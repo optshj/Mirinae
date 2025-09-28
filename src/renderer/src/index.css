@@ -30,6 +30,7 @@ html.resizable {
     padding-bottom: 4px;
 }
 #calendar-container {
+    width: 100%;
     transition: all 0.3s ease-in-out;
 }
 html.flip-calendar #calendar-container {

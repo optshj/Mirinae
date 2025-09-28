@@ -7,14 +7,14 @@ export function useLogin() {
     const login = () => {
         window.api.startGoogleOauth()
     }
+
     const logout = () => {
         setTokens(initialTokens)
-        if (window.api.logoutGoogleOAuth) {
-            window.api.logoutGoogleOAuth()
-        }
+        window.api.logoutGoogleOAuth()
     }
 
     const handleLogin = useCallback((receivedTokens) => {
+        console.log(receivedTokens)
         setTokens(receivedTokens)
     }, [])
 
@@ -37,7 +37,6 @@ export function useLogin() {
 
     useEffect(() => {
         tryAutoLogin()
-        // 인터넷 연결 시 자동로그인 시도
         window.addEventListener('online', tryAutoLogin)
 
         window.api.onGoogleOauthSuccess(handleLogin)
@@ -47,7 +46,7 @@ export function useLogin() {
             window.api.removeListeners()
             window.removeEventListener('online', tryAutoLogin)
         }
-    }, [])
+    }, [handleLogin, handleError, tryAutoLogin])
 
     return { login, logout, tokens }
 }
