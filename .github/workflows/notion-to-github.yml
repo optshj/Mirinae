@@ -3,7 +3,7 @@ name: Sync Notion Issues to GitHub
 on:
     schedule:
         - cron: '0 */6 * * *'
-    workflow_dispatch:
+    workflow_dispatch: # 수동 실행 가능
 
 jobs:
     sync:
