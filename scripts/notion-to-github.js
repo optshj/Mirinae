@@ -1,7 +1,7 @@
 const notionKey = process.env.NOTION_API_KEY
 const notionDbId = process.env.NOTION_DB_ID
 const githubToken = process.env.GHP_PAT
-const repo = process.env.repo
+const repo = process.env.REPO
 
 /** 🔹 Notion DB에서 데이터 가져오기 */
 async function fetchNotionIssues() {
