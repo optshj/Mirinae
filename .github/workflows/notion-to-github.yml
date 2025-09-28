@@ -15,7 +15,7 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@v3
               with:
-                  node-version: 18 # fetch 사용 가능
+                  node-version: 18
 
             - name: Run sync script
               env:
