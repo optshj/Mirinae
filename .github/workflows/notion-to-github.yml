@@ -17,9 +17,6 @@ jobs:
               with:
                   node-version: 18
 
-            - name: Install dependencies
-              run: npm install axios
-
             - name: Run sync script
               env:
                   NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
