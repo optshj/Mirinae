@@ -15,10 +15,7 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@v3
               with:
-                  node-version: 18
-
-            - name: Install dependencies
-              run: npm install axios
+                  node-version: 18 # fetch 사용 가능
 
             - name: Run sync script
               env:
