@@ -2,8 +2,8 @@ name: Sync Notion Issues to GitHub
 
 on:
     schedule:
-        - cron: '*/10 * * * *' # 10분마다 실행
-    workflow_dispatch: # 수동 실행 가능
+        - cron: '0 */6 * * *'
+    workflow_dispatch:
 
 jobs:
     sync:
@@ -21,6 +21,6 @@ jobs:
               env:
                   NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
                   NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
-                  GITHUB_PAT: ${{ secrets.GHP_PAT }}
+                  GHP_PAT: ${{ secrets.GHP_PAT }}
                   REPO: ${{ github.repository }}
               run: node scripts/notion-to-github.js
