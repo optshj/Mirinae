@@ -5,6 +5,15 @@ const notionDbId = process.env.NOTION_DB_ID
 const githubToken = process.env.GITHUB_PAT
 const repo = process.env.REPO // username/repo 자동 가져오기
 
+/**
+ * Notion 데이터베이스를 조회하여 'ToDo' 상태 항목을 GitHub 이슈로 생성합니다.
+ *
+ * Notion에서 데이터베이스 페이지 목록을 가져오고 각 페이지의 제목, 본문, 상태를 읽어
+ * 상태가 정확히 'ToDo'인 항목만 지정된 GitHub 리포지토리에 이슈로 생성합니다.
+ * 생성되는 이슈에는 'notion-sync' 라벨이 자동으로 추가됩니다.
+ *
+ * 사용되는 환경 변수: NOTION_API_KEY, NOTION_DB_ID, GITHUB_PAT, REPO
+ */
 async function main() {
     console.log('🔹 Notion → GitHub Issue Sync 시작')
 

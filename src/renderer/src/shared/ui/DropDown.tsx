@@ -7,6 +7,16 @@ interface DropDownProps {
     align?: 'left' | 'right'
 }
 
+/**
+ * 트리거 요소에 연결된 드롭다운 메뉴를 렌더링한다.
+ *
+ * 드롭다운 메뉴는 트리거의 위치를 기준으로 절대 위치에 배치되며, 메뉴 컨텐츠는 document.body에 포털로 렌더링된다.
+ *
+ * @param trigger - 드롭다운을 여닫는 트리거로 렌더링할 React 노드
+ * @param children - 드롭다운 메뉴 내부에 렌더링할 내용
+ * @param align - 메뉴의 수평 정렬을 지정합니다. 'left' 또는 'right'을 사용하며 기본값은 'left'입니다.
+ * @returns 드롭다운 트리거와 메뉴를 포함하는 React 요소
+ */
 export default function DropDown({ trigger, children, align = 'left' }: DropDownProps) {
     const [open, setOpen] = useState(false)
     const [position, setPosition] = useState({ top: 0, left: 0, width: 0 })
