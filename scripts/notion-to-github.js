@@ -1,5 +1,3 @@
-const fetch = require('node-fetch')
-
 const notionKey = process.env.NOTION_API_KEY
 const notionDbId = process.env.NOTION_DB_ID
 const githubToken = process.env.GHP_PAT
