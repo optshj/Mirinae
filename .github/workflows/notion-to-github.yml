@@ -1,0 +1,29 @@
+name: Sync Notion Issues to GitHub
+
+on:
+    schedule:
+        - cron: '*/10 * * * *' # 10분마다 실행
+    workflow_dispatch: # 수동 실행 가능
+
+jobs:
+    sync:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18
+
+            - name: Install dependencies
+              run: npm install axios
+
+            - name: Run sync script
+              env:
+                  NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+                  NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+                  GITHUB_PAT: ${{ secrets.GHP_PAT }}
+                  REPO: ${{ github.repository }}
+              run: node scripts/notion-to-github.js
