@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { initialTokens, Tokens } from '../types/userType'
+import { initialTokens, Tokens } from '@/shared/types/userType'
 
 export function useLogin() {
     const [tokens, setTokens] = useState<Tokens>(initialTokens)

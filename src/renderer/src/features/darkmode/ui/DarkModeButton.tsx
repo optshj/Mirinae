@@ -23,13 +23,17 @@ export function DarkModeButton() {
     }
 
     return (
-        <div className="flex flex-row justify-between select-none">
+        <div className="flex flex-row justify-between">
             <label>다크모드</label>
-            <div role="button" onClick={toggleDarkMode} className="relative flex h-6 w-12 items-center justify-center rounded-full bg-yellow-400 transition-colors duration-300 dark:bg-gray-500">
+            <button
+                onClick={toggleDarkMode}
+                onKeyDown={(e) => e.preventDefault()}
+                className="relative flex h-6 w-12 items-center justify-center rounded-full bg-yellow-400 transition-colors duration-300 dark:bg-gray-500"
+            >
                 <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-transform duration-300 ${darkMode ? '-translate-x-3' : 'translate-x-3'}`}>
                     {darkMode ? <MdDarkMode className="h-full w-full text-gray-500" /> : <MdLightMode className="h-full w-full text-yellow-400" />}
                 </div>
-            </div>
+            </button>
         </div>
     )
 }

@@ -1,5 +1,5 @@
-import { useLogin } from '@/features/user'
-import { getColorById } from '../../lib/getColor'
+import { useLogin } from '@/shared/hooks/useLogin'
+import { getColorById } from '@/features/event/lib/getColor'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventItemWithColor } from '@/shared/types/EventTypes'
 
@@ -32,6 +32,7 @@ export function useEditEvent() {
                 },
                 body: JSON.stringify(eventData)
             })
+
             return response.json()
         },
         onMutate: async (variables) => {
@@ -62,6 +63,7 @@ export function useEditEvent() {
                         start: { dateTime: startDateTime.toISOString(), timeZone },
                         end: { dateTime: endDateTime.toISOString(), timeZone }
                     }
+
                     return {
                         ...previousData,
                         items: [...filteredItems, updatedItem]
@@ -71,9 +73,9 @@ export function useEditEvent() {
 
             return { previousData }
         },
-
         onError: (_err, _variables, context: any) => queryClient.setQueryData(['googleCalendarEvents'], context.previousData),
         onSettled: () => queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] })
     })
+
     return { editEvent: editEventMutation.mutate }
 }

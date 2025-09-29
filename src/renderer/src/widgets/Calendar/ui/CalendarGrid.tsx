@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { ScheduleModal } from '../ScheduleModal/ScheduleModal'
+import { ScheduleModal } from './ScheduleModal'
 
 import { useCalendarItems } from '@/features/event'
 
