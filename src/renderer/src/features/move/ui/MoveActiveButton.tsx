@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { MoveIcon } from 'lucide-react'
+
+import { trackEvent } from '@aptabase/electron/renderer'
+
 import { Button } from '@/shared/ui/button'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/shared/ui/dialog'
-import { MoveIcon } from 'lucide-react'
-import { trackEvent } from '@aptabase/electron/renderer'
 
 export function MoveActiveButton() {
     const [isDrag, setIsDrag] = useState(false)
@@ -23,7 +25,7 @@ export function MoveActiveButton() {
             <DialogTrigger asChild>
                 <div>{isDrag ? '화면조절 종료' : '화면조절 시작'}</div>
             </DialogTrigger>
-            <DialogContent style={{ WebkitAppRegion: 'drag' } as any}>
+            <DialogContent style={{ WebkitAppRegion: 'drag' } as any} onInteractOutside={(e) => e.preventDefault()}>
                 <DialogHeader style={{ cursor: 'move' }}>
                     <DialogTitle className="flex items-center gap-2">
                         <MoveIcon size={16} aria-hidden="true" />

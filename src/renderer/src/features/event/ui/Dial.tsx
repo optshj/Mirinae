@@ -170,8 +170,8 @@ export function Dial({ updateForm, color, defaultTime = ['08:00', '10:00'] }: Di
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     style={{ pointerEvents: 'none' }}
                 >
                     <circle cx="12" cy="13" r="8" />

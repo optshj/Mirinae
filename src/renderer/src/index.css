@@ -2,6 +2,45 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+*:focus {
+    outline: none !important;
+}
+div {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+button {
+    outline: none !important;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+html,
+body {
+    font-family: 'Inter', sans-serif;
+    overflow: hidden !important;
+    background: transparent;
+}
+html.resizable {
+    border: 3px dotted #e0e0e0;
+    box-sizing: border-box;
+    padding-bottom: 4px;
+}
+#calendar-container {
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+}
+html.flip-calendar #calendar-container {
+    scale: 0.95;
+    opacity: 0;
+    margin-top: -16px;
+    transition: all 0.3s ease-in-out;
+    pointer-events: none;
+}
+
 @theme {
     --color-font-black: #1f2937;
     --color-font-: #4b5563;
@@ -86,33 +125,6 @@
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
-
-*:focus {
-    outline: none !important;
-}
-div {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
-button {
-    outline: none !important;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
-
-html,
-body {
-    font-family: 'Inter', sans-serif;
-    overflow: hidden !important;
-    background: transparent;
-}
-html.resizable {
-    border: 3px dotted #e0e0e0;
-    box-sizing: border-box;
-}
 @theme inline {
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);

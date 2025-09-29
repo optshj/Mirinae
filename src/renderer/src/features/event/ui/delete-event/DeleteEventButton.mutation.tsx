@@ -1,4 +1,4 @@
-import { useLogin } from '@/features/user'
+import { useLogin } from '@/shared/hooks/useLogin'
 import { EventItemWithColor } from '@/shared/types/EventTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 

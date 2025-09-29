@@ -1,8 +1,9 @@
 import { useState } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+
 import { formatKoreanDateTime } from '@/shared/lib/dateFunction'
 import { EventItemWithColor } from '@/shared/types/EventTypes'
 import { Button } from '@/shared/ui/button'
-import { ChevronDown, ChevronUp } from 'lucide-react'
 
 interface FooterEventProps {
     items: EventItemWithColor[]
@@ -28,7 +29,7 @@ export function FooterEvent({ items, title, description }: FooterEventProps) {
     return (
         <section className="bg-primary relative flex-1 rounded-xl p-4">
             <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-primary items-center font-semibold whitespace-nowrap">{title}</h3>
+                <h3 className="text-primary font-semibold whitespace-nowrap">{title}</h3>
 
                 <div className="flex flex-row">
                     <Button onClick={handleScrollUp} disabled={!canScrollUp} variant="ghost" size="icon" tabIndex={-1}>
@@ -40,7 +41,7 @@ export function FooterEvent({ items, title, description }: FooterEventProps) {
                 </div>
             </div>
 
-            <div className="flex max-h-30 flex-col gap-4 overflow-hidden">
+            <div className="flex max-h-30 flex-col gap-4">
                 {items.length === 0 ? (
                     <span className="text-font-gray py-8 text-center whitespace-nowrap">{description}</span>
                 ) : (

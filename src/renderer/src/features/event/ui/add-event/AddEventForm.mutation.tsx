@@ -1,5 +1,5 @@
-import { useLogin } from '@/features/user'
-import { getColorById } from '../../lib/getColor'
+import { useLogin } from '@/shared/hooks/useLogin'
+import { getColorById } from '@/features/event/lib/getColor'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventItemWithColor } from '@/shared/types/EventTypes'
 

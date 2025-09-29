@@ -9,7 +9,6 @@ export function RefreshButton() {
                 window.location.reload()
                 trackEvent('RefreshButton')
             }}
-            className="text-primary"
         />
     )
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { Check } from 'lucide-react'
 import { useAddEvent } from './AddEventForm.mutation'
-import { getColorById, getPalette } from '../../lib/getColor'
+import { getColorById, getPalette } from '@/features/event/lib/getColor'
 
 import HangulInput from '@/shared/ui/HangulInput'
 import { toast } from 'sonner'
@@ -57,8 +57,7 @@ export function AddEventForm({ date }: { date: Date }) {
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (document.getElementById('edit-event-form')) {
-                //수정폼이 열려있으면 안열리게
-                return
+                return //수정폼이 열려있으면 안열리게
             }
             if (e.ctrlKey && e.key === 'Enter') {
                 e.preventDefault()

@@ -1,8 +1,10 @@
-import { EventItem, EventItemWithColor } from '@/shared/types/EventTypes'
-import { getColorById } from '../lib/getColor'
 import { useQuery } from '@tanstack/react-query'
-import { useShowHoliday } from '../model/ShowHolidayContext'
-import { useLogin } from '@/features/user'
+
+import { getColorById } from '@/features/event/lib/getColor'
+import { useShowHoliday } from '@/features/event/model/ShowHolidayContext'
+
+import { EventItem, EventItemWithColor } from '@/shared/types/EventTypes'
+import { useLogin } from '@/shared/hooks/useLogin'
 
 /**
  * Google Calendar API를 사용하여 캘린더 이벤트를 가져오는 훅입니다.

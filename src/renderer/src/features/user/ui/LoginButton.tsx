@@ -1,4 +1,4 @@
-import { useLogin } from '../api/useLogin'
+import { useLogin } from '@/shared/hooks/useLogin'
 
 export function LoginButton() {
     const { login, logout, tokens } = useLogin()

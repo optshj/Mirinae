@@ -7,7 +7,7 @@ export function QuitAppButton() {
                 window.api.quitApp()
                 trackEvent('QuitAppButton')
             }}
-            className="text-red-600"
+            className="text-red-500 dark:text-red-400"
         >
             앱 종료
         </div>

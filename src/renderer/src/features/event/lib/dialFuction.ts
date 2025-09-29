@@ -15,7 +15,7 @@ export function timeToAngle(timeString) {
     return angle % 360
 }
 
-export function angleToTime(angle) {
+export function angleToTime(angle: number) {
     let hour = Math.floor(angle / 15) % 24
     let minute = Math.round(((angle % 15) * 4) / 5) * 5
     if (minute === 60) {

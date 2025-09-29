@@ -1,9 +1,12 @@
 import { useState } from 'react'
-import { isSameDay } from '@/shared/lib/dateFunction'
+
+import { ScheduleModal } from './ScheduleModal'
 
 import { useCalendarItems } from '@/features/event'
-import { ScheduleModal } from '../ScheduleModal/ScheduleModal'
+
 import { EventList } from '@/entities/event'
+
+import { isSameDay } from '@/shared/lib/dateFunction'
 import { Dialog, DialogTrigger } from '@/shared/ui/dialog'
 
 interface CalendarGridProps {
@@ -25,7 +28,7 @@ export function CalendarGrid({ days, month }: CalendarGridProps) {
         <div className="bg-primary flex w-full flex-col overflow-hidden rounded-xl">
             <div className="grid grid-cols-7 bg-[#F9FAFB] text-center font-semibold dark:bg-zinc-800">
                 {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
-                    <div className="py-2" key={day}>
+                    <div className="text-primary py-2" key={day}>
                         {day}
                     </div>
                 ))}
@@ -50,7 +53,7 @@ export function CalendarGrid({ days, month }: CalendarGridProps) {
                                     onDoubleClick={() => handleDateDoubleClick(date)}
                                 >
                                     <div className={`px-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'} `}>
-                                        <div className={`${isToday ? 'bg-main-color text-[#f3f4f6]' : ''} flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70`}>
+                                        <div className={`${isToday ? 'bg-main-color text-[#f3f4f6] dark:text-[#333333]' : ''} flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70`}>
                                             {date.getDate()}
                                         </div>
                                     </div>

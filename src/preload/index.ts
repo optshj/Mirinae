@@ -21,12 +21,14 @@ const api = {
     startGoogleOauth: () => ipcRenderer.send('start-google-oauth'),
 
     onGoogleOauthSuccess: (callback) => {
-        ipcRenderer.removeAllListeners('google-oauth-token')
-        ipcRenderer.on('google-oauth-token', (_event, ...args) => callback(...args))
+        const listener = (_event, ...args) => callback(...args)
+        ipcRenderer.on('google-oauth-token', listener)
+        return () => ipcRenderer.removeListener('google-oauth-token', listener)
     },
     onGoogleOauthError: (callback) => {
-        ipcRenderer.removeAllListeners('google-oauth-error')
+        const listener = (_event, ...args) => callback(...args)
         ipcRenderer.on('google-oauth-error', (_event, ...args) => callback(...args))
+        return () => ipcRenderer.removeListener('google-oauth-error', listener)
     },
 
     tryAutoLogin: () => ipcRenderer.invoke('try-auto-login'),
