@@ -1,36 +1,43 @@
 import { useEffect, useState } from 'react'
-import { useEditEvent } from './EditEventForm.mutation'
 import { toast } from 'sonner'
 import { trackEvent } from '@aptabase/electron/renderer'
+
 import { EventForm } from '../EventForm'
-import { EventItemWithColor } from '@/shared/types/EventTypes'
-import { ISO8601toSimpleTime } from '@/shared/lib/dateFunction'
+import { useEditEvent } from './EditEventForm.mutation'
 import { FormState } from '../../types/FormType'
 
+import { ISO8601toSimpleTime } from '@/shared/lib/dateFunction'
+import { CalendarEventWithColor, isHolidayEvent } from '@/shared/types/EventType'
+import { isTimeEvent } from '@/shared/types/EventType'
+
 interface EditEventFormProps {
-    event: EventItemWithColor
+    event: CalendarEventWithColor
     deleteButton: React.ReactNode
 }
 export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
     const [showForm, setShowForm] = useState(false)
     const { editEvent } = useEditEvent()
+
+    const date = isTimeEvent(event) ? new Date(event.start.dateTime) : new Date(event.start.date)
+    // form 초기화
     const [form, setForm] = useState<FormState>({
         summary: event.summary,
         colorId: event.colorId,
-        startTime: ISO8601toSimpleTime(event.start.dateTime),
-        endTime: ISO8601toSimpleTime(event.end.dateTime)
+        start: ISO8601toSimpleTime(isTimeEvent(event) ? event.start.dateTime : event.start.date),
+        end: ISO8601toSimpleTime(isTimeEvent(event) ? event.end.dateTime : event.end.date),
+        allDay: !isTimeEvent(event)
     })
 
-    const updateForm = (key: keyof FormState, value: string) => setForm((prev) => ({ ...prev, [key]: value }))
+    const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }))
 
-    const date = new Date(event.start.dateTime)
-
+    // 제출 처리
     const handleSubmit = () => {
         if (performSubmit()) return
         setShowForm(false)
         trackEvent('EditEvent')
+        const desc = form.allDay ? '하루 종일 일정으로 수정되었습니다.' : `${form.start} - ${form.end}에 일정이 수정되었습니다.`
         toast.success(`"${form.summary}" 일정이 수정되었습니다`, {
-            description: `${date.toLocaleDateString()} ${form.startTime} - ${form.endTime}에 일정이 수정되었습니다.`
+            description: `${date.toLocaleDateString()} ${desc}`
         })
     }
 
@@ -44,12 +51,17 @@ export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
             toast.warning('일정 제목을 입력해주세요')
             return true
         }
-        editEvent({ eventId: event.id, date, ...form })
+
+        editEvent({
+            eventId: event.id,
+            date,
+            ...form
+        })
         return false
     }
 
     const openForm = () => {
-        if (event.organizer?.displayName !== '대한민국의 휴일') setShowForm(true)
+        if (!isHolidayEvent(event)) setShowForm(true)
     }
 
     // Ctrl + Enter 단축키
@@ -74,31 +86,26 @@ export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
                     onCancel={() => setShowForm(false)}
                     onSubmit={onFormSubmit}
                     onSubmitText="수정"
-                    defaultTime={[form.startTime, form.endTime]}
+                    defaultTime={[form.start, form.end]}
+                    allDay={form.allDay}
+                    setAllDay={(value) => updateForm('allDay', value)}
                 />
             ) : (
-                // 기본 이벤트 아이템
                 <div
-                    key={event.id}
                     className="relative flex items-center justify-between rounded-xl p-3 dark:saturate-70"
                     style={{
                         backgroundColor: `${event.color.background}30`
                     }}
                     onDoubleClick={openForm}
                 >
-                    <div
-                        className="h-full w-2 rounded-xl"
-                        style={{
-                            backgroundColor: event.color.background
-                        }}
-                    />
+                    <div className="h-full w-2 rounded-xl" style={{ backgroundColor: event.color.background }} />
                     <div className="text-primary flex-1 pl-4">
                         <span className="font-semibold">{event.summary}</span>
                         <div className="mt-1 text-xs">
-                            {event.start.dateTime ? `${new Date(event.start.dateTime).toLocaleString()} ~ ${new Date(event.end.dateTime).toLocaleString()}` : `${event.start.date} ~ ${event.end.date}`}
+                            {isTimeEvent(event) ? `${new Date(event.start.dateTime).toLocaleString()} ~ ${new Date(event.end.dateTime).toLocaleString()}` : `${event.start.date} ~ ${event.end.date}`}
                         </div>
                     </div>
-                    {event.organizer?.displayName === '대한민국의 휴일' ? null : deleteButton}
+                    {!isHolidayEvent(event) && deleteButton}
                 </div>
             )}
         </>

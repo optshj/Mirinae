@@ -1,5 +1,5 @@
 import { useLogin } from '@/shared/hooks/useLogin'
-import { EventItemWithColor } from '@/shared/types/EventTypes'
+import { CalendarEventWithColor } from '@/shared/types/EventType'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export function useDeleteEvent() {
@@ -21,7 +21,7 @@ export function useDeleteEvent() {
         onMutate: async (eventId) => {
             await queryClient.cancelQueries({ queryKey: ['googleCalendarEvents'] })
             const previousData = queryClient.getQueryData<{
-                items: EventItemWithColor[]
+                items: CalendarEventWithColor[]
             }>(['googleCalendarEvents'])
 
             if (previousData) {

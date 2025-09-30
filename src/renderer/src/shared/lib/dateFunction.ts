@@ -12,7 +12,7 @@ export function ISO8601toSimpleTime(isoString) {
 }
 
 // 예시: YYYY-MM-DD HH:mm 형식
-export function formatDate(date: string) {
+export function formatDate(date: Date) {
     const d = new Date(date)
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
@@ -58,4 +58,33 @@ export function formatKoreanDateTime(dateStr: string): string {
     const yearPrefix = year !== currentYear ? `${year}년 ` : ''
 
     return `${yearPrefix}${month}월 ${day}일 (${weekday}) ${period} ${hours}:${minutes}`
+}
+
+// 예: 2025-09-30 → "9월 30일 (화)"
+export function formatKoreanDate(dateStr: string): string {
+    const date = new Date(dateStr)
+    if (isNaN(date.getTime())) return ''
+
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+
+    const weekdays = ['일', '월', '화', '수', '목', '금', '토']
+    const weekday = weekdays[date.getDay()]
+
+    return `${month}월 ${day}일 (${weekday})`
+}
+
+// 예: Date + 09:30 -> 2025-10-01T09:30:00.000+09:00
+export function makeDateTime(date: Date, time: string) {
+    const [hour, minute] = time.split(':').map(Number)
+    const result = new Date(date)
+    result.setHours(hour, minute, 0, 0)
+    return result
+}
+
+export function formatDateLocal(date: Date) {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
 }

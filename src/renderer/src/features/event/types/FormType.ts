@@ -1,6 +1,7 @@
 export interface FormState {
     summary: string
     colorId: string
-    startTime: string
-    endTime: string
+    start: string
+    end: string
+    allDay: boolean
 }

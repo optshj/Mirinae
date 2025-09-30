@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
-import { formatKoreanDateTime } from '@/shared/lib/dateFunction'
-import { EventItemWithColor } from '@/shared/types/EventTypes'
+import { formatKoreanDate, formatKoreanDateTime } from '@/shared/lib/dateFunction'
 import { Button } from '@/shared/ui/button'
+import { CalendarEventWithColor, isTimeEvent } from '@/shared/types/EventType'
 
 interface FooterEventProps {
-    items: EventItemWithColor[]
+    items: CalendarEventWithColor[]
     title: string
     description: string
 }
@@ -45,12 +45,12 @@ export function FooterEvent({ items, title, description }: FooterEventProps) {
                 {items.length === 0 ? (
                     <span className="text-font-gray py-8 text-center whitespace-nowrap">{description}</span>
                 ) : (
-                    visibleItems.map((event, i) => (
-                        <div key={visibleStartIndex + i} className="flex items-center gap-3 px-3">
+                    visibleItems.map((event) => (
+                        <div key={event.id} className="flex items-center gap-3 px-3">
                             <span className="h-2 w-2 rounded-full" style={{ background: event.color.background }}></span>
                             <div className="flex flex-col">
                                 <span className="text-primary line-clamp-1 font-semibold">{event.summary}</span>
-                                <span className="text-font-gray line-clamp-1 text-sm">{formatKoreanDateTime(event.start.dateTime)}</span>
+                                <span className="text-font-gray line-clamp-1 text-sm">{isTimeEvent(event) ? formatKoreanDateTime(event.start.dateTime) : formatKoreanDate(event.start.date)}</span>
                             </div>
                         </div>
                     ))

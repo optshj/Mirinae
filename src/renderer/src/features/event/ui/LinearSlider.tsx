@@ -1,12 +1,14 @@
 import { AlarmClock, AlarmClockOff } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { FormState } from '../types/FormType'
 
 interface SliderProps {
-    updateForm: (key: keyof { startTime: string; endTime: string }, value: string) => void
+    updateForm: (key: keyof FormState, value: FormState[keyof FormState]) => void
     color?: string
     defaultTime?: [string, string]
+    disabled?: boolean
 }
-export function LinearSlider({ updateForm, color = '#6A91E0', defaultTime = ['08:00', '12:00'] }: SliderProps) {
+export function LinearSlider({ updateForm, color = '#6A91E0', defaultTime = ['08:00', '12:00'], disabled = false }: SliderProps) {
     const MAX_TIME = 23 * 60 + 55
     const sliderRef = useRef<HTMLDivElement>(null)
 
@@ -27,27 +29,27 @@ export function LinearSlider({ updateForm, color = '#6A91E0', defaultTime = ['08
     const positionToMinutes = (x: number) => {
         if (!sliderRef.current) return 0
         const rect = sliderRef.current.getBoundingClientRect()
-        const pos = Math.max(0, Math.min(x - rect.left, rect.width)) // 바깥 드래그 방지
+        const pos = Math.max(0, Math.min(x - rect.left, rect.width))
         const ratio = pos / rect.width
         const minutes = Math.min(ratio * 1440, MAX_TIME)
-
         return Math.round(minutes / 5) * 5
     }
 
     const handleDrag = (thumb: 'start' | 'end', e: React.PointerEvent) => {
+        if (disabled) return // 비활성화 시 동작 막기
         e.preventDefault()
 
         const move = (moveEvent: PointerEvent) => {
             const minutes = positionToMinutes(moveEvent.clientX)
 
             if (thumb === 'start') {
-                const newStart = Math.min(minutes, end) // 종료 시간보다 크면 안 됨
+                const newStart = Math.min(minutes, end)
                 setStart(newStart)
-                updateForm('startTime', minutesToTime(newStart))
+                updateForm('start', minutesToTime(newStart))
             } else {
-                const newEnd = Math.max(minutes, start) // 시작 시간보다 작으면 안 됨
+                const newEnd = Math.max(minutes, start)
                 setEnd(newEnd)
-                updateForm('endTime', minutesToTime(newEnd))
+                updateForm('end', minutesToTime(newEnd))
             }
         }
 
@@ -64,11 +66,14 @@ export function LinearSlider({ updateForm, color = '#6A91E0', defaultTime = ['08
         <div className="w-full px-6 py-2">
             <div className="relative h-12 select-none">
                 {/* 슬라이더 트랙 */}
-                <div ref={sliderRef} className="absolute top-1/2 left-0 h-2 w-full -translate-y-1/2 rounded-full bg-zinc-200 dark:bg-zinc-700" />
+                <div
+                    ref={sliderRef}
+                    className={`absolute top-1/2 left-0 h-2 w-full -translate-y-1/2 rounded-full ${disabled ? 'bg-zinc-300 opacity-60 dark:bg-zinc-800' : 'bg-zinc-200 dark:bg-zinc-700'}`}
+                />
 
                 {/* 선택된 구간 */}
                 <div
-                    className="absolute top-1/2 h-2 rounded-full"
+                    className={`absolute top-1/2 h-2 rounded-full ${disabled ? 'opacity-40' : ''}`}
                     style={{
                         left: `${(start / 1440) * 100}%`,
                         width: `${((end - start) / 1440) * 100}%`,
@@ -77,17 +82,17 @@ export function LinearSlider({ updateForm, color = '#6A91E0', defaultTime = ['08
                     }}
                 />
 
-                {/* 기준 라벨 (00, 06, 12, 18, 24) */}
+                {/* 기준 라벨 */}
                 {['00', '06', '12', '18', '24'].map((label, i) => (
                     <div
                         key={label}
-                        className="absolute top-4 text-xs text-zinc-500"
+                        className={`absolute top-4 text-xs ${disabled ? 'text-zinc-400' : 'text-zinc-500'}`}
                         style={{
                             left: `${((i * 6) / 24) * 100}%`,
                             transform: 'translateX(-50%)'
                         }}
                     >
-                        <div className="mx-auto mb-1 h-4 w-[1px] bg-zinc-400" />
+                        <div className={`mx-auto mb-1 h-4 w-[1px] ${disabled ? 'bg-zinc-500' : 'bg-zinc-400'}`} />
                         {label}
                     </div>
                 ))}
@@ -95,7 +100,9 @@ export function LinearSlider({ updateForm, color = '#6A91E0', defaultTime = ['08
                 {/* 시작 Thumb */}
                 <div
                     onPointerDown={(e) => handleDrag('start', e)}
-                    className="text-secondary absolute top-1/2 flex h-7 w-7 items-center justify-center rounded-full border-2 border-zinc-300 bg-white p-1 dark:border-zinc-600 dark:bg-[#424242]"
+                    className={`absolute top-1/2 flex h-7 w-7 items-center justify-center rounded-full border-2 p-1 ${
+                        disabled ? 'border-zinc-400 bg-zinc-200 opacity-60 dark:border-zinc-600 dark:bg-zinc-700' : 'border-zinc-300 bg-white dark:border-zinc-600 dark:bg-[#424242]'
+                    }`}
                     style={{
                         left: `${(start / 1440) * 100}%`,
                         transform: 'translate(-50%, -50%)'
@@ -107,7 +114,9 @@ export function LinearSlider({ updateForm, color = '#6A91E0', defaultTime = ['08
                 {/* 종료 Thumb */}
                 <div
                     onPointerDown={(e) => handleDrag('end', e)}
-                    className="text-secondary absolute top-1/2 flex h-7 w-7 items-center justify-center rounded-full border-2 border-zinc-300 bg-white p-1 dark:border-zinc-600 dark:bg-[#424242]"
+                    className={`absolute top-1/2 flex h-7 w-7 items-center justify-center rounded-full border-2 p-1 ${
+                        disabled ? 'border-zinc-400 bg-zinc-200 opacity-60 dark:border-zinc-600 dark:bg-zinc-700' : 'border-zinc-300 bg-white dark:border-zinc-600 dark:bg-[#424242]'
+                    }`}
                     style={{
                         left: `${(end / 1440) * 100}%`,
                         transform: 'translate(-50%, -50%)'

@@ -6,15 +6,16 @@ import { FormState } from '../types/FormType'
 
 interface EventFormFieldsProps {
     form: FormState
-    updateForm: (key: keyof FormState, value: string) => void
+    updateForm: (key: keyof FormState, value: FormState[keyof FormState]) => void
     onCancel: () => void
     onSubmitText: string
     onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
     defaultTime?: [string, string]
     id?: string
+    allDay: boolean
+    setAllDay: (value: boolean) => void
 }
-
-export function EventForm({ form, updateForm, onCancel, onSubmit, onSubmitText, defaultTime, id }: EventFormFieldsProps) {
+export function EventForm({ form, updateForm, onCancel, onSubmit, onSubmitText, defaultTime, id, allDay, setAllDay }: EventFormFieldsProps) {
     const selectedColor = getColorById(form.colorId).background
     const palette = getPalette()
 
@@ -36,29 +37,48 @@ export function EventForm({ form, updateForm, onCancel, onSubmit, onSubmitText, 
                 />
             </div>
 
+            {/** 하루종일 스위치 */}
+            <div className="flex items-center gap-4">
+                <span style={{ color: selectedColor }}>하루종일</span>
+                <button
+                    type="button"
+                    onClick={() => {
+                        setAllDay(!allDay)
+                    }}
+                    onKeyDown={(e) => e.preventDefault()}
+                    className={`border-background-secondary relative flex h-6 w-12 cursor-pointer items-center justify-center rounded-full transition-colors duration-300 ${allDay ? 'bg-green-500' : 'bg-zinc-400'}`}
+                >
+                    <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-all duration-300 ${allDay ? 'translate-x-3' : '-translate-x-3'} `} />
+                </button>
+            </div>
+
+            {/** 시간 선택: 하루종일이면 숨김 */}
             <div>
                 <label style={{ color: selectedColor }}>시간 선택</label>
                 <div className="relatived flex flex-col items-center justify-center">
-                    <LinearSlider updateForm={updateForm} color={selectedColor} defaultTime={defaultTime} />
-                    <div className="flex w-full justify-between px-24">
-                        <div className="flex flex-col items-center">
-                            <span className="text-md text-secondary">시작</span>
-                            <span className="w-[52px] text-center text-lg font-bold" style={{ color: selectedColor }}>
-                                {form.startTime}
-                            </span>
-                        </div>
+                    <LinearSlider updateForm={updateForm} color={selectedColor} defaultTime={defaultTime} disabled={allDay} />
+                    {allDay ? null : (
+                        <div className="flex w-full justify-between px-24">
+                            <div className="flex flex-col items-center">
+                                <span className="text-md text-secondary">시작</span>
+                                <span className="w-[52px] text-center text-lg font-bold" style={{ color: selectedColor }}>
+                                    {form.start}
+                                </span>
+                            </div>
 
-                        <ArrowRight className="text-primary mt-2 h-5 w-5" />
+                            <ArrowRight className="text-primary mt-2 h-5 w-5" />
 
-                        <div className="flex flex-col items-center">
-                            <span className="text-md text-secondary">종료</span>
-                            <span className="w-[52px] text-center text-lg font-bold" style={{ color: selectedColor }}>
-                                {form.endTime}
-                            </span>
+                            <div className="flex flex-col items-center">
+                                <span className="text-md text-secondary">종료</span>
+                                <span className="w-[52px] text-center text-lg font-bold" style={{ color: selectedColor }}>
+                                    {form.end}
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
+
             {/** 컬러 팔레트 */}
             <div className="grid grid-cols-6 gap-2 px-2">
                 {Object.entries(palette).map(([key, color]) => (
@@ -72,6 +92,7 @@ export function EventForm({ form, updateForm, onCancel, onSubmit, onSubmitText, 
                     </div>
                 ))}
             </div>
+
             {/** 버튼 */}
             <div className="flex items-center justify-end gap-2">
                 <button type="button" className="rounded-lg border border-zinc-300 bg-zinc-100 px-6 py-1.5 font-semibold text-zinc-500" onClick={onCancel}>

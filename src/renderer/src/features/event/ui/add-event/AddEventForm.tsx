@@ -1,31 +1,33 @@
 import { useEffect, useState } from 'react'
-import { useAddEvent } from './AddEventForm.mutation'
 import { toast } from 'sonner'
 import { trackEvent } from '@aptabase/electron/renderer'
+
+import { useAddEvent } from './AddEventForm.mutation'
 import { EventForm } from '../EventForm'
 import { FormState } from '../../types/FormType'
 
 const initialFormState: FormState = {
     summary: '',
     colorId: '1',
-    startTime: '08:00',
-    endTime: '12:00'
+    start: '08:00',
+    end: '12:00',
+    allDay: false
 }
 export function AddEventForm({ date }: { date: Date }) {
     const [showForm, setShowForm] = useState(false)
     const [form, setForm] = useState<FormState>(initialFormState)
-    const updateForm = (key: keyof FormState, value: string) => setForm((prev) => ({ ...prev, [key]: value }))
-    const resetForm = () => setForm(initialFormState)
-
     const { addEvent } = useAddEvent()
+    const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }))
+    const resetForm = () => setForm(initialFormState)
 
     const handleSubmit = () => {
         if (performSubmit()) return
         setShowForm(false)
         resetForm()
         trackEvent('AddEvent')
+        const desc = form.allDay ? '하루 종일 일정으로 추가되었습니다.' : `${form.start} - ${form.end}에 일정이 추가되었습니다.`
         toast.success(`"${form.summary}" 일정이 추가되었습니다`, {
-            description: `${date.toLocaleDateString()} ${form.startTime} - ${form.endTime}에 일정이 추가되었습니다.`
+            description: `${date.toLocaleDateString()} ${desc}`
         })
     }
 
@@ -65,7 +67,15 @@ export function AddEventForm({ date }: { date: Date }) {
     return (
         <>
             {showForm ? (
-                <EventForm form={form} updateForm={updateForm} onCancel={() => setShowForm(false)} onSubmit={onFormSubmit} onSubmitText="추가" />
+                <EventForm
+                    form={form}
+                    updateForm={updateForm}
+                    onCancel={() => setShowForm(false)}
+                    onSubmit={onFormSubmit}
+                    onSubmitText="추가"
+                    allDay={form.allDay}
+                    setAllDay={(value) => updateForm('allDay', value)}
+                />
             ) : (
                 <button
                     className="text-secondary mt-2 w-full rounded-xl border-2 border-dashed py-3 text-center"

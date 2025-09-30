@@ -1,4 +1,4 @@
-export interface EventItem {
+type Events = {
     kind: 'calendar#event'
     etag: string
     id: string
@@ -21,16 +21,6 @@ export interface EventItem {
         email: string
         displayName: string
         self: boolean
-    }
-    start: {
-        date: string
-        dateTime: string
-        timeZone: string
-    }
-    end: {
-        date: string
-        dateTime: string
-        timeZone: string
     }
     endTimeUnspecified: boolean
     recurrence: [string]
@@ -171,10 +161,36 @@ export interface EventItem {
     }
     eventType: string
 }
+export type TimeEvent = Events & {
+    start: { dateTime: string; timeZone: string }
+    end: { dateTime: string; timeZone: string }
+}
+export type HolidayEvent = Events & {
+    start: { date: string }
+    end: { date: string }
+}
+export type AllDayEvent = Events & {
+    start: { date: string }
+    end: { date: string }
+}
+export type CalendarEvent = TimeEvent | HolidayEvent | AllDayEvent
 
-export interface EventItemWithColor extends EventItem {
+export type CalendarEventWithColor = CalendarEvent & {
     color: {
         background: string
         foreground: string
     }
+}
+
+// 타입 가드
+export function isAllDayEvent(event: CalendarEvent): event is AllDayEvent {
+    return 'date' in event.start && event.eventType === 'default'
+}
+
+export function isTimeEvent(event: CalendarEvent): event is TimeEvent {
+    return 'dateTime' in event.start
+}
+
+export function isHolidayEvent(event: CalendarEvent): event is HolidayEvent {
+    return event.description === '공휴일'
 }

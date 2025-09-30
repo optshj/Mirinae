@@ -3,10 +3,7 @@ import { useDeleteEvent } from './DeleteEventButton.mutation'
 import { toast } from 'sonner'
 import { trackEvent } from '@aptabase/electron/renderer'
 
-interface DeleteEventButtonProps {
-    eventId: string
-}
-export function DeleteEventButton({ eventId }: DeleteEventButtonProps) {
+export function DeleteEventButton({ eventId }: { eventId: string }) {
     const { deleteEvent } = useDeleteEvent()
 
     return (
