@@ -58,7 +58,7 @@ describe('AddEventForm', () => {
         expect(mockAddEvent).toHaveBeenCalledWith({
             date: date,
             startTime: '08:00',
-            endTime: '10:00',
+            endTime: '12:00',
             summary: '회의',
             colorId: '1'
         })
@@ -72,7 +72,7 @@ describe('AddEventForm', () => {
         expect(mockAddEvent).toHaveBeenCalledWith({
             date: date,
             startTime: '08:00',
-            endTime: '10:00',
+            endTime: '12:00',
             summary: '테스트 일정',
             colorId: '1'
         })
