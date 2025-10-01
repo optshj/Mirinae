@@ -21,38 +21,26 @@ export function AddEventForm({ date }: { date: Date }) {
     const resetForm = () => setForm(initialFormState)
 
     const handleSubmit = () => {
-        if (performSubmit()) return
+        if (!form.summary.trim()) {
+            toast.warning('일정 제목을 입력해주세요')
+            return
+        }
+        addEvent({ date, ...form })
         setShowForm(false)
-        resetForm()
         trackEvent('AddEvent')
         const desc = form.allDay ? '하루 종일 일정으로 추가되었습니다.' : `${form.start} - ${form.end}에 일정이 추가되었습니다.`
         toast.success(`"${form.summary}" 일정이 추가되었습니다`, {
             description: `${date.toLocaleDateString()} ${desc}`
         })
-    }
-
-    const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        handleSubmit()
-    }
-
-    const performSubmit = () => {
-        if (!form.summary.trim()) {
-            toast.warning('일정 제목을 입력해주세요')
-            return true
-        }
-        addEvent({ date, ...form })
-        return false
+        resetForm()
     }
 
     // Ctrl + Enter 단축키
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (document.getElementById('edit-event-form')) {
-                return
-            }
+            if (document.getElementById('edit-event-form')) return
+
             if (e.ctrlKey && e.key === 'Enter') {
-                e.preventDefault()
                 if (showForm) {
                     handleSubmit()
                 } else {
@@ -67,15 +55,7 @@ export function AddEventForm({ date }: { date: Date }) {
     return (
         <>
             {showForm ? (
-                <EventForm
-                    form={form}
-                    updateForm={updateForm}
-                    onCancel={() => setShowForm(false)}
-                    onSubmit={onFormSubmit}
-                    onSubmitText="추가"
-                    allDay={form.allDay}
-                    setAllDay={(value) => updateForm('allDay', value)}
-                />
+                <EventForm form={form} updateForm={updateForm} onCancel={() => setShowForm(false)} onSubmit={handleSubmit} onSubmitText="추가" />
             ) : (
                 <button
                     className="text-secondary mt-2 w-full rounded-xl border-2 border-dashed py-3 text-center"

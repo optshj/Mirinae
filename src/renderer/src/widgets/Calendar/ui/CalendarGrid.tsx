@@ -8,6 +8,7 @@ import { EventList } from '@/entities/event'
 
 import { isSameDay } from '@/shared/lib/dateFunction'
 import { Dialog, DialogTrigger } from '@/shared/ui/dialog'
+import { isTimeEvent } from '@/shared/types/EventType'
 
 interface CalendarGridProps {
     days: Date[]
@@ -42,7 +43,7 @@ export function CalendarGrid({ days, month }: CalendarGridProps) {
                         const isCurrentMonth = date.getMonth() === month
                         const isToday = isSameDay(new Date(), date)
                         const events = items?.filter((item) => {
-                            const eventDate = item.start.dateTime ? new Date(item.start.dateTime) : new Date(item.start.date)
+                            const eventDate = isTimeEvent(item) ? new Date(item.start.dateTime) : new Date(item.start.date)
                             return isSameDay(eventDate, date)
                         })
                         return (

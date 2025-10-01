@@ -7,7 +7,7 @@ import { useEditEvent } from './EditEventForm.mutation'
 import { FormState } from '../../types/FormType'
 
 import { ISO8601toSimpleTime } from '@/shared/lib/dateFunction'
-import { CalendarEventWithColor, isHolidayEvent } from '@/shared/types/EventType'
+import { CalendarEventWithColor, isAllDayEvent, isHolidayEvent } from '@/shared/types/EventType'
 import { isTimeEvent } from '@/shared/types/EventType'
 
 interface EditEventFormProps {
@@ -23,41 +23,29 @@ export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
     const [form, setForm] = useState<FormState>({
         summary: event.summary,
         colorId: event.colorId,
-        start: ISO8601toSimpleTime(isTimeEvent(event) ? event.start.dateTime : event.start.date),
-        end: ISO8601toSimpleTime(isTimeEvent(event) ? event.end.dateTime : event.end.date),
-        allDay: !isTimeEvent(event)
+        start: isTimeEvent(event) ? ISO8601toSimpleTime(event.start.dateTime) : '08:00',
+        end: isTimeEvent(event) ? ISO8601toSimpleTime(event.end.dateTime) : '12:00',
+        allDay: isAllDayEvent(event)
     })
-
     const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }))
 
     // 제출 처리
     const handleSubmit = () => {
-        if (performSubmit()) return
+        if (!form.summary.trim()) {
+            toast.warning('일정 제목을 입력해주세요')
+            return
+        }
+        editEvent({
+            eventId: event.id,
+            date,
+            ...form
+        })
         setShowForm(false)
         trackEvent('EditEvent')
         const desc = form.allDay ? '하루 종일 일정으로 수정되었습니다.' : `${form.start} - ${form.end}에 일정이 수정되었습니다.`
         toast.success(`"${form.summary}" 일정이 수정되었습니다`, {
             description: `${date.toLocaleDateString()} ${desc}`
         })
-    }
-
-    const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        handleSubmit()
-    }
-
-    const performSubmit = () => {
-        if (!form.summary.trim()) {
-            toast.warning('일정 제목을 입력해주세요')
-            return true
-        }
-
-        editEvent({
-            eventId: event.id,
-            date,
-            ...form
-        })
-        return false
     }
 
     const openForm = () => {
@@ -68,7 +56,6 @@ export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.ctrlKey && e.key === 'Enter') {
-                e.preventDefault()
                 if (showForm) handleSubmit()
             }
         }
@@ -79,17 +66,7 @@ export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
     return (
         <>
             {showForm ? (
-                <EventForm
-                    id={'edit-event-form'}
-                    form={form}
-                    updateForm={updateForm}
-                    onCancel={() => setShowForm(false)}
-                    onSubmit={onFormSubmit}
-                    onSubmitText="수정"
-                    defaultTime={[form.start, form.end]}
-                    allDay={form.allDay}
-                    setAllDay={(value) => updateForm('allDay', value)}
-                />
+                <EventForm id={'edit-event-form'} form={form} updateForm={updateForm} onCancel={() => setShowForm(false)} onSubmit={handleSubmit} onSubmitText="수정" />
             ) : (
                 <div
                     className="relative flex items-center justify-between rounded-xl p-3 dark:saturate-70"

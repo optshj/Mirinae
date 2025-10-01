@@ -3,7 +3,7 @@ export function isSameDay(a: Date, b: Date) {
 }
 
 //2025-09-17T18:00:00+09:00 -> 18:00
-export function ISO8601toSimpleTime(isoString) {
+export function ISO8601toSimpleTime(isoString: string) {
     const date = new Date(isoString)
     const hours = date.getHours()
     const minutes = date.getMinutes()

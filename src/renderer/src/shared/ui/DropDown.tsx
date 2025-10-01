@@ -61,7 +61,7 @@ export default function DropDown({ trigger, children, align = 'left' }: DropDown
                         left: position.left,
                         minWidth: '160px'
                     }}
-                    className={`bg-primary z-[9999] mt-2 flex origin-top flex-col gap-2 rounded-xl px-4 py-2 shadow-lg transition-all duration-200 ${open ? 'scale-100 opacity-100' : 'pointer-events-none scale-95 opacity-0'} `}
+                    className={`bg-primary z-[9999] mt-2 flex flex-col gap-2 rounded-xl px-4 py-2 shadow-lg transition-all duration-200 ${open ? 'scale-100 opacity-100' : 'pointer-events-none scale-95 opacity-0'} `}
                 >
                     {children}
                 </div>,

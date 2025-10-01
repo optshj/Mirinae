@@ -57,10 +57,11 @@ describe('AddEventForm', () => {
         fireEvent.click(screen.getByRole('button', { name: '추가' }))
         expect(mockAddEvent).toHaveBeenCalledWith({
             date: date,
-            startTime: '08:00',
-            endTime: '12:00',
+            start: '08:00',
+            end: '12:00',
             summary: '회의',
-            colorId: '1'
+            colorId: '1',
+            allDay: false
         })
     })
 
@@ -71,10 +72,11 @@ describe('AddEventForm', () => {
         fireEvent.keyDown(screen.getByRole('button', { name: '추가' }), { ctrlKey: true, key: 'Enter' })
         expect(mockAddEvent).toHaveBeenCalledWith({
             date: date,
-            startTime: '08:00',
-            endTime: '12:00',
+            start: '08:00',
+            end: '12:00',
             summary: '테스트 일정',
-            colorId: '1'
+            colorId: '1',
+            allDay: false
         })
     })
 })

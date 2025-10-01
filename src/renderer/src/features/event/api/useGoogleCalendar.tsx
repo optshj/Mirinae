@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getColorById } from '@/features/event/lib/getColor'
 import { useShowHoliday } from '@/features/event/model/ShowHolidayContext'
 
-import { CalendarEventWithColor } from '@/shared/types/EventType'
+import { CalendarEventWithColor, isHolidayEvent } from '@/shared/types/EventType'
 import { useLogin } from '@/shared/hooks/useLogin'
 
 /**
@@ -39,14 +39,13 @@ export function useGoogleCalendar() {
         select: (data) => {
             // 공휴일만 필터링함
             const coloredEvents: CalendarEventWithColor[] = data.items
-                .filter((event: CalendarEventWithColor) => event.description === '공휴일')
+                .filter((event: CalendarEventWithColor) => isHolidayEvent(event))
                 .map((event: CalendarEventWithColor) => ({ ...event, color: getColorById('10') }))
             return coloredEvents
         },
         enabled: !!tokens.access_token
     })
     const mergedItems = isShow ? [...(holidayItems ?? []), ...(items ?? [])] : (items ?? []) // event와 holiday를 합침 (공휴일표시 여부에 따라 필터링)
-    console.log(mergedItems)
     return {
         items: mergedItems
     }

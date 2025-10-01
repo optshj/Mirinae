@@ -10,12 +10,9 @@ interface EventFormFieldsProps {
     onCancel: () => void
     onSubmitText: string
     onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-    defaultTime?: [string, string]
     id?: string
-    allDay: boolean
-    setAllDay: (value: boolean) => void
 }
-export function EventForm({ form, updateForm, onCancel, onSubmit, onSubmitText, defaultTime, id, allDay, setAllDay }: EventFormFieldsProps) {
+export function EventForm({ form, updateForm, onCancel, onSubmit, onSubmitText, id }: EventFormFieldsProps) {
     const selectedColor = getColorById(form.colorId).background
     const palette = getPalette()
 
@@ -43,21 +40,21 @@ export function EventForm({ form, updateForm, onCancel, onSubmit, onSubmitText, 
                 <button
                     type="button"
                     onClick={() => {
-                        setAllDay(!allDay)
+                        updateForm('allDay', !form.allDay)
                     }}
                     onKeyDown={(e) => e.preventDefault()}
-                    className={`border-background-secondary relative flex h-6 w-12 cursor-pointer items-center justify-center rounded-full transition-colors duration-300 ${allDay ? 'bg-green-500' : 'bg-zinc-400'}`}
+                    className={`border-background-secondary relative flex h-6 w-12 items-center justify-center rounded-full transition-colors duration-300 ${form.allDay ? 'bg-green-500' : 'bg-zinc-400'}`}
                 >
-                    <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-all duration-300 ${allDay ? 'translate-x-3' : '-translate-x-3'} `} />
+                    <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-all duration-300 ${form.allDay ? 'translate-x-3' : '-translate-x-3'} `} />
                 </button>
             </div>
 
             {/** 시간 선택: 하루종일이면 숨김 */}
             <div>
                 <label style={{ color: selectedColor }}>시간 선택</label>
-                <div className="relatived flex flex-col items-center justify-center">
-                    <LinearSlider updateForm={updateForm} color={selectedColor} defaultTime={defaultTime} disabled={allDay} />
-                    {allDay ? null : (
+                <div className="relative flex flex-col items-center justify-center">
+                    <LinearSlider updateForm={updateForm} color={selectedColor} defaultTime={[form.start, form.end]} disabled={form.allDay} />
+                    {!form.allDay && (
                         <div className="flex w-full justify-between px-24">
                             <div className="flex flex-col items-center">
                                 <span className="text-md text-secondary">시작</span>
@@ -84,7 +81,7 @@ export function EventForm({ form, updateForm, onCancel, onSubmit, onSubmitText, 
                 {Object.entries(palette).map(([key, color]) => (
                     <div
                         key={key}
-                        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full dark:saturate-70"
+                        className="flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70"
                         style={{ backgroundColor: color.background }}
                         onClick={() => updateForm('colorId', key)}
                     >
