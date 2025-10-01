@@ -30,7 +30,8 @@ export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
     const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }))
 
     // 제출 처리
-    const handleSubmit = () => {
+    const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
+        e?.preventDefault()
         if (!form.summary.trim()) {
             toast.warning('일정 제목을 입력해주세요')
             return

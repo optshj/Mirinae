@@ -20,7 +20,8 @@ export function AddEventForm({ date }: { date: Date }) {
     const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }))
     const resetForm = () => setForm(initialFormState)
 
-    const handleSubmit = () => {
+    const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
+        e?.preventDefault()
         if (!form.summary.trim()) {
             toast.warning('일정 제목을 입력해주세요')
             return
