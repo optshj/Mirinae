@@ -1,7 +1,7 @@
 import { formatDateTime } from '@/shared/lib/dateFunction'
-import { EventItemWithColor } from '@/shared/types/EventTypes'
+import { CalendarEventWithColor } from '@/shared/types/EventType'
 
-export function EventList({ items }: { items: EventItemWithColor[] }) {
+export function EventList({ items }: { items: CalendarEventWithColor[] }) {
     return (
         <>
             {items.slice(0, 4).map((event, i) => (

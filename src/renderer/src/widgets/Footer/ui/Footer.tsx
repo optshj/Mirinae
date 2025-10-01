@@ -2,32 +2,44 @@ import { useMemo } from 'react'
 import { FooterEvent } from '@/entities/event'
 import { useCalendarItems } from '@/features/event'
 import { isSameDay } from '@/shared/lib/dateFunction'
+import { isTimeEvent } from '@/shared/types/EventType'
 
 export function Footer() {
     const { items } = useCalendarItems()
     const tomorrow = new Date()
     tomorrow.setHours(0, 0, 0, 0)
     tomorrow.setDate(tomorrow.getDate() + 1)
-
-    const upcomingEvent = useMemo(() => {
-        return items.filter((event) => new Date(event.start.dateTime) >= tomorrow).sort((a, b) => new Date(a.start.dateTime).getTime() - new Date(b.start.dateTime).getTime())
-    }, [items])
-
     const todayEvent = useMemo(
         () =>
-            items.filter((item) => {
-                if (!item.start.dateTime) return false
-                return isSameDay(new Date(item.start.dateTime), new Date())
+            items.filter((event) => {
+                if (isTimeEvent(event)) {
+                    return isSameDay(new Date(event.start.dateTime), new Date())
+                } else {
+                    return isSameDay(new Date(event.start.date), new Date())
+                }
             }),
         [items]
     )
 
-    const importantEvent = useMemo(() => {
-        return items
-            .filter((event) => new Date(event.start.dateTime) >= tomorrow)
-            .filter((event) => event.colorId === '11') // 빨간색 일정만 중요한 일정으로 표시
-            .sort((a, b) => new Date(a.start.dateTime).getTime() - new Date(b.start.dateTime).getTime())
-    }, [items])
+    const upcomingEvent = useMemo(
+        () =>
+            items
+                .filter((event) => {
+                    const start = isTimeEvent(event) ? new Date(event.start.dateTime) : new Date(event.start.date)
+                    return start >= tomorrow
+                })
+                .sort((a, b) => {
+                    const aStart = isTimeEvent(a) ? new Date(a.start.dateTime).getTime() : new Date(a.start.date).getTime()
+                    const bStart = isTimeEvent(b) ? new Date(b.start.dateTime).getTime() : new Date(b.start.date).getTime()
+                    return aStart - bStart
+                }),
+        [items]
+    )
+
+    const importantEvent = useMemo(
+        () => upcomingEvent.filter((event) => event.colorId === '11'), // 빨간색 일정
+        [upcomingEvent]
+    )
 
     return (
         <aside className="mt-2 grid h-48 grid-cols-3 gap-2">

@@ -12,7 +12,7 @@ export function HolidayButton() {
                     trackEvent('ChangeHoliday')
                 }}
                 onKeyDown={(e) => e.preventDefault()}
-                className={`border-background-secondary relative flex h-6 w-12 cursor-pointer items-center justify-center rounded-full transition-colors duration-300 ${isShow ? 'bg-green-500' : 'bg-zinc-400'}`}
+                className={`border-background-secondary relative flex h-6 w-12 items-center justify-center rounded-full transition-colors duration-300 ${isShow ? 'bg-green-500' : 'bg-zinc-400'}`}
             >
                 <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-all duration-300 ${isShow ? 'translate-x-3' : '-translate-x-3'} `} />
             </button>

@@ -1,9 +1,9 @@
 import { createContext, useContext } from 'react'
 import { useGoogleCalendar } from '@/features/event/api/useGoogleCalendar'
-import { EventItemWithColor } from '@/shared/types/EventTypes'
+import { CalendarEventWithColor } from '@/shared/types/EventType'
 
 export const CalendarItemsContext = createContext<{
-    items: EventItemWithColor[]
+    items: CalendarEventWithColor[]
 }>({
     items: []
 })
