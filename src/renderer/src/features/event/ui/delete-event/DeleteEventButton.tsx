@@ -1,7 +1,7 @@
-import { IoCloseOutline } from 'react-icons/io5'
 import { useDeleteEvent } from './DeleteEventButton.mutation'
 import { toast } from 'sonner'
 import { trackEvent } from '@aptabase/electron/renderer'
+import { X } from 'lucide-react'
 
 export function DeleteEventButton({ eventId }: { eventId: string }) {
     const { deleteEvent } = useDeleteEvent()
@@ -15,7 +15,7 @@ export function DeleteEventButton({ eventId }: { eventId: string }) {
                 toast.success('일정이 삭제되었습니다.')
             }}
         >
-            <IoCloseOutline />
+            <X strokeWidth={1.5} size={16} />
         </button>
     )
 }
