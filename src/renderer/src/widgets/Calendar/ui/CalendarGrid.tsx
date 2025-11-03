@@ -27,12 +27,18 @@ export function CalendarGrid({ days, month }: CalendarGridProps) {
 
     return (
         <div className="bg-primary flex w-full flex-col overflow-hidden rounded-xl">
-            <div className="grid grid-cols-7 bg-[#F9FAFB] text-center font-semibold dark:bg-zinc-800">
-                {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
-                    <div className="text-primary py-2" key={day}>
+            <div className="grid grid-cols-7 bg-[#F9FAFB] py-2 text-center font-semibold dark:bg-zinc-800">
+                <div className="text-red-400" key="일">
+                    일
+                </div>
+                {['월', '화', '수', '목', '금'].map((day) => (
+                    <div className="text-primary" key={day}>
                         {day}
                     </div>
                 ))}
+                <div className="text-blue-400" key="토">
+                    토
+                </div>
             </div>
             <div
                 className="grid grid-cols-7"
