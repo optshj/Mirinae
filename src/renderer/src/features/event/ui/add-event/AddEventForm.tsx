@@ -5,6 +5,7 @@ import { trackEvent } from '@aptabase/electron/renderer'
 import { useAddEvent } from './AddEventForm.mutation'
 import { EventForm } from '../EventForm'
 import { FormState } from '../../types/FormType'
+import { Kbd } from '@/shared/ui/kbd'
 
 const initialFormState: FormState = {
     summary: '',
@@ -65,7 +66,8 @@ export function AddEventForm({ date }: { date: Date }) {
                         resetForm()
                     }}
                 >
-                    + 일정 추가
+                    일정 추가
+                    <Kbd className="ml-2">Ctrl + ⏎</Kbd>
                 </button>
             )}
         </>

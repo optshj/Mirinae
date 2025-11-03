@@ -1,6 +1,7 @@
 import React, { useState, InputHTMLAttributes, useEffect, useRef } from 'react'
 import Hangul from 'hangul-js'
 import { convertEngToKor } from '../lib/en2kr'
+import { Kbd } from './kbd'
 
 interface HangulInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
     value: string
@@ -69,5 +70,10 @@ export default function HangulInput({ value, onChange, ...props }: HangulInputPr
         onChange(value + pastedText)
     }
 
-    return <input spellCheck={false} ref={inputRef} {...props} value={value} onKeyDown={handleKeyDown} onPaste={handlePaste} onChange={(e) => onChange(e.target.value)} autoComplete="off" />
+    return (
+        <div className="relative w-full">
+            <input spellCheck={false} ref={inputRef} {...props} value={value} onKeyDown={handleKeyDown} onPaste={handlePaste} onChange={(e) => onChange(e.target.value)} autoComplete="off" />
+            <Kbd className="absolute top-1/2 right-4 -translate-y-1/2 bg-transparent">Ctrl + ⏎</Kbd>
+        </div>
+    )
 }
