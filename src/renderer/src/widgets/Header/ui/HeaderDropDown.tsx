@@ -1,4 +1,4 @@
-import DropDown from '@/shared/ui/DropDown'
+import DropDown from '@/shared/ui/dropdown'
 
 import { LoginButton } from '@/features/user'
 import { OpacityButton } from '@/features/opacity'
@@ -10,7 +10,7 @@ import { EllipsisVertical } from 'lucide-react'
 
 export function HeaderDropDown() {
     return (
-        <DropDown trigger={<EllipsisVertical strokeWidth={1.5} size={24} />} align="right">
+        <DropDown trigger={<EllipsisVertical strokeWidth={1.5} size={24} />} align="right" closeOnClick={false}>
             <LoginButton />
             <MoveActiveButton />
             <OpacityButton />

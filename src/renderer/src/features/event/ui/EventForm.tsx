@@ -81,7 +81,7 @@ export function EventForm({ form, updateForm, onCancel, onSubmit, onSubmitText, 
                 {Object.entries(palette).map(([key, color]) => (
                     <div
                         key={key}
-                        className="flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70"
+                        className="flex h-6 w-6 items-center justify-center rounded-full transition-all hover:scale-150 dark:saturate-70"
                         style={{ backgroundColor: color.background }}
                         onClick={() => updateForm('colorId', key)}
                     >
