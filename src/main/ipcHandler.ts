@@ -27,4 +27,11 @@ export const registerIPCHandlers = () => {
         store.set('window-opacity', newOpacity)
     })
     ipcMain.handle('get-initial-opacity', () => store.get('window-opacity'))
+
+    ipcMain.on('set-colorId', (_, colorId: string) => {
+        store.set('important-colorId', colorId)
+        if (mainWindow) mainWindow.webContents.send('colorId-changed', colorId)
+    })
+
+    ipcMain.handle('get-initial-colorId', async () => store.get('important-colorId', '11'))
 }
