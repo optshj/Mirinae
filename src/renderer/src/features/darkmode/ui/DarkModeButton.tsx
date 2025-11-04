@@ -31,7 +31,11 @@ export function DarkModeButton() {
                 className="relative flex h-6 w-12 items-center justify-center rounded-full bg-yellow-400 transition-colors duration-300 dark:bg-gray-500"
             >
                 <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-transform duration-300 ${darkMode ? '-translate-x-3' : 'translate-x-3'}`}>
-                    {darkMode ? <Moon strokeWidth={3} className="h-full w-full text-gray-500" /> : <Sun strokeWidth={3} className="h-full w-full text-yellow-500" />}
+                    {darkMode ? (
+                        <Moon strokeWidth={3} className="h-full w-full text-gray-500" fill="currentColor" />
+                    ) : (
+                        <Sun strokeWidth={3} className="h-full w-full text-yellow-500" fill="currentColor" />
+                    )}
                 </div>
             </button>
         </div>
