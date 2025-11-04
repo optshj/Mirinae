@@ -13,6 +13,11 @@ export interface Api {
     quitApp: () => void
     setOpacity: (opacity: number) => void
     getInitialOpacity: () => Promise<number>
+
+    setColorId: (color: string) => void
+    getInitialColorId: () => Promise<string>
+    onColorIdChange: (callback: (colorId: string) => void) => void
+
     removeListeners: () => void
     onShowPatchNotes: (callback: () => void) => () => void
 }
@@ -36,15 +41,24 @@ const api = {
     safeReload: () => ipcRenderer.send('safe-reload'),
     startDragging: () => ipcRenderer.send('start-dragging'),
     stopDragging: () => ipcRenderer.send('stop-dragging'),
+
     quitApp: () => ipcRenderer.send('quit-app'),
+
     setOpacity: (opacity: number) => ipcRenderer.send('set-opacity', opacity),
     getInitialOpacity: () => ipcRenderer.invoke('get-initial-opacity'),
+
+    setColorId: (color: string) => ipcRenderer.send('set-colorId', color),
+    getInitialColorId: () => ipcRenderer.invoke('get-initial-colorId'),
+
+    onColorIdChange: (callback) => {
+        const listener = (_, colorId: string) => callback(colorId)
+        ipcRenderer.on('colorId-changed', listener)
+        return () => ipcRenderer.removeListener('colorId-changed', listener)
+    },
     onShowPatchNotes: (callback) => {
-        const listener = (_event, ...args) => callback(...args)
+        const listener = (_, ...args) => callback(...args)
         ipcRenderer.on('show-patch-notes', listener)
-        return () => {
-            ipcRenderer.removeListener('show-patch-notes', listener)
-        }
+        return () => ipcRenderer.removeListener('show-patch-notes', listener)
     },
     removeListeners: () => {
         ipcRenderer.removeAllListeners()

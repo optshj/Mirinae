@@ -9,8 +9,9 @@ interface FooterEventProps {
     items: CalendarEventWithColor[]
     title: string
     description: string
+    headerButton?: React.ReactNode
 }
-export function FooterEvent({ items, title, description }: FooterEventProps) {
+export function FooterEvent({ items, title, description, headerButton }: FooterEventProps) {
     const [visibleStartIndex, setVisibleStartIndex] = useState(0)
 
     const showCount = 2
@@ -29,7 +30,10 @@ export function FooterEvent({ items, title, description }: FooterEventProps) {
     return (
         <section className="bg-primary relative flex-1 rounded-xl p-4">
             <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-primary font-semibold whitespace-nowrap">{title}</h3>
+                <div className="flex items-center gap-2">
+                    <h3 className="text-primary font-semibold whitespace-nowrap">{title}</h3>
+                    {headerButton}
+                </div>
 
                 <div className="flex flex-row">
                     <Button onClick={handleScrollUp} disabled={!canScrollUp} variant="ghost" size="icon" tabIndex={-1}>
