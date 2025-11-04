@@ -25,7 +25,7 @@ export function EventForm({ form, updateForm, onCancel, onSubmit, onSubmitText, 
                 <HangulInput
                     id="summary"
                     placeholder="일정을 입력해주세요"
-                    className="text-primary rounded-lg border border-zinc-300 py-2 pr-20 pl-3 focus:ring-0 focus:outline-none dark:saturate-70"
+                    className="text-primary w-full rounded-lg border border-zinc-300 py-2 pr-20 pl-3 focus:ring-0 focus:outline-none dark:saturate-70"
                     type="text"
                     value={form.summary}
                     onChange={(newSummary) => updateForm('summary', newSummary)}
