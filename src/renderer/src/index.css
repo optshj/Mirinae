@@ -40,6 +40,9 @@ html.flip-calendar #calendar-container {
     transition: all 0.3s ease-in-out;
     pointer-events: none;
 }
+html.disable-click {
+    pointer-events: none;
+}
 
 @theme {
     --color-font-black: #1f2937;

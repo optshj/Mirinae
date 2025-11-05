@@ -18,6 +18,8 @@ export interface Api {
     getInitialColorId: () => Promise<string>
     onColorIdChange: (callback: (colorId: string) => void) => void
 
+    onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void
+
     removeListeners: () => void
     onShowPatchNotes: (callback: () => void) => () => void
 }
@@ -60,9 +62,14 @@ const api = {
         ipcRenderer.on('show-patch-notes', listener)
         return () => ipcRenderer.removeListener('show-patch-notes', listener)
     },
-    removeListeners: () => {
-        ipcRenderer.removeAllListeners()
-    }
+    onUpdateClickable: (callback: (isExplorer: boolean) => void) => {
+        ipcRenderer.removeAllListeners('update-clickable')
+        ipcRenderer.on('update-clickable', (_event, isExplorer: boolean) => {
+            callback(isExplorer)
+        })
+    },
+
+    removeListeners: () => {}
 }
 
 // Use `contextBridge` to expose Electron APIs to the renderer only if
