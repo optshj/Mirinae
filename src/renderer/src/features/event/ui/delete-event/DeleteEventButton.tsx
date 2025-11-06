@@ -8,7 +8,7 @@ export function DeleteEventButton({ eventId }: { eventId: string }) {
 
     return (
         <button
-            onDoubleClick={(e) => {
+            onClick={(e) => {
                 e.stopPropagation()
                 deleteEvent(eventId)
                 trackEvent('DeleteEvent')
