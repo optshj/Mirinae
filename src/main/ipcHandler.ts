@@ -3,6 +3,7 @@ import { attach, detach } from 'electron-as-wallpaper'
 import { mainWindow } from '.'
 import { tryAutoLogin, logoutGoogleOAuth, startGoogleOAuth } from './oauth'
 import { store } from './store'
+import activeWindow from 'active-win'
 
 export const registerIPCHandlers = () => {
     ipcMain.handle('try-auto-login', tryAutoLogin)
@@ -34,4 +35,10 @@ export const registerIPCHandlers = () => {
     })
 
     ipcMain.handle('get-initial-colorId', async () => store.get('important-colorId', '11'))
+
+    ipcMain.on('renderer-ready', async (event) => {
+        const window = await activeWindow()
+        const isExplorer = window?.title === 'Program Manager'
+        event.sender.send('update-clickable', isExplorer)
+    })
 }

@@ -6,8 +6,7 @@ beforeAll(() => {
     window.api = {
         tryAutoLogin: vi.fn().mockResolvedValue({ access_token: 'test-token' }),
         onGoogleOauthSuccess: vi.fn(),
-        onGoogleOauthError: vi.fn(),
-        removeListeners: vi.fn()
+        onGoogleOauthError: vi.fn()
     }
 })
 afterEach(() => {

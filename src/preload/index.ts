@@ -3,10 +3,11 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 export interface Api {
     startGoogleOauth: () => void
-    onGoogleOauthSuccess: (callback: (tokens: any) => void) => void
-    onGoogleOauthError: (callback: (error: any) => void) => void
+    onGoogleOauthSuccess: (callback: (tokens: any) => void) => () => void
+    onGoogleOauthError: (callback: (error: any) => void) => () => void
     tryAutoLogin: () => Promise<any>
     logoutGoogleOAuth: () => Promise<boolean>
+
     safeReload: () => void
     startDragging: () => void
     stopDragging: () => void
@@ -18,7 +19,8 @@ export interface Api {
     getInitialColorId: () => Promise<string>
     onColorIdChange: (callback: (colorId: string) => void) => void
 
-    removeListeners: () => void
+    onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void
+
     onShowPatchNotes: (callback: () => void) => () => void
 }
 
@@ -26,13 +28,13 @@ const api = {
     startGoogleOauth: () => ipcRenderer.send('start-google-oauth'),
 
     onGoogleOauthSuccess: (callback) => {
-        const listener = (_event, ...args) => callback(...args)
+        const listener = (_, ...args) => callback(...args)
         ipcRenderer.on('google-oauth-token', listener)
         return () => ipcRenderer.removeListener('google-oauth-token', listener)
     },
     onGoogleOauthError: (callback) => {
-        const listener = (_event, ...args) => callback(...args)
-        ipcRenderer.on('google-oauth-error', (_event, ...args) => callback(...args))
+        const listener = (_, ...args) => callback(...args)
+        ipcRenderer.on('google-oauth-error', listener)
         return () => ipcRenderer.removeListener('google-oauth-error', listener)
     },
 
@@ -60,8 +62,11 @@ const api = {
         ipcRenderer.on('show-patch-notes', listener)
         return () => ipcRenderer.removeListener('show-patch-notes', listener)
     },
-    removeListeners: () => {
-        ipcRenderer.removeAllListeners()
+    onUpdateClickable: (callback: (isExplorer: boolean) => void) => {
+        const listener = (_, isExplorer: boolean) => callback(isExplorer)
+        ipcRenderer.removeListener('update-clickable', listener)
+        ipcRenderer.on('update-clickable', listener)
+        return () => ipcRenderer.removeListener('update-clickable', listener)
     }
 }
 
