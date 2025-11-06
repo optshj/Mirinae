@@ -9,7 +9,7 @@ import { registerIPCHandlers } from './ipcHandler'
 import { store } from './store'
 import { checkVersionAndShowPatchNotes } from './versionCheck'
 import { initialize } from '@aptabase/electron/main'
-import activeWindow from 'active-win'
+import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindow'
 
 const SERVICE_NAME = 'Mirinae'
 
@@ -74,11 +74,7 @@ app.whenReady().then(() => {
     initAutoUpdater()
     registerIPCHandlers()
     checkVersionAndShowPatchNotes()
-    setInterval(async () => {
-        const window = await activeWindow()
-        const isExplorer = window?.title === 'Program Manager'
-        mainWindow.webContents.send('update-clickable', isExplorer)
-    }, 500)
+    startActiveWindowWatcher(mainWindow)
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
@@ -86,5 +82,6 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
+    stopActiveWindowWatcher()
     if (process.platform !== 'darwin') app.quit()
 })

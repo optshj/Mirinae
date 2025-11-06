@@ -41,7 +41,7 @@ html.flip-calendar #calendar-container {
     pointer-events: none;
 }
 html.disable-click {
-    pointer-events: none;
+    pointer-events: none;
 }
 
 @theme {

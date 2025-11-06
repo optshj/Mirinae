@@ -39,11 +39,12 @@ export function useLogin() {
         tryAutoLogin()
         window.addEventListener('online', tryAutoLogin)
 
-        window.api.onGoogleOauthSuccess(handleLogin)
-        window.api.onGoogleOauthError(handleError)
+        const removeSuccessListener = window.api.onGoogleOauthSuccess(handleLogin)
+        const removeErrorListener = window.api.onGoogleOauthError(handleError)
 
         return () => {
-            window.api.removeListeners()
+            removeSuccessListener()
+            removeErrorListener()
             window.removeEventListener('online', tryAutoLogin)
         }
     }, [handleLogin, handleError, tryAutoLogin])

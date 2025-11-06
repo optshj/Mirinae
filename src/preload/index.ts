@@ -3,10 +3,11 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 export interface Api {
     startGoogleOauth: () => void
-    onGoogleOauthSuccess: (callback: (tokens: any) => void) => void
-    onGoogleOauthError: (callback: (error: any) => void) => void
+    onGoogleOauthSuccess: (callback: (tokens: any) => void) => () => void
+    onGoogleOauthError: (callback: (error: any) => void) => () => void
     tryAutoLogin: () => Promise<any>
     logoutGoogleOAuth: () => Promise<boolean>
+
     safeReload: () => void
     startDragging: () => void
     stopDragging: () => void
@@ -20,7 +21,6 @@ export interface Api {
 
     onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void
 
-    removeListeners: () => void
     onShowPatchNotes: (callback: () => void) => () => void
 }
 
@@ -28,13 +28,13 @@ const api = {
     startGoogleOauth: () => ipcRenderer.send('start-google-oauth'),
 
     onGoogleOauthSuccess: (callback) => {
-        const listener = (_event, ...args) => callback(...args)
+        const listener = (_, ...args) => callback(...args)
         ipcRenderer.on('google-oauth-token', listener)
         return () => ipcRenderer.removeListener('google-oauth-token', listener)
     },
     onGoogleOauthError: (callback) => {
-        const listener = (_event, ...args) => callback(...args)
-        ipcRenderer.on('google-oauth-error', (_event, ...args) => callback(...args))
+        const listener = (_, ...args) => callback(...args)
+        ipcRenderer.on('google-oauth-error', listener)
         return () => ipcRenderer.removeListener('google-oauth-error', listener)
     },
 
@@ -63,13 +63,11 @@ const api = {
         return () => ipcRenderer.removeListener('show-patch-notes', listener)
     },
     onUpdateClickable: (callback: (isExplorer: boolean) => void) => {
-        ipcRenderer.removeAllListeners('update-clickable')
-        ipcRenderer.on('update-clickable', (_event, isExplorer: boolean) => {
-            callback(isExplorer)
-        })
-    },
-
-    removeListeners: () => {}
+        const listener = (_, isExplorer: boolean) => callback(isExplorer)
+        ipcRenderer.removeListener('update-clickable', listener)
+        ipcRenderer.on('update-clickable', listener)
+        return () => ipcRenderer.removeListener('update-clickable', listener)
+    }
 }
 
 // Use `contextBridge` to expose Electron APIs to the renderer only if
