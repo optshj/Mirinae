@@ -1,8 +1,8 @@
 import activeWindow from 'active-win';
 import type { BrowserWindow } from 'electron';
 
-let windowCheckInterval: NodeJS.Timeout;
-let lastIsExplorer: boolean;
+let windowCheckInterval: NodeJS.Timeout | undefined;
+let lastIsExplorer: boolean | undefined;
 
 export function startActiveWindowWatcher(mainWindow: BrowserWindow) {
     if (windowCheckInterval) {
@@ -28,5 +28,7 @@ export function startActiveWindowWatcher(mainWindow: BrowserWindow) {
 export function stopActiveWindowWatcher() {
     if (windowCheckInterval) {
         clearInterval(windowCheckInterval);
+        windowCheckInterval = undefined;
+        lastIsExplorer = undefined;
     }
 }

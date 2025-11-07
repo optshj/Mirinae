@@ -64,6 +64,5 @@ export const initAutoUpdater = () => {
     // 에러 처리
     autoUpdater.on('error', (err) => {
         log.error('[Updater] 업데이트 오류 발생:', err);
-        console.error('업데이트 오류:', err);
     });
 };

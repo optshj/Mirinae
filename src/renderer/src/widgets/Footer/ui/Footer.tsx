@@ -22,10 +22,12 @@ export function Footer() {
     }, []);
 
     const tomorrow = useMemo(() => {
-        return new Date();
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        date.setDate(date.getDate() + 1);
+        return date;
     }, []);
-    tomorrow.setHours(0, 0, 0, 0);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+
     const todayEvent = useMemo(
         () =>
             items.filter((event) => {

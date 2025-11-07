@@ -26,7 +26,7 @@ export function MoveActiveButton() {
                 <div>{isDrag ? '화면조절 종료' : '화면조절 시작'}</div>
             </DialogTrigger>
             <DialogContent style={{ WebkitAppRegion: 'drag' } as any} onInteractOutside={(e) => e.preventDefault()}>
-                <DialogHeader style={{ cursor: 'move' }}>
+                <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <MoveIcon size={16} aria-hidden="true" />
                         화면조절

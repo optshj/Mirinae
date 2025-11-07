@@ -25,12 +25,16 @@ export default function DropDown({ trigger, children, align = 'left', closeOnCli
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             const target = event.target;
-            if (!(target instanceof Node)) return;
+            if (!(target instanceof Node)) {
+                return;
+            }
 
             const menu = menuRef.current;
             const trigger = triggerRef.current;
 
-            if (menu?.contains(target) || trigger?.contains(target)) return;
+            if (menu?.contains(target) || trigger?.contains(target)) {
+                return;
+            }
             setOpen(false);
         }
 
@@ -39,7 +43,9 @@ export default function DropDown({ trigger, children, align = 'left', closeOnCli
     }, []);
 
     useEffect(() => {
-        if (!triggerRef.current) return;
+        if (!triggerRef.current) {
+            return;
+        }
         const rect = triggerRef.current.getBoundingClientRect();
         setPosition({
             top: rect.bottom + window.scrollY,
@@ -49,7 +55,9 @@ export default function DropDown({ trigger, children, align = 'left', closeOnCli
     }, [open, align]);
 
     const handleMenuClick = () => {
-        if (closeOnClick) setOpen(false);
+        if (closeOnClick) {
+            setOpen(false);
+        }
     };
 
     return (
