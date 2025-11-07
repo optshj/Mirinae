@@ -33,7 +33,11 @@ export function useGoogleCalendar() {
             return res;
         },
         select: (data) => {
-            return data.items.filter((event: CalendarEvent) => isHolidayEvent(event));
+            return data.items
+                .filter((event: CalendarEvent) => isHolidayEvent(event))
+                .map((event: CalendarEvent) => {
+                    return { ...event, colorId: '10' };
+                });
         },
         enabled: Boolean(tokens.access_token)
     });
