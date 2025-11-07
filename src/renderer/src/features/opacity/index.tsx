@@ -1,1 +1,1 @@
-export { OpacityButton } from './ui/OpacityButton'
+export { OpacityButton } from './ui/OpacityButton';

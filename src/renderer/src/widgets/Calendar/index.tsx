@@ -1,1 +1,1 @@
-export { CalendarGrid } from './ui/CalendarGrid'
+export { CalendarGrid } from './ui/CalendarGrid';

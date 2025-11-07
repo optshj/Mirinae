@@ -1,15 +1,10 @@
-import { FlipButton } from '@/features/flip'
-import { RefreshButton } from '@/features/refresh'
-import { HeaderDropDown } from './HeaderDropDown'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { FlipButton } from '@/features/flip';
+import { RefreshButton } from '@/features/refresh';
+import { HeaderDropDown } from './HeaderDropDown';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { DateProps } from '@/shared/lib/useDate';
 
-interface CalendarHeaderProps {
-    displayMonth: number
-    year: number
-    handlePrevMonth: () => void
-    handleNextMonth: () => void
-}
-export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }: CalendarHeaderProps) {
+export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }: Pick<DateProps, 'displayMonth' | 'year' | 'handlePrevMonth' | 'handleNextMonth'>) {
     return (
         <div className="bg-primary text-primary mb-2 flex w-full flex-row items-center justify-between rounded-xl px-6 py-3">
             <div className="flex flex-row items-center">
@@ -30,5 +25,5 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
                 <HeaderDropDown />
             </div>
         </div>
-    )
+    );
 }

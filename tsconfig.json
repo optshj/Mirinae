@@ -1,7 +1,7 @@
 {
     "files": [],
     "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }],
-    "include": ["./src/renderer/src/**/*"],
+    "include": ["./src/renderer/src/**/*", "src/renderer/src/global.d.ts"],
     "compilerOptions": {
         "composite": true,
         "jsx": "react-jsx",

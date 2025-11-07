@@ -1,31 +1,35 @@
-import { useState } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useState } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-import { formatKoreanDate, formatKoreanDateTime } from '@/shared/lib/dateFunction'
-import { Button } from '@/shared/ui/button'
-import { CalendarEventWithColor, isTimeEvent } from '@/shared/types/EventType'
+import { formatKoreanDate, formatKoreanDateTime } from '@/shared/lib/dateFunction';
+import { Button } from '@/shared/ui/button';
+import { CalendarEvent, isTimeEvent } from '@/shared/types/EventType';
 
 interface FooterEventProps {
-    items: CalendarEventWithColor[]
-    title: string
-    description: string
-    headerButton?: React.ReactNode
+    items: CalendarEvent[];
+    title: string;
+    description: string;
+    headerButton?: React.ReactNode;
 }
 export function FooterEvent({ items, title, description, headerButton }: FooterEventProps) {
-    const [visibleStartIndex, setVisibleStartIndex] = useState(0)
+    const [visibleStartIndex, setVisibleStartIndex] = useState(0);
 
-    const showCount = 2
-    const canScrollUp = visibleStartIndex > 0
-    const canScrollDown = visibleStartIndex < items.length - showCount
+    const showCount = 2;
+    const canScrollUp = visibleStartIndex > 0;
+    const canScrollDown = visibleStartIndex < items.length - showCount;
 
-    const visibleItems = items.slice(visibleStartIndex, visibleStartIndex + showCount)
+    const visibleItems = items.slice(visibleStartIndex, visibleStartIndex + showCount);
 
     const handleScrollUp = () => {
-        if (canScrollUp) setVisibleStartIndex(visibleStartIndex - 1)
-    }
+        if (canScrollUp) {
+            setVisibleStartIndex(visibleStartIndex - 1);
+        }
+    };
     const handleScrollDown = () => {
-        if (canScrollDown) setVisibleStartIndex(visibleStartIndex + 1)
-    }
+        if (canScrollDown) {
+            setVisibleStartIndex(visibleStartIndex + 1);
+        }
+    };
 
     return (
         <section className="bg-primary relative flex-1 rounded-xl p-4">
@@ -51,7 +55,7 @@ export function FooterEvent({ items, title, description, headerButton }: FooterE
                 ) : (
                     visibleItems.map((event) => (
                         <div key={event.id} className="flex items-center gap-3 px-3">
-                            <span className="h-2 w-2 rounded-full" style={{ background: event.color.background }}></span>
+                            <span className={`h-2 w-2 rounded-full event-color-${event.colorId} bg-[var(--event-color)]`}></span>
                             <div className="flex flex-col">
                                 <span className="text-primary line-clamp-1 font-semibold">{event.summary}</span>
                                 <span className="text-font-gray line-clamp-1 text-sm">{isTimeEvent(event) ? formatKoreanDateTime(event.start.dateTime) : formatKoreanDate(event.start.date)}</span>
@@ -61,5 +65,5 @@ export function FooterEvent({ items, title, description, headerButton }: FooterE
                 )}
             </div>
         </section>
-    )
+    );
 }

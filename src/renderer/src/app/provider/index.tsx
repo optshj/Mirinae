@@ -1,8 +1,8 @@
-import { GoogleOAuthProvider } from '@react-oauth/google'
-import { CalendarItemsProvider, ShowHolidayProvider } from '@/features/event'
-import { ReactQueryProvider } from './QueryClient'
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { CalendarItemsProvider, ShowHolidayProvider } from '@/features/event';
+import { ReactQueryProvider } from './QueryClient';
 
-const CLIENT_ID = import.meta.env.VITE_CLIENT_ID
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
 export default function Provider({ children }: { children: React.ReactNode }) {
     return (
@@ -13,5 +13,5 @@ export default function Provider({ children }: { children: React.ReactNode }) {
                 </CalendarItemsProvider>
             </ShowHolidayProvider>
         </ReactQueryProvider>
-    )
+    );
 }

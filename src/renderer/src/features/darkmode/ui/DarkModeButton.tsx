@@ -1,26 +1,26 @@
-import { useState, useEffect } from 'react'
-import { trackEvent } from '@aptabase/electron/renderer'
-import { Moon, Sun } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { trackEvent } from '@aptabase/electron/renderer';
+import { Moon, Sun } from 'lucide-react';
 
 export function DarkModeButton() {
     const [darkMode, setDarkMode] = useState(() => {
-        const storedTheme = localStorage.getItem('theme')
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-        return storedTheme === 'dark' || (!storedTheme && prefersDark)
-    })
+        const storedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        return storedTheme === 'dark' || (!storedTheme && prefersDark);
+    });
 
     useEffect(() => {
-        document.documentElement.classList.toggle('dark', darkMode)
-    }, [darkMode])
+        document.documentElement.classList.toggle('dark', darkMode);
+    }, [darkMode]);
 
     const toggleDarkMode = () => {
         setDarkMode((prev) => {
-            const newDark = !prev
-            localStorage.setItem('theme', newDark ? 'dark' : 'light')
-            trackEvent('ChangeDarkMode')
-            return newDark
-        })
-    }
+            const newDark = !prev;
+            localStorage.setItem('theme', newDark ? 'dark' : 'light');
+            trackEvent('ChangeDarkMode');
+            return newDark;
+        });
+    };
 
     return (
         <div className="flex flex-row justify-between">
@@ -39,5 +39,5 @@ export function DarkModeButton() {
                 </div>
             </button>
         </div>
-    )
+    );
 }

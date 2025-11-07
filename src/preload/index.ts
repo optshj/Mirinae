@@ -1,41 +1,41 @@
-import { contextBridge, ipcRenderer } from 'electron'
-import { electronAPI } from '@electron-toolkit/preload'
+import { contextBridge, ipcRenderer } from 'electron';
+import { electronAPI } from '@electron-toolkit/preload';
 
 export interface Api {
-    startGoogleOauth: () => void
-    onGoogleOauthSuccess: (callback: (tokens: any) => void) => () => void
-    onGoogleOauthError: (callback: (error: any) => void) => () => void
-    tryAutoLogin: () => Promise<any>
-    logoutGoogleOAuth: () => Promise<boolean>
+    startGoogleOauth: () => void;
+    onGoogleOauthSuccess: (callback: (tokens: any) => void) => () => void;
+    onGoogleOauthError: (callback: (error: any) => void) => () => void;
+    tryAutoLogin: () => Promise<any>;
+    logoutGoogleOAuth: () => Promise<boolean>;
 
-    safeReload: () => void
-    startDragging: () => void
-    stopDragging: () => void
-    quitApp: () => void
-    setOpacity: (opacity: number) => void
-    getInitialOpacity: () => Promise<number>
+    safeReload: () => void;
+    startDragging: () => void;
+    stopDragging: () => void;
+    quitApp: () => void;
+    setOpacity: (opacity: number) => void;
+    getInitialOpacity: () => Promise<number>;
 
-    setColorId: (color: string) => void
-    getInitialColorId: () => Promise<string>
-    onColorIdChange: (callback: (colorId: string) => void) => void
+    setColorId: (color: string) => void;
+    getInitialColorId: () => Promise<string>;
+    onColorIdChange: (callback: (colorId: string) => void) => void;
 
-    onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void
+    onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void;
 
-    onShowPatchNotes: (callback: () => void) => () => void
+    onShowPatchNotes: (callback: () => void) => () => void;
 }
 
 const api = {
     startGoogleOauth: () => ipcRenderer.send('start-google-oauth'),
 
     onGoogleOauthSuccess: (callback) => {
-        const listener = (_, ...args) => callback(...args)
-        ipcRenderer.on('google-oauth-token', listener)
-        return () => ipcRenderer.removeListener('google-oauth-token', listener)
+        const listener = (_, ...args) => callback(...args);
+        ipcRenderer.on('google-oauth-token', listener);
+        return () => ipcRenderer.removeListener('google-oauth-token', listener);
     },
     onGoogleOauthError: (callback) => {
-        const listener = (_, ...args) => callback(...args)
-        ipcRenderer.on('google-oauth-error', listener)
-        return () => ipcRenderer.removeListener('google-oauth-error', listener)
+        const listener = (_, ...args) => callback(...args);
+        ipcRenderer.on('google-oauth-error', listener);
+        return () => ipcRenderer.removeListener('google-oauth-error', listener);
     },
 
     tryAutoLogin: () => ipcRenderer.invoke('try-auto-login'),
@@ -53,35 +53,35 @@ const api = {
     getInitialColorId: () => ipcRenderer.invoke('get-initial-colorId'),
 
     onColorIdChange: (callback) => {
-        const listener = (_, colorId: string) => callback(colorId)
-        ipcRenderer.on('colorId-changed', listener)
-        return () => ipcRenderer.removeListener('colorId-changed', listener)
+        const listener = (_, colorId: string) => callback(colorId);
+        ipcRenderer.on('colorId-changed', listener);
+        return () => ipcRenderer.removeListener('colorId-changed', listener);
     },
     onShowPatchNotes: (callback) => {
-        const listener = (_, ...args) => callback(...args)
-        ipcRenderer.on('show-patch-notes', listener)
-        return () => ipcRenderer.removeListener('show-patch-notes', listener)
+        const listener = (_, ...args) => callback(...args);
+        ipcRenderer.on('show-patch-notes', listener);
+        return () => ipcRenderer.removeListener('show-patch-notes', listener);
     },
     onUpdateClickable: (callback: (isExplorer: boolean) => void) => {
-        const listener = (_, isExplorer: boolean) => callback(isExplorer)
-        ipcRenderer.removeListener('update-clickable', listener)
-        ipcRenderer.on('update-clickable', listener)
-        return () => ipcRenderer.removeListener('update-clickable', listener)
+        const listener = (_, isExplorer: boolean) => callback(isExplorer);
+        ipcRenderer.removeListener('update-clickable', listener);
+        ipcRenderer.on('update-clickable', listener);
+        return () => ipcRenderer.removeListener('update-clickable', listener);
     }
-}
+};
 
 // Use `contextBridge` to expose Electron APIs to the renderer only if
 // context isolation is enabled, otherwise just add to the DOM global.
 if (process.contextIsolated) {
     try {
-        contextBridge.exposeInMainWorld('electron', electronAPI)
-        contextBridge.exposeInMainWorld('api', api)
+        contextBridge.exposeInMainWorld('electron', electronAPI);
+        contextBridge.exposeInMainWorld('api', api);
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 } else {
-    // @ts-ignore (define in dts)
-    window.electron = electronAPI
-    // @ts-ignore (define in dts)
-    window.api = api
+    // @ts-expect-error (define in dts)
+    window.electron = electronAPI;
+
+    window.api = api;
 }

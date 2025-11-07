@@ -1,1 +1,1 @@
-export { QuitAppButton } from './ui/QuitAppButton'
+export { QuitAppButton } from './ui/QuitAppButton';

@@ -123,59 +123,59 @@
         <p>창을 닫아주시면 앱에서 계속 진행됩니다.</p>
 
         <script>
-            const numStars = 150
-            const numShootingStars = 10
-            const container = document.getElementById('starsBackground')
+            const numStars = 150;
+            const numShootingStars = 10;
+            const container = document.getElementById('starsBackground');
 
             /** 일반 별 생성 */
             for (let i = 0; i < numStars; i++) {
-                const star = document.createElement('div')
-                star.classList.add('star')
+                const star = document.createElement('div');
+                star.classList.add('star');
 
                 // 위치, 크기, 애니메이션 속도 랜덤 설정
-                star.style.top = `${Math.random() * 100}vh`
-                star.style.left = `${Math.random() * 100}vw`
-                star.style.width = star.style.height = `${1 + Math.random() * 1.5}px`
-                star.style.animationDuration = `${3 + Math.random() * 7}s`
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.width = star.style.height = `${1 + Math.random() * 1.5}px`;
+                star.style.animationDuration = `${3 + Math.random() * 7}s`;
 
-                container.appendChild(star)
+                container.appendChild(star);
             }
 
             /** 별동별 생성 */
             for (let i = 0; i < numShootingStars; i++) {
-                const shootingStar = document.createElement('div')
-                shootingStar.classList.add('shooting-star')
+                const shootingStar = document.createElement('div');
+                shootingStar.classList.add('shooting-star');
 
-                let top, left
+                let top, left;
                 if (Math.random() > 0.5) {
-                    top = `-10%`
-                    left = `${Math.random() * 100}%`
+                    top = `-10%`;
+                    left = `${Math.random() * 100}%`;
                 } else {
-                    top = `${Math.random() * 100}%`
-                    left = `${100 + Math.random() * 5}%`
+                    top = `${Math.random() * 100}%`;
+                    left = `${100 + Math.random() * 5}%`;
                 }
 
                 // 첫 5개 별동별은 거의 즉시 시작
-                const animationDelay = i < 5 ? `${Math.random() * 3}s` : `${3 + Math.random() * 17}s`
+                const animationDelay = i < 5 ? `${Math.random() * 3}s` : `${3 + Math.random() * 17}s`;
 
-                shootingStar.style.top = top
-                shootingStar.style.left = left
-                shootingStar.style.animationDuration = `${3 + Math.random() * 3}s`
-                shootingStar.style.animationDelay = animationDelay
+                shootingStar.style.top = top;
+                shootingStar.style.left = left;
+                shootingStar.style.animationDuration = `${3 + Math.random() * 3}s`;
+                shootingStar.style.animationDelay = animationDelay;
 
-                const trail = document.createElement('div')
-                trail.classList.add('shooting-star-trail')
+                const trail = document.createElement('div');
+                trail.classList.add('shooting-star-trail');
 
-                const head = document.createElement('div')
-                head.classList.add('shooting-star-head')
+                const head = document.createElement('div');
+                head.classList.add('shooting-star-head');
 
-                const tail = document.createElement('div')
-                tail.classList.add('shooting-star-tail')
+                const tail = document.createElement('div');
+                tail.classList.add('shooting-star-tail');
 
-                trail.appendChild(head)
-                trail.appendChild(tail)
-                shootingStar.appendChild(trail)
-                container.appendChild(shootingStar)
+                trail.appendChild(head);
+                trail.appendChild(tail);
+                shootingStar.appendChild(trail);
+                container.appendChild(shootingStar);
             }
         </script>
     </body>

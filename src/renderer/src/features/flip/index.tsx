@@ -1,1 +1,1 @@
-export { FlipButton } from './ui/FlipButton'
+export { FlipButton } from './ui/FlipButton';

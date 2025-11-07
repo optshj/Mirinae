@@ -1,2 +1,2 @@
-export { EventList } from './ui/EventList'
-export { FooterEvent } from './ui/FooterEvent'
+export { EventList } from './ui/EventList';
+export { FooterEvent } from './ui/FooterEvent';
