@@ -1,0 +1,26 @@
+{
+    "productName": "미리내",
+    "appId": "com.mirinae",
+    "publish": {
+        "provider": "github",
+        "owner": "optshj",
+        "repo": "Mirinae"
+    },
+    "asar": true,
+    "files": ["out/**/*", "package.json", "!**/node_modules/electron-as-wallpaper/target/release/deps/**", "!node_modules/lucide-react/**", "!node_modules/@tanstack/**"],
+    "directories": {
+        "output": "release"
+    },
+    "win": {
+        "target": "nsis",
+        "icon": "resources/icon.png"
+    },
+    "extraResources": [
+        {
+            "from": "resources",
+            "to": "resources"
+        }
+    ],
+    "compression": "maximum",
+    "afterPack": "scripts/remove-locales.js"
+}

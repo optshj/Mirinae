@@ -4,7 +4,6 @@ import http from 'http'
 import crypto from 'crypto'
 import keytar from 'keytar'
 import { join } from 'path'
-import fetch from 'node-fetch'
 
 const SERVICE_NAME = 'Mirinae'
 const ACCOUNT_NAME = 'google-refresh-token'
