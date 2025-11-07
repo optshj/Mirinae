@@ -1,10 +1,10 @@
-import { useLogin } from '@/shared/hooks/useLogin'
-import { CalendarEventWithColor } from '@/shared/types/EventType'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useLogin } from '@/shared/hooks/useLogin';
+import { CalendarEvent } from '@/shared/types/EventType';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useDeleteEvent() {
-    const { tokens } = useLogin()
-    const queryClient = useQueryClient()
+    const { tokens } = useLogin();
+    const queryClient = useQueryClient();
     const deleteEventMutation = useMutation({
         mutationKey: ['deleteEvent'],
         mutationFn: async (eventId: string) => {
@@ -13,27 +13,29 @@ export function useDeleteEvent() {
                 headers: {
                     Authorization: `Bearer ${tokens.access_token}`
                 }
-            })
+            });
 
-            if (!response.ok) throw new Error('Failed to delete event')
-            return eventId
+            if (!response.ok) {
+                throw new Error('Failed to delete event');
+            }
+            return eventId;
         },
         onMutate: async (eventId) => {
-            await queryClient.cancelQueries({ queryKey: ['googleCalendarEvents'] })
+            await queryClient.cancelQueries({ queryKey: ['googleCalendarEvents'] });
             const previousData = queryClient.getQueryData<{
-                items: CalendarEventWithColor[]
-            }>(['googleCalendarEvents'])
+                items: CalendarEvent[];
+            }>(['googleCalendarEvents']);
 
             if (previousData) {
                 queryClient.setQueryData(['googleCalendarEvents'], {
                     ...previousData,
                     items: previousData.items.filter((event) => event.id !== eventId)
-                })
+                });
             }
-            return { previousData }
+            return { previousData };
         },
         onError: (_error, _variable, context: any) => queryClient.setQueryData(['googleCalendarEvents'], context.previousData),
         onSettled: () => queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] })
-    })
-    return { deleteEvent: deleteEventMutation.mutate }
+    });
+    return { deleteEvent: deleteEventMutation.mutate };
 }

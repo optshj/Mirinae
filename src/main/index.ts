@@ -15,11 +15,13 @@ const SERVICE_NAME = 'Mirinae';
 
 export let mainWindow: BrowserWindow;
 
-const myAppLauncher = new AutoLaunch({
+// Enable auto launch on system startup
+new AutoLaunch({
     name: SERVICE_NAME,
     path: process.execPath
-});
-myAppLauncher.enable();
+}).enable();
+
+// Initialize Aptabase analytics
 initialize('A-US-3842104393');
 
 function createWindow(): void {
@@ -84,11 +86,15 @@ app.whenReady().then(() => {
     startActiveWindowWatcher(mainWindow);
 
     app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+        if (BrowserWindow.getAllWindows().length === 0) {
+            createWindow();
+        }
     });
 });
 
 app.on('window-all-closed', () => {
     stopActiveWindowWatcher();
-    if (process.platform !== 'darwin') app.quit();
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });

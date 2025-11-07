@@ -1,6 +1,6 @@
-import Provider from './provider'
-import { Calendar } from '@/pages'
-import { Toaster } from '@/shared/ui/sonner'
+import Provider from './provider';
+import { Calendar } from '@/pages';
+import { Toaster } from '@/shared/ui/sonner';
 
 export default function App() {
     return (
@@ -8,5 +8,5 @@ export default function App() {
             <Calendar />
             <Toaster position="top-center" richColors />
         </Provider>
-    )
+    );
 }

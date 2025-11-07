@@ -1,1 +1,1 @@
-export { DarkModeButton } from './ui/DarkModeButton'
+export { DarkModeButton } from './ui/DarkModeButton';

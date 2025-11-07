@@ -1,9 +1,9 @@
 export interface Tokens {
-    access_token: string
-    refresh_token?: string
-    expires_in?: number
-    scope?: string
-    token_type?: string
+    access_token: string;
+    refresh_token?: string;
+    expires_in?: number;
+    scope?: string;
+    token_type?: string;
 }
 export const initialTokens: Tokens = {
     access_token: '',
@@ -11,4 +11,4 @@ export const initialTokens: Tokens = {
     expires_in: undefined,
     scope: undefined,
     token_type: undefined
-}
+};
