@@ -29,11 +29,11 @@ html.resizable {
     box-sizing: border-box;
     padding-bottom: 4px;
 }
-#calendar-container {
+#event-container {
     width: 100%;
     transition: all 0.3s ease-in-out;
 }
-html.flip-calendar #calendar-container {
+html.flip-event #event-container {
     scale: 0.95;
     opacity: 0;
     margin-top: -16px;
@@ -51,30 +51,6 @@ html.disable-click {
     --color-bg-gray: #f3f4f6;
     --color-main-color: #a4bdfc;
     --shadow-all: 0 0 12px 2px #a4bdfc;
-    --animate-shake: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
-@keyframes shake {
-    0% {
-        transform: translateX(0);
-    }
-    15% {
-        transform: translateX(-4px);
-    }
-    30% {
-        transform: translateX(4px);
-    }
-    45% {
-        transform: translateX(-4px);
-    }
-    60% {
-        transform: translateX(4px);
-    }
-    75% {
-        transform: translateX(-2px);
-    }
-    100% {
-        transform: translateX(0);
-    }
 }
 
 @layer base {
@@ -128,6 +104,42 @@ html.disable-click {
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+@layer base {
+    .event-color-1 {
+        --event-color: #a4bdfc;
+    }
+    .event-color-2 {
+        --event-color: #7ae7bf;
+    }
+    .event-color-3 {
+        --event-color: #dbadff;
+    }
+    .event-color-4 {
+        --event-color: #ff887c;
+    }
+    .event-color-5 {
+        --event-color: #fbd75b;
+    }
+    .event-color-6 {
+        --event-color: #ffb878;
+    }
+    .event-color-7 {
+        --event-color: #46d6db;
+    }
+    .event-color-8 {
+        --event-color: #e1e1e1;
+    }
+    .event-color-9 {
+        --event-color: #5484ed;
+    }
+    .event-color-10 {
+        --event-color: #51b749;
+    }
+    .event-color-11 {
+        --event-color: #dc2127;
+    }
+}
+
 @theme inline {
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);

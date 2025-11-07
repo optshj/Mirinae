@@ -1,31 +1,32 @@
-import activeWindow from 'active-win'
-import type { BrowserWindow } from 'electron'
+import activeWindow from 'active-win';
+import type { BrowserWindow } from 'electron';
 
-let windowCheckInterval: NodeJS.Timeout | undefined = undefined
-let lastIsExplorer: boolean | undefined = undefined
+let windowCheckInterval: NodeJS.Timeout;
+let lastIsExplorer: boolean;
 
 export function startActiveWindowWatcher(mainWindow: BrowserWindow) {
-    if (windowCheckInterval) return
+    if (windowCheckInterval) {
+        return;
+    }
 
     windowCheckInterval = setInterval(async () => {
         try {
-            const window = await activeWindow()
+            const window = await activeWindow();
 
-            const isExplorer = process.platform === 'win32' ? window?.title === 'Program Manager' : process.platform === 'darwin' ? window?.owner?.name === 'Finder' : false
+            const isExplorer = process.platform === 'win32' ? window?.title === 'Program Manager' : process.platform === 'darwin' ? window?.owner?.name === 'Finder' : false;
 
             if (isExplorer !== lastIsExplorer) {
-                lastIsExplorer = isExplorer
-                mainWindow.webContents.send('update-clickable', isExplorer)
+                lastIsExplorer = isExplorer;
+                mainWindow.webContents.send('update-clickable', isExplorer);
             }
         } catch (error) {
-            console.error('Failed to get active window:', error)
+            console.error('Failed to get active window:', error);
         }
-    }, 1000)
+    }, 1000);
 }
 
 export function stopActiveWindowWatcher() {
     if (windowCheckInterval) {
-        clearInterval(windowCheckInterval)
-        windowCheckInterval = undefined
+        clearInterval(windowCheckInterval);
     }
 }

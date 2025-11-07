@@ -1,24 +1,24 @@
-import { useState } from 'react'
-import { MoveIcon } from 'lucide-react'
+import { useState } from 'react';
+import { MoveIcon } from 'lucide-react';
 
-import { trackEvent } from '@aptabase/electron/renderer'
+import { trackEvent } from '@aptabase/electron/renderer';
 
-import { Button } from '@/shared/ui/button'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/shared/ui/dialog'
+import { Button } from '@/shared/ui/button';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/shared/ui/dialog';
 
 export function MoveActiveButton() {
-    const [isDrag, setIsDrag] = useState(false)
+    const [isDrag, setIsDrag] = useState(false);
     const toggleDrag = () => {
-        setIsDrag((prev) => !prev)
+        setIsDrag((prev) => !prev);
         if (isDrag) {
-            window.api.stopDragging()
-            document.documentElement.classList.remove('resizable')
+            window.api.stopDragging();
+            document.documentElement.classList.remove('resizable');
         } else {
-            window.api.startDragging()
-            document.documentElement.classList.add('resizable')
-            trackEvent('MoveActiveButton')
+            window.api.startDragging();
+            document.documentElement.classList.add('resizable');
+            trackEvent('MoveActiveButton');
         }
-    }
+    };
 
     return (
         <Dialog open={isDrag} onOpenChange={toggleDrag}>
@@ -33,7 +33,7 @@ export function MoveActiveButton() {
                     </DialogTitle>
                     <DialogDescription>이 창을 드래그하여 위치를 조절하세요.</DialogDescription>
                     <DialogDescription>창의 테두리를 드래그하여 크기를 조절할 수 있습니다.</DialogDescription>
-                    <DialogDescription>조절을 마치려면 아래 '적용' 버튼을 클릭하세요.</DialogDescription>
+                    <DialogDescription>조절을 마치려면 아래 &apos;적용&apos; 버튼을 클릭하세요.</DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
                     <DialogClose asChild style={{ WebkitAppRegion: 'no-drag' } as any}>
@@ -42,5 +42,5 @@ export function MoveActiveButton() {
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-    )
+    );
 }

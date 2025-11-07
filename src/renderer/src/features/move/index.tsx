@@ -1,1 +1,1 @@
-export { MoveActiveButton } from './ui/MoveActiveButton'
+export { MoveActiveButton } from './ui/MoveActiveButton';

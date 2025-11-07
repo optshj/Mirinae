@@ -1,1 +1,1 @@
-export { PatchNoteModal } from './ui/PatchNoteModal'
+export { PatchNoteModal } from './ui/PatchNoteModal';

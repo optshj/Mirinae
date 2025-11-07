@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react'
-import { Button } from '@/shared/ui/button'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import { Button } from '@/shared/ui/button';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 export function OpacityButton() {
-    const [opacity, setOpacity] = useState(1.0)
+    const [opacity, setOpacity] = useState(1.0);
     useEffect(() => {
         async function fetchOpacity() {
-            const initialOpacity = await window.api.getInitialOpacity()
-            setOpacity(initialOpacity)
+            const initialOpacity = await window.api.getInitialOpacity();
+            setOpacity(initialOpacity);
         }
-        fetchOpacity()
-    }, [])
+        fetchOpacity();
+    }, []);
 
     return (
         <div className="flex flex-row justify-between">
@@ -23,10 +23,10 @@ export function OpacityButton() {
                     tabIndex={-1}
                     onClick={() => {
                         setOpacity((prev) => {
-                            const newOpacity = Math.max(prev - 0.05, 0.2)
-                            window.api.setOpacity(newOpacity)
-                            return newOpacity
-                        })
+                            const newOpacity = Math.max(prev - 0.05, 0.2);
+                            window.api.setOpacity(newOpacity);
+                            return newOpacity;
+                        });
                     }}
                 >
                     <ChevronDown />
@@ -39,15 +39,15 @@ export function OpacityButton() {
                     tabIndex={-1}
                     onClick={() => {
                         setOpacity((prev) => {
-                            const newOpacity = Math.min(prev + 0.05, 1.0)
-                            window.api.setOpacity(newOpacity)
-                            return newOpacity
-                        })
+                            const newOpacity = Math.min(prev + 0.05, 1.0);
+                            window.api.setOpacity(newOpacity);
+                            return newOpacity;
+                        });
                     }}
                 >
                     <ChevronUp />
                 </Button>
             </div>
         </div>
-    )
+    );
 }

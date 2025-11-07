@@ -1,11 +1,11 @@
-import { useRef, useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
+import { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface DropDownProps {
-    trigger: React.ReactNode
-    children: React.ReactNode
-    align?: 'left' | 'right'
-    closeOnClick?: boolean
+    trigger: React.ReactNode;
+    children: React.ReactNode;
+    align?: 'left' | 'right';
+    closeOnClick?: boolean;
 }
 
 /**
@@ -17,40 +17,40 @@ interface DropDownProps {
  * @param closeOnClick - 내부 클릭 시 닫을지 여부
  */
 export default function DropDown({ trigger, children, align = 'left', closeOnClick = true }: DropDownProps) {
-    const [open, setOpen] = useState(false)
-    const [position, setPosition] = useState({ top: 0, left: 0, width: 0 })
-    const triggerRef = useRef<HTMLDivElement>(null)
-    const menuRef = useRef<HTMLDivElement>(null)
+    const [open, setOpen] = useState(false);
+    const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+    const triggerRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            const target = event.target
-            if (!(target instanceof Node)) return
+            const target = event.target;
+            if (!(target instanceof Node)) return;
 
-            const menu = menuRef.current
-            const trigger = triggerRef.current
+            const menu = menuRef.current;
+            const trigger = triggerRef.current;
 
-            if (menu?.contains(target) || trigger?.contains(target)) return
-            setOpen(false)
+            if (menu?.contains(target) || trigger?.contains(target)) return;
+            setOpen(false);
         }
 
-        document.addEventListener('mousedown', handleClickOutside)
-        return () => document.removeEventListener('mousedown', handleClickOutside)
-    }, [])
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     useEffect(() => {
-        if (!triggerRef.current) return
-        const rect = triggerRef.current.getBoundingClientRect()
+        if (!triggerRef.current) return;
+        const rect = triggerRef.current.getBoundingClientRect();
         setPosition({
             top: rect.bottom + window.scrollY,
             left: align === 'right' ? rect.right + window.scrollX - 160 : rect.left + window.scrollX,
             width: rect.width
-        })
-    }, [open, align])
+        });
+    }, [open, align]);
 
     const handleMenuClick = () => {
-        if (closeOnClick) setOpen(false)
-    }
+        if (closeOnClick) setOpen(false);
+    };
 
     return (
         <>
@@ -75,5 +75,5 @@ export default function DropDown({ trigger, children, align = 'left', closeOnCli
                 document.body
             )}
         </>
-    )
+    );
 }

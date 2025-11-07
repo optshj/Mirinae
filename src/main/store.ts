@@ -1,4 +1,4 @@
-import Store from 'electron-store'
+import Store from 'electron-store';
 
 export const store = new (Store as any).default({
     defaults: {
@@ -7,4 +7,4 @@ export const store = new (Store as any).default({
         'last-version': '0.0.1',
         'important-colorId': '11'
     }
-})
+});

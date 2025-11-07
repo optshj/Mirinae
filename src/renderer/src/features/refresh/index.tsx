@@ -1,1 +1,1 @@
-export { RefreshButton } from './ui/RefreshButton'
+export { RefreshButton } from './ui/RefreshButton';

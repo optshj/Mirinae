@@ -51,8 +51,8 @@ const KOREAN_KEYMAP = {
     Y: 'ㅛ',
     U: 'ㅕ',
     I: 'ㅑ'
-}
+} as const;
 
 export function convertEngToKor(key: string): string {
-    return KOREAN_KEYMAP[key] || key
+    return KOREAN_KEYMAP[key] || key;
 }

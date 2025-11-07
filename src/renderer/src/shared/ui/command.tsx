@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import * as React from 'react'
-import { Command as CommandPrimitive } from 'cmdk'
-import { SearchIcon } from 'lucide-react'
+import * as React from 'react';
+import { Command as CommandPrimitive } from 'cmdk';
+import { SearchIcon } from 'lucide-react';
 
-import { cn } from '@/shared/lib/utils'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/shared/ui/dialog'
+import { cn } from '@/shared/lib/utils';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
     return (
@@ -14,7 +14,7 @@ function Command({ className, ...props }: React.ComponentProps<typeof CommandPri
             className={cn('flex h-full w-full flex-col overflow-hidden rounded-md bg-white text-neutral-950 dark:bg-neutral-950 dark:text-neutral-50', className)}
             {...props}
         />
-    )
+    );
 }
 
 function CommandDialog({
@@ -25,10 +25,10 @@ function CommandDialog({
     showCloseButton = true,
     ...props
 }: React.ComponentProps<typeof Dialog> & {
-    title?: string
-    description?: string
-    className?: string
-    showCloseButton?: boolean
+    title?: string;
+    description?: string;
+    className?: string;
+    showCloseButton?: boolean;
 }) {
     return (
         <Dialog {...props}>
@@ -42,7 +42,7 @@ function CommandDialog({
                 </Command>
             </DialogContent>
         </Dialog>
-    )
+    );
 }
 
 function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
@@ -58,15 +58,15 @@ function CommandInput({ className, ...props }: React.ComponentProps<typeof Comma
                 {...props}
             />
         </div>
-    )
+    );
 }
 
 function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
-    return <CommandPrimitive.List data-slot="command-list" className={cn('max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto', className)} {...props} />
+    return <CommandPrimitive.List data-slot="command-list" className={cn('max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto', className)} {...props} />;
 }
 
 function CommandEmpty({ ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
-    return <CommandPrimitive.Empty data-slot="command-empty" className="py-6 text-center text-sm" {...props} />
+    return <CommandPrimitive.Empty data-slot="command-empty" className="py-6 text-center text-sm" {...props} />;
 }
 
 function CommandGroup({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) {
@@ -79,11 +79,11 @@ function CommandGroup({ className, ...props }: React.ComponentProps<typeof Comma
             )}
             {...props}
         />
-    )
+    );
 }
 
 function CommandSeparator({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Separator>) {
-    return <CommandPrimitive.Separator data-slot="command-separator" className={cn('-mx-1 h-px bg-neutral-200 dark:bg-neutral-800', className)} {...props} />
+    return <CommandPrimitive.Separator data-slot="command-separator" className={cn('-mx-1 h-px bg-neutral-200 dark:bg-neutral-800', className)} {...props} />;
 }
 
 function CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
@@ -96,11 +96,11 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
             )}
             {...props}
         />
-    )
+    );
 }
 
 function CommandShortcut({ className, ...props }: React.ComponentProps<'span'>) {
-    return <span data-slot="command-shortcut" className={cn('ml-auto text-xs tracking-widest text-neutral-500 dark:text-neutral-400', className)} {...props} />
+    return <span data-slot="command-shortcut" className={cn('ml-auto text-xs tracking-widest text-neutral-500 dark:text-neutral-400', className)} {...props} />;
 }
 
-export { Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator }
+export { Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator };
