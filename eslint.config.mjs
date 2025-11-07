@@ -2,7 +2,7 @@ import js from '@eslint/js'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import pluginReact from 'eslint-plugin-react'
-import pluginImport from 'eslint-plugin-import' // 1. import 플러그인 가져오기
+import pluginImport from 'eslint-plugin-import'
 
 export default [
     js.configs.recommended,

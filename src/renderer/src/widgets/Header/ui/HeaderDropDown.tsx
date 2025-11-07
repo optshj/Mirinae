@@ -1,12 +1,12 @@
-import DropDown from '@/shared/ui/dropdown'
+import DropDown from '@/shared/ui/dropdown';
 
-import { LoginButton } from '@/features/user'
-import { OpacityButton } from '@/features/opacity'
-import { QuitAppButton } from '@/features/quit'
-import { DarkModeButton } from '@/features/darkmode'
-import { HolidayButton } from '@/features/event'
-import { MoveActiveButton } from '@/features/move'
-import { EllipsisVertical } from 'lucide-react'
+import { LoginButton } from '@/features/user';
+import { OpacityButton } from '@/features/opacity';
+import { QuitAppButton } from '@/features/quit';
+import { DarkModeButton } from '@/features/darkmode';
+import { HolidayButton } from '@/features/event';
+import { MoveActiveButton } from '@/features/move';
+import { EllipsisVertical } from 'lucide-react';
 
 export function HeaderDropDown() {
     return (
@@ -18,5 +18,5 @@ export function HeaderDropDown() {
             <HolidayButton />
             <QuitAppButton />
         </DropDown>
-    )
+    );
 }
