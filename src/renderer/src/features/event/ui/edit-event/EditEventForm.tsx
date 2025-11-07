@@ -72,7 +72,7 @@ export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
             {showForm ? (
                 <EventForm id={'edit-event-form'} form={form} updateForm={updateForm} onCancel={() => setShowForm(false)} onSubmit={handleSubmit} onSubmitText="수정" />
             ) : (
-                <div className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 event-color-${event.colorId} bg-[var(--event-color)]/20`} onDoubleClick={openForm}>
+                <div className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 event-color-${event.colorId} bg-[var(--event-color)]/20`} onClick={openForm}>
                     <div className={`h-full w-2 rounded-xl event-color-${event.colorId} bg-[var(--event-color)]`} />
                     <div className="text-primary flex-1 pl-4">
                         <span className="font-semibold">{event.summary}</span>
