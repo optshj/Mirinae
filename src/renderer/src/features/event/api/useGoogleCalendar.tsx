@@ -21,7 +21,14 @@ export function useGoogleCalendar() {
             }).then((res) => res.json());
             return res;
         },
-        select: (data) => data.items ?? [],
+        select: (data) => {
+            return data.items.map((event: CalendarEvent) => {
+                return {
+                    ...event,
+                    colorId: event.colorId ?? '1'
+                };
+            });
+        },
         enabled: Boolean(tokens.access_token)
     });
     const { data: holidayItems } = useQuery({
