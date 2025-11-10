@@ -29,11 +29,11 @@ html.resizable {
     box-sizing: border-box;
     padding-bottom: 4px;
 }
-#event-container {
+#calendar-container {
     width: 100%;
     transition: all 0.3s ease-in-out;
 }
-html.flip-event #event-container {
+html.flip-calendar #calendar-container {
     scale: 0.95;
     opacity: 0;
     margin-top: -16px;
