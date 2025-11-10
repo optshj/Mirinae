@@ -1,6 +1,6 @@
 {
     "name": "mirinae",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "미리내",
     "main": "./out/main/index.js",
     "author": "Mirinae",
@@ -20,7 +20,7 @@
         "build:mac": "electron-vite build && electron-builder --mac",
         "build:linux": "electron-vite build && electron-builder --linux",
         "test": "vitest",
-        "publish": "npx electron-builder --publish always"
+        "publish": "npm run build:win && electron-builder --publish always"
     },
     "dependencies": {
         "@aptabase/electron": "^0.3.1",
