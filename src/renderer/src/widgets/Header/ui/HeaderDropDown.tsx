@@ -7,6 +7,7 @@ import { DarkModeButton } from '@/features/darkmode';
 import { HolidayButton } from '@/features/event';
 import { MoveActiveButton } from '@/features/move';
 import { EllipsisVertical } from 'lucide-react';
+import { FlipFooterButton } from '@/features/flip';
 
 export function HeaderDropDown() {
     return (
@@ -16,6 +17,7 @@ export function HeaderDropDown() {
             <OpacityButton />
             <DarkModeButton />
             <HolidayButton />
+            <FlipFooterButton />
             <QuitAppButton />
         </DropDown>
     );

@@ -24,25 +24,6 @@ body {
     overflow: hidden !important;
     background: transparent;
 }
-html.resizable {
-    border: 3px dotted #e0e0e0;
-    box-sizing: border-box;
-    padding-bottom: 4px;
-}
-#calendar-container {
-    width: 100%;
-    transition: all 0.3s ease-in-out;
-}
-html.flip-calendar #calendar-container {
-    scale: 0.95;
-    opacity: 0;
-    margin-top: -16px;
-    transition: all 0.3s ease-in-out;
-    pointer-events: none;
-}
-html.disable-click {
-    pointer-events: none;
-}
 
 @theme {
     --color-font-black: #1f2937;
