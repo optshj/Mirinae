@@ -23,7 +23,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
     };
 
     return (
-        <div className="bg-primary flex w-full flex-col overflow-hidden rounded-xl">
+        <div className="bg-primary flex flex-1 flex-col overflow-hidden rounded-xl">
             <div className="grid grid-cols-7 bg-[#F9FAFB] py-2 text-center font-semibold dark:bg-zinc-800">
                 <div className="text-red-400" aria-label="일요일">
                     일
@@ -37,7 +37,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
                     토
                 </div>
             </div>
-            <div className="grid h-[calc(100vh-20rem)] grid-cols-7 grid-rows-[repeat(6,1fr)]">
+            <div className="grid h-[calc(100vh-20rem)] grid-cols-7 grid-rows-[repeat(6,1fr)] transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-8rem)]">
                 <Dialog open={open} onOpenChange={setOpen}>
                     {days.map((date, i) => {
                         const isCurrentMonth = date.getMonth() === month;

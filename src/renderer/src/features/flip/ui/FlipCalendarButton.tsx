@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FoldVertical, UnfoldVertical } from 'lucide-react';
 import { trackEvent } from '@aptabase/electron/renderer';
 
-export function FlipButton() {
+export function FlipCalendarButton() {
     const [isFlip, setIsFlip] = useState(false);
 
     const handleClick = () => {

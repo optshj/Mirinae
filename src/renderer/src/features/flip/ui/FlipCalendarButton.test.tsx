@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { FlipButton } from './FlipButton';
+import { FlipCalendarButton } from './FlipCalendarButton';
 
 const mockFlipCalendar = vi.fn();
 
@@ -16,7 +16,7 @@ describe('FlipButton', () => {
     });
 
     it('버튼이 렌더링 된다', () => {
-        render(<FlipButton />);
+        render(<FlipCalendarButton />);
         const button = screen.getByRole('button');
         expect(button).toBeInTheDocument();
     });
