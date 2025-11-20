@@ -1,10 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export function FlipFooterButton() {
     const [isFlip, setIsFlip] = useState(false);
+
+    useEffect(() => {
+        const saved = localStorage.getItem('flipFooter');
+        if (saved === 'true') {
+            setIsFlip(true);
+            document.documentElement.classList.add('flip-footer');
+        }
+    }, []);
+
     const onClick = () => {
-        setIsFlip((prev) => !prev);
-        document.documentElement.classList.toggle('flip-footer');
+        setIsFlip((prev) => {
+            const next = !prev;
+            document.documentElement.classList.toggle('flip-footer', next);
+            localStorage.setItem('flipFooter', next.toString());
+            return next;
+        });
     };
 
     return (
@@ -16,7 +29,7 @@ export function FlipFooterButton() {
                 onKeyDown={(e) => e.preventDefault()}
                 className={`border-background-secondary relative flex h-6 w-12 items-center justify-center rounded-full transition-colors duration-300 ${isFlip ? 'bg-green-500' : 'bg-zinc-400'}`}
             >
-                <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-all duration-300 ${isFlip ? 'translate-x-3' : '-translate-x-3'} `} />
+                <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-all duration-300 ${isFlip ? 'translate-x-3' : '-translate-x-3'}`} />
             </button>
         </div>
     );
