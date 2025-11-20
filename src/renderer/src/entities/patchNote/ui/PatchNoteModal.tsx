@@ -13,7 +13,7 @@ export function PatchNoteModal() {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+            <DialogContent onInteractOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
                 <DialogHeader>
                     <DialogTitle>새롭게 변경된 기능</DialogTitle>
                     <DialogDescription>1. 하단 일정 패널이 접히도록 개선되어 달력을 더 넓게 볼 수 있습니다.</DialogDescription>

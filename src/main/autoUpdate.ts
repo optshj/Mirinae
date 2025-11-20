@@ -13,6 +13,7 @@ export const initAutoUpdater = () => {
     // 업데이트 체크 시작
     log.info('[Updater] 업데이트 체크 시작 (현재 버전:', app.getVersion(), ')');
     autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.downloadUpdate();
 
     // 업데이트 발견 시
     autoUpdater.on('update-available', (info) => {
@@ -35,7 +36,6 @@ export const initAutoUpdater = () => {
                 if (result.response === 0) {
                     shouldInstallOnDownload = true;
                     log.info('[Updater] 업데이트 다운로드 시작');
-                    autoUpdater.downloadUpdate();
                 } else {
                     shouldInstallOnDownload = false;
                 }
