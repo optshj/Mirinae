@@ -23,7 +23,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
     };
 
     return (
-        <div className="bg-primary flex w-full flex-col overflow-hidden rounded-xl">
+        <div className="bg-primary flex flex-1 flex-col overflow-hidden rounded-xl">
             <div className="grid grid-cols-7 bg-[#F9FAFB] py-2 text-center font-semibold dark:bg-zinc-800">
                 <div className="text-red-400" aria-label="일요일">
                     일

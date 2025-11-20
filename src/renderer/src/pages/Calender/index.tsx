@@ -11,7 +11,7 @@ export function Calendar() {
     return (
         <div>
             <Header displayMonth={displayMonth} year={year} handleNextMonth={handleNextMonth} handlePrevMonth={handlePrevMonth} />
-            <div id="calendar-container">
+            <div className="flex flex-1 flex-col transition-all duration-300 ease-in-out [html.flip-calendar_&]:pointer-events-none [html.flip-calendar_&]:-mt-4 [html.flip-calendar_&]:scale-95 [html.flip-calendar_&]:opacity-0">
                 <CalendarGrid days={days} month={month} />
                 <Footer />
             </div>

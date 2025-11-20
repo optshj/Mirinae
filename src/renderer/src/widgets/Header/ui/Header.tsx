@@ -1,4 +1,4 @@
-import { FlipButton } from '@/features/flip';
+import { FlipCalendarButton } from '@/features/flip';
 import { RefreshButton } from '@/features/refresh';
 import { HeaderDropDown } from './HeaderDropDown';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -20,7 +20,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
             </div>
 
             <div className="text-primary flex items-center gap-4">
-                <FlipButton />
+                <FlipCalendarButton />
                 <RefreshButton />
                 <HeaderDropDown />
             </div>

@@ -1,1 +1,2 @@
-export { FlipButton } from './ui/FlipButton';
+export { FlipCalendarButton } from './ui/FlipCalendarButton';
+export { FlipFooterButton } from './ui/FlipFooterButton';
