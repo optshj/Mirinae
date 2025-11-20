@@ -3,7 +3,7 @@ import { useState } from 'react';
 export function FlipFooterButton() {
     const [isFlip, setIsFlip] = useState(false);
     const onClick = () => {
-        setIsFlip(!isFlip);
+        setIsFlip((prev) => !prev);
         document.documentElement.classList.toggle('flip-footer');
     };
 
@@ -11,7 +11,8 @@ export function FlipFooterButton() {
         <div className="flex flex-row justify-between">
             <label>달력만보기</label>
             <button
-                onClick={() => onClick()}
+                type="button"
+                onClick={onClick}
                 onKeyDown={(e) => e.preventDefault()}
                 className={`border-background-secondary relative flex h-6 w-12 items-center justify-center rounded-full transition-colors duration-300 ${isFlip ? 'bg-green-500' : 'bg-zinc-400'}`}
             >

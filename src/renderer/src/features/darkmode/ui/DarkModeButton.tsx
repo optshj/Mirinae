@@ -26,6 +26,7 @@ export function DarkModeButton() {
         <div className="flex flex-row justify-between">
             <label>다크모드</label>
             <button
+                type="button"
                 onClick={toggleDarkMode}
                 onKeyDown={(e) => e.preventDefault()}
                 className="relative flex h-6 w-12 items-center justify-center rounded-full bg-yellow-400 transition-colors duration-300 dark:bg-gray-500"

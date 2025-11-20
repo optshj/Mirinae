@@ -24,14 +24,6 @@ body {
     overflow: hidden !important;
     background: transparent;
 }
-html.resizable {
-    border: 3px dotted #e0e0e0;
-    box-sizing: border-box;
-    padding-bottom: 4px;
-}
-html.disable-click {
-    pointer-events: none;
-}
 
 @theme {
     --color-font-black: #1f2937;

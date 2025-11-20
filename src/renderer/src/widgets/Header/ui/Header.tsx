@@ -11,7 +11,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
                 <div className="p-2">
                     <ChevronLeft strokeWidth={1.25} onClick={handlePrevMonth} />
                 </div>
-                <div className="min-w-[16d0px] px-4 text-center text-xl font-semibold">
+                <div className="min-w-[160px] px-4 text-center text-xl font-semibold">
                     {year}년 {displayMonth.toString().padStart(2, '0')}월
                 </div>
                 <div className="p-2">
