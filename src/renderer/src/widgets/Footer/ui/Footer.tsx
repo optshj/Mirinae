@@ -59,6 +59,7 @@ export function Footer() {
 
     return (
         <aside className="mt-2 grid h-48 grid-cols-3 gap-2 transition-all duration-300 ease-in-out [html.flip-footer_&]:pointer-events-none [html.flip-footer_&]:h-0 [html.flip-footer_&]:overflow-hidden [html.flip-footer_&]:opacity-0">
+            {/*[html.flip-footer_&]:mt-0 */}
             <FooterEvent items={todayEvent} title="오늘의 일정" description="오늘의 일정이 없습니다" />
             <FooterEvent items={upcomingEvent} title="다가오는 일정" description="다가오는 일정이 없습니다" />
             <FooterEvent items={importantEvent} title="중요한 일정" description="중요한 일정이 표시됩니다" headerButton={<PalleteDropdown />} />
