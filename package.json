@@ -16,7 +16,7 @@
         "build": "npm run typecheck && electron-vite build",
         "postinstall": "electron-builder install-app-deps",
         "build:unpack": "npm run build && electron-builder --dir",
-        "build:win": "npm run build && electron-builder --win",
+        "build:win": "npm run build && electron-builder --win --x64",
         "build:mac": "electron-vite build && electron-builder --mac",
         "build:linux": "electron-vite build && electron-builder --linux",
         "test": "vitest",
@@ -32,8 +32,7 @@
         "electron-log": "^5.4.3",
         "electron-store": "^10.1.0",
         "electron-updater": "^6.6.2",
-        "keytar": "^7.9.0",
-        "vite-plugin-csp-guard": "^2.1.1"
+        "keytar": "^7.9.0"
     },
     "devDependencies": {
         "@radix-ui/react-dialog": "^1.1.15",
@@ -83,6 +82,7 @@
         "eslint-plugin-import": "^2.31.0",
         "eslint-plugin-prettier": "^5.2.1",
         "eslint-plugin-react": "^7.37.3",
-        "eslint-plugin-react-hooks": "^5.1.0"
+        "eslint-plugin-react-hooks": "^5.1.0",
+        "vite-plugin-csp-guard": "^2.1.1"
     }
 }
