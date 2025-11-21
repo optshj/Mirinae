@@ -37,7 +37,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
                     토
                 </div>
             </div>
-            <div className="grid h-[calc(100vh-20rem)] grid-cols-7 grid-rows-[repeat(6,1fr)] transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-7.5rem)]">
+            <div className="grid h-[calc(100vh-20rem)] grid-cols-7 grid-rows-[repeat(6,1fr)] transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-7.5rem)] [html.resizable_&]:transition-none">
                 <Dialog open={open} onOpenChange={setOpen}>
                     {days.map((date, i) => {
                         const isCurrentMonth = date.getMonth() === month;

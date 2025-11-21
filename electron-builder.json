@@ -7,7 +7,20 @@
         "repo": "Mirinae"
     },
     "asar": true,
-    "files": ["out/**/*", "package.json", "!**/node_modules/electron-as-wallpaper/target/release/deps/**", "!node_modules/lucide-react/**", "!node_modules/@tanstack/**"],
+    "files": [
+        "out/**/*",
+        "package.json",
+        "!**/node_modules/electron-as-wallpaper/target/**",
+        "!**/test/**",
+        "!src/**",
+        "!**/*.{md,markdown,txt}",
+        "!**/*.{ts,tsx,map,pdb}",
+        "!**/tsconfig.json",
+        "!**/eslint*",
+        "!src/**",
+        "!test/**",
+        "!scripts/**"
+    ],
     "directories": {
         "output": "release"
     },
@@ -22,5 +35,5 @@
         }
     ],
     "compression": "maximum",
-    "afterPack": "scripts/remove-locales.js"
+    "electronLanguages": ["en", "ko"]
 }

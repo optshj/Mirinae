@@ -23,6 +23,7 @@ body {
     font-family: 'Inter', sans-serif;
     overflow: hidden !important;
     background: transparent;
+    height: 100%;
 }
 
 @theme {
