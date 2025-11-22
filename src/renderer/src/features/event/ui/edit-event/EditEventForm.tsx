@@ -12,8 +12,9 @@ import { CalendarEvent, isAllDayEvent, isHolidayEvent, isTimeEvent } from '@/sha
 interface EditEventFormProps {
     event: CalendarEvent;
     deleteButton: React.ReactNode;
+    completeButton: React.ReactNode;
 }
-export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
+export function EditEventForm({ event, deleteButton, completeButton }: EditEventFormProps) {
     const [showForm, setShowForm] = useState(false);
     const { editEvent } = useEditEvent();
 
@@ -72,7 +73,10 @@ export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
             {showForm ? (
                 <EventForm id={'edit-event-form'} form={form} updateForm={updateForm} onCancel={() => setShowForm(false)} onSubmit={handleSubmit} onSubmitText="수정" />
             ) : (
-                <div className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 event-color-${event.colorId} bg-[var(--event-color)]/20`} onClick={openForm}>
+                <div
+                    className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 event-color-${event.colorId} bg-[var(--event-color)]/20 ${event.extendedProperties.private.isCompleted ? 'opacity-50' : ''}`}
+                    onClick={openForm}
+                >
                     <div className={`h-full w-2 rounded-xl event-color-${event.colorId} bg-[var(--event-color)]`} />
                     <div className="text-primary flex-1 pl-4">
                         <span className="font-semibold">{event.summary}</span>
@@ -80,7 +84,12 @@ export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
                             {isTimeEvent(event) ? `${new Date(event.start.dateTime).toLocaleString()} ~ ${new Date(event.end.dateTime).toLocaleString()}` : `${event.start.date} ~ ${event.end.date}`}
                         </div>
                     </div>
-                    {!isHolidayEvent(event) && deleteButton}
+                    {!isHolidayEvent(event) && (
+                        <div className="flex items-center gap-2">
+                            {completeButton}
+                            {deleteButton}
+                        </div>
+                    )}
                 </div>
             )}
         </>

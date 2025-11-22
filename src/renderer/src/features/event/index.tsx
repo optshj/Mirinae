@@ -6,3 +6,4 @@ export { AddEventForm } from './ui/add-event/AddEventForm';
 export { DeleteEventButton } from './ui/delete-event/DeleteEventButton';
 export { EditEventForm } from './ui/edit-event/EditEventForm';
 export { PalleteDropdown } from './ui/pallete/PalleteDropdown';
+export { CompleteEventButton } from './ui/complete-event/CompleteEventButton';
