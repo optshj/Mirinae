@@ -97,3 +97,24 @@ export function formatDateLocal(date: Date) {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
+
+export function toIsoStringWithOffset(date: Date) {
+    const tzo = -date.getTimezoneOffset();
+    const dif = tzo >= 0 ? '+' : '-';
+    const pad = (num: number) => {
+        const norm = Math.floor(Math.abs(num));
+        return (norm < 10 ? '0' : '') + norm;
+    };
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hour = pad(date.getHours());
+    const minute = pad(date.getMinutes());
+    const second = pad(date.getSeconds());
+
+    const offsetHour = pad(tzo / 60);
+    const offsetMinute = pad(tzo % 60);
+
+    return `${year}-${month}-${day}T${hour}:${minute}:${second}${dif}${offsetHour}:${offsetMinute}`;
+}
