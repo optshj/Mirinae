@@ -29,7 +29,7 @@ export function useGoogleCalendar() {
                     ...(event.extendedProperties || {}),
                     private: {
                         ...(event.extendedProperties?.private || {}),
-                        isCompleted: event.extendedProperties?.private?.isCompleted ?? false
+                        isCompleted: event.extendedProperties?.private?.isCompleted ?? ''
                     }
                 }
             }));

@@ -4,7 +4,7 @@ import { CalendarEvent } from '@/shared/types/EventType';
 
 interface CompleteEventProp {
     eventId: string;
-    isCompleted: boolean;
+    isCompleted: string;
 }
 export function useCompleteEvent() {
     const { tokens } = useLogin();
@@ -20,7 +20,6 @@ export function useCompleteEvent() {
                     }
                 }
             };
-
             const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
                 method: 'PATCH',
                 headers: {
@@ -36,7 +35,6 @@ export function useCompleteEvent() {
 
             return response.json();
         },
-
         onMutate: async ({ eventId, isCompleted }) => {
             await queryClient.cancelQueries({ queryKey: ['googleCalendarEvents'] });
             const previousData = queryClient.getQueryData<{ items: CalendarEvent[] }>(['googleCalendarEvents']);
@@ -66,7 +64,6 @@ export function useCompleteEvent() {
                 queryClient.setQueryData(['googleCalendarEvents'], context.previousData);
             }
         },
-
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
         }

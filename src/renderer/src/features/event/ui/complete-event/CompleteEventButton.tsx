@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 interface CompleteEventButtonProps {
     eventId: string;
-    isCompleted: boolean | undefined;
+    isCompleted: string;
 }
 export function CompleteEventButton({ eventId, isCompleted }: CompleteEventButtonProps) {
     const { completeEvent } = useCompleteEvent();
@@ -14,7 +14,7 @@ export function CompleteEventButton({ eventId, isCompleted }: CompleteEventButto
         toast.info(isCompleted ? '일정이 미완료로 표시되었습니다.' : '일정이 완료로 표시되었습니다.');
         completeEvent({
             eventId,
-            isCompleted: !isCompleted
+            isCompleted: isCompleted ? '' : 'true'
         });
     };
 
