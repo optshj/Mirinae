@@ -8,7 +8,7 @@ interface EventBodyParams {
     colorId: string;
     allDay: boolean;
 }
-export function createEventBody({ date, start, end, summary, colorId, allDay }: EventBodyParams) {
+export function createEventBody({ date, start, end, summary, allDay, colorId = '1' }: EventBodyParams) {
     if (allDay) {
         const startDate = formatDateLocal(date);
         const endDateObj = new Date(date);
@@ -19,7 +19,7 @@ export function createEventBody({ date, start, end, summary, colorId, allDay }: 
             summary,
             start: { date: startDate },
             end: { date: endDate },
-            colorId: colorId || '1'
+            colorId: colorId
         };
     }
 
@@ -31,6 +31,6 @@ export function createEventBody({ date, start, end, summary, colorId, allDay }: 
         summary,
         start: { dateTime: toIsoStringWithOffset(startDateTime), timeZone },
         end: { dateTime: toIsoStringWithOffset(endDateTime), timeZone },
-        colorId: colorId || '1'
+        colorId: colorId
     };
 }
