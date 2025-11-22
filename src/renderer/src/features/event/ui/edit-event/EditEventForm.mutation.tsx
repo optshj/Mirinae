@@ -1,7 +1,7 @@
 import { useLogin } from '@/shared/hooks/useLogin';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarEvent } from '@/shared/types/EventType';
-import { formatDateLocal, makeDateTime, toIsoStringWithOffset } from '@/shared/lib/dateFunction';
+import { createEventBody } from '@/features/event/lib/createEventBody';
 
 interface EditEventProp {
     eventId: string;
@@ -12,7 +12,6 @@ interface EditEventProp {
     colorId: string;
     allDay: boolean;
 }
-
 export function useEditEvent() {
     const { tokens } = useLogin();
     const queryClient = useQueryClient();
@@ -63,31 +62,4 @@ export function useEditEvent() {
     });
 
     return { editEvent: editEventMutation.mutate };
-}
-
-function createEventBody({ date, start, end, summary, colorId, allDay }: Omit<EditEventProp, 'eventId'>) {
-    if (allDay) {
-        const startDate = formatDateLocal(date);
-        const endDateObj = new Date(date);
-        endDateObj.setDate(endDateObj.getDate() + 1);
-        const endDate = formatDateLocal(endDateObj);
-
-        return {
-            summary,
-            start: { date: startDate },
-            end: { date: endDate },
-            colorId: colorId || '1'
-        };
-    }
-
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const startDateTime = makeDateTime(date, start);
-    const endDateTime = makeDateTime(date, end);
-
-    return {
-        summary,
-        start: { dateTime: toIsoStringWithOffset(startDateTime), timeZone },
-        end: { dateTime: toIsoStringWithOffset(endDateTime), timeZone },
-        colorId: colorId || '1'
-    };
 }
