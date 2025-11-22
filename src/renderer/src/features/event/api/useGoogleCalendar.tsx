@@ -24,7 +24,14 @@ export function useGoogleCalendar() {
         select: (data) => {
             return (data.items || []).map((event: CalendarEvent) => ({
                 ...event,
-                colorId: event.colorId ?? '1'
+                colorId: event.colorId ?? '1',
+                extendedProperties: {
+                    ...(event.extendedProperties || {}),
+                    private: {
+                        ...(event.extendedProperties?.private || {}),
+                        isCompleted: event.extendedProperties?.private?.isCompleted ?? false
+                    }
+                }
             }));
         },
         enabled: Boolean(tokens.access_token),
@@ -41,7 +48,15 @@ export function useGoogleCalendar() {
             return res;
         },
         select: (data) => {
-            return (data.items || []).filter((event: CalendarEvent) => isHolidayEvent(event)).map((event: CalendarEvent) => ({ ...event, colorId: '10' }));
+            return (data.items || [])
+                .filter((event: CalendarEvent) => isHolidayEvent(event))
+                .map((event: CalendarEvent) => ({
+                    ...event,
+                    colorId: '10',
+                    extendedProperties: {
+                        private: { isCompleted: false }
+                    }
+                }));
         },
         enabled: Boolean(tokens.access_token)
     });

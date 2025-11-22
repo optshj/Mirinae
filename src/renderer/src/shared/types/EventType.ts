@@ -49,14 +49,6 @@ type Events = {
         }
     ];
     attendeesOmitted: boolean;
-    extendedProperties: {
-        private: {
-            (key): string;
-        };
-        shared: {
-            (key): string;
-        };
-    };
     hangoutLink: string;
     conferenceData: {
         createRequest: {
@@ -160,6 +152,11 @@ type Events = {
         customTypeName: string;
     };
     eventType: string;
+    extendedProperties: {
+        private: {
+            isCompleted?: boolean;
+        };
+    };
 };
 export type TimeEvent = Events & {
     start: { dateTime: string; timeZone: string };
