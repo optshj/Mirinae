@@ -1,7 +1,7 @@
 import { useLogin } from '@/shared/hooks/useLogin';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarEvent } from '@/shared/types/EventType';
-import { formatDateLocal, makeDateTime } from '@/shared/lib/dateFunction';
+import { createEventBody } from '@/features/event/lib/createEventBody';
 
 interface EditEventProp {
     eventId: string;
@@ -18,32 +18,8 @@ export function useEditEvent() {
 
     const editEventMutation = useMutation({
         mutationKey: ['editEvent'],
-        mutationFn: async ({ eventId, date, start, end, summary, colorId, allDay }: EditEventProp) => {
-            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            let eventData;
-            if (allDay) {
-                // 하루 종일의 경우
-                const startDate = formatDateLocal(date);
-                const endDateObj = new Date(date);
-                endDateObj.setDate(endDateObj.getDate() + 1);
-                const endDate = formatDateLocal(endDateObj);
-                eventData = {
-                    summary,
-                    start: { date: startDate },
-                    end: { date: endDate },
-                    colorId: colorId || '1'
-                };
-            } else {
-                // 아닌 경우
-                const startDateTime = makeDateTime(date, start);
-                const endDateTime = makeDateTime(date, end);
-                eventData = {
-                    summary,
-                    start: { dateTime: startDateTime.toISOString(), timeZone },
-                    end: { dateTime: endDateTime.toISOString(), timeZone },
-                    colorId: colorId || '1'
-                };
-            }
+        mutationFn: async ({ eventId, ...bodyProps }: EditEventProp) => {
+            const eventData = createEventBody(bodyProps);
             const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
                 method: 'PUT',
                 headers: {
@@ -53,54 +29,35 @@ export function useEditEvent() {
                 body: JSON.stringify(eventData)
             });
 
+            if (!response.ok) {
+                throw new Error('Failed to edit event');
+            }
+
             return response.json();
         },
-        onMutate: async (variables) => {
+        onMutate: async ({ eventId, ...bodyProps }) => {
             await queryClient.cancelQueries({ queryKey: ['googleCalendarEvents'] });
-            const previousData = queryClient.getQueryData<{
-                items: CalendarEvent[];
-            }>(['googleCalendarEvents']);
+            const previousData = queryClient.getQueryData<{ items: CalendarEvent[] }>(['googleCalendarEvents']);
+            const updatedEventPart = createEventBody(bodyProps);
+
             if (previousData) {
-                queryClient.setQueryData(['googleCalendarEvents'], () => {
-                    const { eventId, date, start, end, summary, colorId } = variables;
-
-                    const filteredItems = previousData.items.filter((item) => item.id !== eventId);
-                    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                    let updatedItem;
-                    if (variables.allDay) {
-                        // 하루 종일의 경우
-                        const startDate = formatDateLocal(date);
-                        const endDateObj = new Date(date);
-                        endDateObj.setDate(endDateObj.getDate() + 1);
-                        const endDate = formatDateLocal(endDateObj);
-                        updatedItem = {
-                            summary,
-                            start: { date: startDate },
-                            end: { date: endDate },
-                            colorId: colorId || '1'
-                        };
-                    } else {
-                        // 아닌 경우
-                        const startDateTime = makeDateTime(date, start);
-                        const endDateTime = makeDateTime(date, end);
-                        updatedItem = {
-                            summary,
-                            start: { dateTime: startDateTime.toISOString(), timeZone },
-                            end: { dateTime: endDateTime.toISOString(), timeZone },
-                            colorId: colorId || '1'
-                        };
-                    }
-
-                    return {
-                        ...previousData,
-                        items: [...filteredItems, updatedItem]
-                    };
+                queryClient.setQueryData(['googleCalendarEvents'], {
+                    items: previousData.items.map((item) => {
+                        if (item.id === eventId) {
+                            return { ...item, ...updatedEventPart, id: eventId };
+                        }
+                        return item;
+                    })
                 });
             }
 
             return { previousData };
         },
-        onError: (_err, _variables, context: any) => queryClient.setQueryData(['googleCalendarEvents'], context.previousData),
+        onError: (_err, _variables, context) => {
+            if (context?.previousData) {
+                queryClient.setQueryData(['googleCalendarEvents'], context.previousData);
+            }
+        },
         onSettled: () => queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] })
     });
 

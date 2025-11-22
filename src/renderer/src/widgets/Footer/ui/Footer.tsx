@@ -42,16 +42,10 @@ export function Footer() {
 
     const upcomingEvent = useMemo(
         () =>
-            items
-                .filter((event) => {
-                    const start = isTimeEvent(event) ? new Date(event.start.dateTime) : new Date(event.start.date);
-                    return start >= tomorrow;
-                })
-                .sort((a, b) => {
-                    const aStart = isTimeEvent(a) ? new Date(a.start.dateTime).getTime() : new Date(a.start.date).getTime();
-                    const bStart = isTimeEvent(b) ? new Date(b.start.dateTime).getTime() : new Date(b.start.date).getTime();
-                    return aStart - bStart;
-                }),
+            items.filter((event) => {
+                const start = isTimeEvent(event) ? new Date(event.start.dateTime) : new Date(event.start.date);
+                return start >= tomorrow;
+            }),
         [items, tomorrow]
     );
 
