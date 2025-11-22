@@ -17,7 +17,6 @@ export function useAddEvent() {
 
     const addEventMutation = useMutation({
         mutationKey: ['addEvent'],
-
         mutationFn: async (variables: AddEventProp) => {
             const eventData = createEventBody(variables);
             const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events`, {
@@ -38,7 +37,6 @@ export function useAddEvent() {
         onMutate: async (newEvent) => {
             await queryClient.cancelQueries({ queryKey: ['googleCalendarEvents'] });
             const previousData = queryClient.getQueryData<{ items: CalendarEvent[] }>(['googleCalendarEvents']);
-
             const newEventItem = {
                 ...createEventBody(newEvent),
                 id: `temp-id-${Date.now()}`
