@@ -36,9 +36,6 @@ export default function HangulInput({ value, onChange, ...props }: HangulInputPr
             inputRef.current?.select();
             return;
         }
-        if (e.ctrlKey || e.altKey || e.metaKey || e.key === 'Tab' || e.key === 'Enter' || e.key === 'Escape') {
-            return;
-        }
 
         const input = inputRef.current;
         if (!input) return;
