@@ -89,7 +89,6 @@ export default function HangulInput({ value, onChange, ...props }: HangulInputPr
         if (e.key.length === 1) {
             e.preventDefault();
 
-            let charToInsert = e.key;
             let newValue = '';
             let nextCursorPos = 0;
 
@@ -114,7 +113,7 @@ export default function HangulInput({ value, onChange, ...props }: HangulInputPr
                     nextCursorPos = start + 1;
                 }
             } else {
-                newValue = textBefore + charToInsert + textAfter;
+                newValue = textBefore + e.key + textAfter;
                 nextCursorPos = start + 1;
             }
 
