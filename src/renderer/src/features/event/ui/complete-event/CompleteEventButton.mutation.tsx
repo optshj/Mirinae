@@ -16,7 +16,7 @@ export function useCompleteEvent() {
             const patchBody = {
                 extendedProperties: {
                     private: {
-                        isCompleted: isCompleted
+                        isCompleted: !isCompleted
                     }
                 }
             };
@@ -47,7 +47,7 @@ export function useCompleteEvent() {
                                 ...item,
                                 extendedProperties: {
                                     private: {
-                                        isCompleted: isCompleted
+                                        isCompleted: !isCompleted
                                     }
                                 }
                             };
