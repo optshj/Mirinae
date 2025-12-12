@@ -48,7 +48,7 @@ function createWindow(): void {
             backgroundThrottling: false,
             spellcheck: false,
             plugins: false,
-            webgl: true,
+            webgl: false,
             images: false,
             experimentalFeatures: false
         }
