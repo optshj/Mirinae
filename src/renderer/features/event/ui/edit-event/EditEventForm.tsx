@@ -6,8 +6,16 @@ import { EventForm } from '../EventForm';
 import { useEditEvent } from './EditEventForm.mutation';
 import { FormState } from '../../types/FormType';
 
-import { ISO8601toSimpleTime } from '@/shared/lib/dateFunction';
 import { CalendarEvent, isAllDayEvent, isHolidayEvent, isTimeEvent } from '@/shared/types/EventType';
+
+//2025-09-17T18:00:00+09:00 -> 18:00
+function ISO8601toSimpleTime(isoString: string) {
+    const date = new Date(isoString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const paddedMinutes = String(minutes).padStart(2, '0');
+    return `${hours}:${paddedMinutes}`;
+}
 
 interface EditEventFormProps {
     event: CalendarEvent;

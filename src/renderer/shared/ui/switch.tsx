@@ -2,6 +2,8 @@ export function Switch({ onClick, isOn }: { onClick: () => void; isOn: boolean }
     return (
         <button
             type="button"
+            role="switch"
+            aria-checked={isOn}
             onClick={onClick}
             onKeyDown={(e) => e.preventDefault()}
             className={`group border-background-secondary relative flex h-6 w-12 items-center justify-center rounded-full transition-colors duration-300 ${isOn ? 'bg-[#3EBD88]' : 'bg-[#CCD0E4]'} `}

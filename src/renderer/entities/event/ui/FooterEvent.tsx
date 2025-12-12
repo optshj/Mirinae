@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
-import { formatKoreanDate, formatKoreanDateTime } from '@/shared/lib/dateFunction';
 import { Button } from '@/shared/ui/button';
 import { CalendarEvent, isTimeEvent } from '@/shared/types/EventType';
 
@@ -66,4 +65,54 @@ export function FooterEvent({ items, title, description, headerButton }: FooterE
             </div>
         </section>
     );
+}
+
+// 예시 8월 31일 (일) 오전 9:00
+export function formatKoreanDateTime(dateStr: string): string {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+        return '';
+    } // 잘못된 날짜 처리
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    const weekday = weekdays[date.getDay()];
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const isAm = hours < 12;
+
+    const period = isAm ? '오전' : '오후';
+    if (hours === 0) {
+        hours = 12;
+    } else if (hours > 12) {
+        hours -= 12;
+    }
+
+    // 올해가 아니면 연도 붙이기
+    const yearPrefix = year !== currentYear ? `${year}년 ` : '';
+
+    return `${yearPrefix}${month}월 ${day}일 (${weekday}) ${period} ${hours}:${minutes}`;
+}
+
+// 예: 2025-09-30 → "9월 30일 (화)"
+export function formatKoreanDate(dateStr: string): string {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+        return '';
+    }
+
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    const weekday = weekdays[date.getDay()];
+
+    return `${month}월 ${day}일 (${weekday})`;
 }
