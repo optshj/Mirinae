@@ -27,11 +27,13 @@ export function useLogin() {
                 const restoredTokens = await window.api.tryAutoLogin();
                 if (restoredTokens?.access_token) {
                     setTokens(restoredTokens);
+                    return restoredTokens;
                 }
             } catch (err) {
                 console.error('Auto login failed:', err);
             }
         }
+        return null;
     }, []);
 
     useEffect(() => {
@@ -48,5 +50,5 @@ export function useLogin() {
         };
     }, [handleLogin, handleError, tryAutoLogin]);
 
-    return { login, logout, tokens };
+    return { login, logout, tokens, tryAutoLogin };
 }
