@@ -39,6 +39,7 @@ function createWindow(): void {
         focusable: true,
         transparent: true,
         skipTaskbar: true,
+        type: 'desktop',
         webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
             nodeIntegration: false,
@@ -47,7 +48,7 @@ function createWindow(): void {
             backgroundThrottling: false,
             spellcheck: false,
             plugins: false,
-            webgl: false,
+            webgl: true,
             images: false,
             experimentalFeatures: false
         }

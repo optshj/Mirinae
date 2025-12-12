@@ -6,10 +6,10 @@ import { CalendarEvent, isHolidayEvent } from '@/shared/types/EventType';
 import { useLogin } from '@/shared/hooks/useLogin';
 
 const CALENDAR_API_URL = 'https://www.googleapis.com/calendar/v3/calendars';
-const REFETCH_INTERVAL = 1000 * 60 * 60; // 1 hour
+const REFETCH_INTERVAL = 1000 * 60 * 60;
 
 export function useGoogleCalendar() {
-    const { tokens } = useLogin();
+    const { tokens, tryAutoLogin } = useLogin();
     const { isShow } = useShowHoliday();
 
     const { data: events } = useQuery({
@@ -18,11 +18,23 @@ export function useGoogleCalendar() {
             const res = await fetch(`${CALENDAR_API_URL}/primary/events?maxResults=2500`, {
                 method: 'GET',
                 headers: { Authorization: `Bearer ${tokens.access_token}` }
-            }).then((res) => res.json());
-            return res;
+            });
+            if (res.status === 401) {
+                const newTokens = await tryAutoLogin();
+                if (newTokens?.access_token) {
+                    const retryRes = await fetch(`${CALENDAR_API_URL}/primary/events?maxResults=2500`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${newTokens.access_token}`
+                        }
+                    });
+                    return retryRes.json();
+                }
+            }
+            return res.json();
         },
         select: (data) => {
-            return (data.items || []).map((event: CalendarEvent) => ({
+            return (data.items || []).map((event) => ({
                 ...event,
                 colorId: event.colorId ?? '1',
                 extendedProperties: {
