@@ -1,3 +1,4 @@
+import React, { useCallback } from 'react';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -7,20 +8,13 @@ interface DropDownProps {
     align?: 'left' | 'right';
     closeOnClick?: boolean;
 }
-
-/**
- * 트리거 요소에 연결된 드롭다운 메뉴를 렌더링한다.
- *
- * @param trigger - 드롭다운을 여닫는 트리거
- * @param children - 드롭다운 내부 콘텐츠
- * @param align - 메뉴 정렬 방향 ('left' | 'right')
- * @param closeOnClick - 내부 클릭 시 닫을지 여부
- */
 export default function DropDown({ trigger, children, align = 'left', closeOnClick = true }: DropDownProps) {
     const [open, setOpen] = useState(false);
-    const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+    const [position, setPosition] = useState({ top: 0, left: 0 });
     const triggerRef = useRef<HTMLDivElement>(null);
-    const menuRef = useRef<HTMLDivElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const closeDropDownForChild = useCallback(() => setOpen(false), []);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -29,10 +23,10 @@ export default function DropDown({ trigger, children, align = 'left', closeOnCli
                 return;
             }
 
-            const menu = menuRef.current;
+            const dropdown = dropdownRef.current;
             const trigger = triggerRef.current;
 
-            if (menu?.contains(target) || trigger?.contains(target)) {
+            if (dropdown?.contains(target) || trigger?.contains(target)) {
                 return;
             }
             setOpen(false);
@@ -49,12 +43,11 @@ export default function DropDown({ trigger, children, align = 'left', closeOnCli
         const rect = triggerRef.current.getBoundingClientRect();
         setPosition({
             top: rect.bottom + window.scrollY,
-            left: align === 'right' ? rect.right + window.scrollX - 160 : rect.left + window.scrollX,
-            width: rect.width
+            left: align === 'right' ? rect.right + window.scrollX - 160 : rect.left + window.scrollX
         });
     }, [open, align]);
 
-    const handleMenuClick = () => {
+    const handleDropDownClick = () => {
         if (closeOnClick) {
             setOpen(false);
         }
@@ -68,17 +61,24 @@ export default function DropDown({ trigger, children, align = 'left', closeOnCli
 
             {createPortal(
                 <div
-                    ref={menuRef}
-                    onClick={handleMenuClick}
+                    ref={dropdownRef}
+                    onClick={handleDropDownClick}
                     style={{
                         top: position.top,
                         left: position.left
                     }}
-                    className={`bg-primary absolute z-[9999] mt-2 flex flex-col gap-2 rounded-xl px-3 py-3 shadow-lg transition-all duration-200 ${
+                    className={`bg-primary absolute z-9999 mt-2 flex min-w-40 flex-col gap-2 rounded-xl px-3 py-3 shadow-lg transition-all duration-200 ${
                         open ? 'scale-100 opacity-100' : 'pointer-events-none scale-95 opacity-0'
                     }`}
                 >
-                    {children}
+                    {React.Children.map(children, (child) => {
+                        if (React.isValidElement(child)) {
+                            return React.cloneElement(child as React.ReactElement<{ closeDropDown: () => void }>, {
+                                closeDropDown: closeDropDownForChild
+                            });
+                        }
+                        return child;
+                    })}
                 </div>,
                 document.body
             )}

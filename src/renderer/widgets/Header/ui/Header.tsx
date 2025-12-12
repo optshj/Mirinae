@@ -1,8 +1,8 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { FlipCalendarButton } from '@/features/flip';
 import { RefreshButton } from '@/features/refresh';
-import { HeaderDropDown } from './HeaderDropDown';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DateProps } from '@/shared/lib/useDate';
+import { HeaderDropDownButton } from './HeaderDropDownButton';
 
 export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }: Pick<DateProps, 'displayMonth' | 'year' | 'handlePrevMonth' | 'handleNextMonth'>) {
     return (
@@ -11,7 +11,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
                 <div className="p-2">
                     <ChevronLeft strokeWidth={1.25} onClick={handlePrevMonth} />
                 </div>
-                <div className="min-w-[160px] px-4 text-center text-xl font-semibold">
+                <div className="min-w-40 px-4 text-center text-xl font-semibold">
                     {year}년 {displayMonth.toString().padStart(2, '0')}월
                 </div>
                 <div className="p-2">
@@ -22,7 +22,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
             <div className="text-primary flex items-center gap-4">
                 <FlipCalendarButton />
                 <RefreshButton />
-                <HeaderDropDown />
+                <HeaderDropDownButton />
             </div>
         </div>
     );

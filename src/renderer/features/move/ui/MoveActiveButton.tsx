@@ -6,9 +6,12 @@ import { trackEvent } from '@aptabase/electron/renderer';
 import { Button } from '@/shared/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/shared/ui/dialog';
 
-export function MoveActiveButton() {
+export function MoveActiveButton({ closeDropDown, closeOnClick = true }: { closeDropDown?: () => void; closeOnClick?: boolean }) {
     const [isDrag, setIsDrag] = useState(false);
     const toggleDrag = () => {
+        if (closeOnClick && closeDropDown) {
+            closeDropDown();
+        }
         setIsDrag((prev) => !prev);
         if (isDrag) {
             window.api.stopDragging();

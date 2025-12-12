@@ -29,9 +29,9 @@ export function DarkModeButton() {
                 type="button"
                 onClick={toggleDarkMode}
                 onKeyDown={(e) => e.preventDefault()}
-                className="relative flex h-6 w-12 items-center justify-center rounded-full bg-yellow-400 transition-colors duration-300 dark:bg-gray-500"
+                className="group relative flex h-6 w-12 items-center justify-center rounded-full bg-yellow-400 transition-colors duration-300 dark:bg-gray-500"
             >
-                <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-transform duration-300 ${darkMode ? '-translate-x-3' : 'translate-x-3'}`}>
+                <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-transform duration-300 group-active:scale-80 ${darkMode ? '-translate-x-3' : 'translate-x-3'}`}>
                     {darkMode ? (
                         <Moon strokeWidth={3} className="h-full w-full text-gray-500" fill="currentColor" />
                     ) : (
