@@ -1,22 +1,11 @@
-import { useEffect, useState } from 'react';
 import DropDown from '@/shared/ui/dropdown';
 import { Check, Palette } from 'lucide-react';
 
-export function PalleteDropdown() {
-    const [colorId, setColorId] = useState<string>('11');
-    useEffect(() => {
-        async function fetchColor() {
-            const saved = await window.api.getInitialColorId();
-            setColorId(saved);
-        }
-        fetchColor();
-    }, []);
-
-    const handleColorChange = (newColor: string) => {
-        setColorId(newColor);
-        window.api.setColorId(newColor);
-    };
-
+interface PalleteDropdownProps {
+    colorId: string;
+    onColorIdChange: (colorId: string) => void;
+}
+export function PalleteDropdown({ colorId, onColorIdChange }: PalleteDropdownProps) {
     return (
         <>
             <DropDown
@@ -33,7 +22,7 @@ export function PalleteDropdown() {
                         <div
                             key={key}
                             className={`flex h-5 w-5 items-center justify-center rounded-full transition-all hover:scale-150 dark:saturate-70 event-color-${key} bg-[var(--event-color)]`}
-                            onClick={() => handleColorChange(key)}
+                            onClick={() => onColorIdChange(key)}
                         >
                             {colorId === key && <Check className="text-white" strokeWidth={3} size={12} />}
                         </div>

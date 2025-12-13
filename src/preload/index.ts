@@ -50,14 +50,6 @@ const api = {
     setOpacity: (opacity: number) => ipcRenderer.send('set-opacity', opacity),
     getInitialOpacity: () => ipcRenderer.invoke('get-initial-opacity'),
 
-    setColorId: (color: string) => ipcRenderer.send('set-colorId', color),
-    getInitialColorId: () => ipcRenderer.invoke('get-initial-colorId'),
-
-    onColorIdChange: (callback) => {
-        const listener = (_, colorId: string) => callback(colorId);
-        ipcRenderer.on('colorId-changed', listener);
-        return () => ipcRenderer.removeListener('colorId-changed', listener);
-    },
     onShowPatchNotes: (callback) => {
         const listener = (_, ...args) => callback(...args);
         ipcRenderer.on('show-patch-notes', listener);
