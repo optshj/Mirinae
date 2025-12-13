@@ -38,7 +38,8 @@ const api = {
         return () => ipcRenderer.removeListener('google-oauth-error', listener);
     },
 
-    tryAutoLogin: () => ipcRenderer.invoke('try-auto-login'),
+    refreshToken: () => ipcRenderer.invoke('try-auto-login'),
+
     logoutGoogleOAuth: () => ipcRenderer.invoke('logout-google-oauth'),
     safeReload: () => ipcRenderer.send('safe-reload'),
     startDragging: () => ipcRenderer.send('start-dragging'),

@@ -21,10 +21,10 @@ export function useLogin() {
         console.error('OAuth Error:', error);
     }, []);
 
-    const tryAutoLogin = useCallback(async () => {
-        if (window.api.tryAutoLogin) {
+    const refreshToken = useCallback(async () => {
+        if (window.api.refreshToken) {
             try {
-                const restoredTokens = await window.api.tryAutoLogin();
+                const restoredTokens = await window.api.refreshToken();
                 if (restoredTokens?.access_token) {
                     setTokens(restoredTokens);
                     return restoredTokens;
@@ -37,8 +37,8 @@ export function useLogin() {
     }, []);
 
     useEffect(() => {
-        tryAutoLogin();
-        window.addEventListener('online', tryAutoLogin);
+        refreshToken();
+        window.addEventListener('online', refreshToken);
 
         const removeSuccessListener = window.api.onGoogleOauthSuccess(handleLogin);
         const removeErrorListener = window.api.onGoogleOauthError(handleError);
@@ -46,9 +46,9 @@ export function useLogin() {
         return () => {
             removeSuccessListener();
             removeErrorListener();
-            window.removeEventListener('online', tryAutoLogin);
+            window.removeEventListener('online', refreshToken);
         };
-    }, [handleLogin, handleError, tryAutoLogin]);
+    }, [handleLogin, handleError, refreshToken]);
 
-    return { login, logout, tokens, tryAutoLogin };
+    return { login, logout, tokens, refreshToken };
 }

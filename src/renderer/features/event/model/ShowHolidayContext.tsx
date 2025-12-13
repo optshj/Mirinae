@@ -25,8 +25,5 @@ export function ShowHolidayProvider({ children }: { children: React.ReactNode })
 
 export const useShowHoliday = () => {
     const context = useContext(ShowHolidayContext);
-    if (context === undefined) {
-        throw new Error('useRefreshCalendar must be used within a RefreshCalendarProvider');
-    }
     return context;
 };

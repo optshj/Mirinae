@@ -9,7 +9,7 @@ const CALENDAR_API_URL = 'https://www.googleapis.com/calendar/v3/calendars';
 const REFETCH_INTERVAL = 1000 * 60 * 60;
 
 export function useGoogleCalendar() {
-    const { tokens, tryAutoLogin } = useLogin();
+    const { tokens, refreshToken } = useLogin();
     const { isShow } = useShowHoliday();
 
     const { data: events } = useQuery({
@@ -20,7 +20,7 @@ export function useGoogleCalendar() {
                 headers: { Authorization: `Bearer ${tokens.access_token}` }
             });
             if (res.status === 401) {
-                const newTokens = await tryAutoLogin();
+                const newTokens = await refreshToken();
                 if (newTokens?.access_token) {
                     const retryRes = await fetch(`${CALENDAR_API_URL}/primary/events?maxResults=2500`, {
                         headers: {
@@ -34,13 +34,11 @@ export function useGoogleCalendar() {
             return res.json();
         },
         select: (data) => {
-            return (data.items || []).map((event) => ({
+            return (data.items || []).map((event: CalendarEvent) => ({
                 ...event,
                 colorId: event.colorId ?? '1',
                 extendedProperties: {
-                    ...(event.extendedProperties || {}),
                     private: {
-                        ...(event.extendedProperties?.private || {}),
                         isCompleted: event.extendedProperties?.private?.isCompleted ?? ''
                     }
                 }
@@ -72,8 +70,8 @@ export function useGoogleCalendar() {
         },
         enabled: Boolean(tokens.access_token)
     });
-
-    const mergedEvents = isShow ? [...(holidayEvents ?? []), ...(events ?? [])] : (events ?? []);
+    console.log(events);
+    const mergedEvents = useMemo(() => (isShow ? [...(holidayEvents ?? []), ...(events ?? [])] : (events ?? [])), [holidayEvents, events, isShow]);
 
     const sortedEventsOrderByDate = useMemo(() => {
         return [...mergedEvents].sort((a, b) => {
