@@ -8,12 +8,13 @@ export function ScheduleModal({ date }: { date: Date }) {
     const { items } = useCalendarItems();
     const events = items.filter((event) => {
         const eventDate = isTimeEvent(event) ? new Date(event.start.dateTime) : new Date(event.start.date);
+
         return isSameDay(eventDate, date);
     });
 
     return (
         <DialogContent>
-            <DialogHeader>
+            <DialogHeader className="mb-2">
                 <DialogTitle>
                     {date.getMonth() + 1}월 {date.getDate()}일 일정
                 </DialogTitle>

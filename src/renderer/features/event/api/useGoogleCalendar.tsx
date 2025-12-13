@@ -6,7 +6,7 @@ import { CalendarEvent, isHolidayEvent } from '@/shared/types/EventType';
 import { useLogin } from '@/shared/hooks/useLogin';
 
 const CALENDAR_API_URL = 'https://www.googleapis.com/calendar/v3/calendars';
-const REFETCH_INTERVAL = 1000 * 60 * 60;
+const REFETCH_INTERVAL = 1000 * 60 * 60; // 1 hour
 
 export function useGoogleCalendar() {
     const { tokens, refreshToken } = useLogin();
@@ -15,14 +15,16 @@ export function useGoogleCalendar() {
     const { data: events } = useQuery({
         queryKey: ['googleCalendarEvents'],
         queryFn: async () => {
-            const res = await fetch(`${CALENDAR_API_URL}/primary/events?maxResults=2500`, {
+            const path = `${CALENDAR_API_URL}/primary/events?maxResults=2500`;
+            const res = await fetch(path, {
                 method: 'GET',
                 headers: { Authorization: `Bearer ${tokens.access_token}` }
             });
+
             if (res.status === 401) {
                 const newTokens = await refreshToken();
                 if (newTokens?.access_token) {
-                    const retryRes = await fetch(`${CALENDAR_API_URL}/primary/events?maxResults=2500`, {
+                    const retryRes = await fetch(path, {
                         headers: {
                             'Content-Type': 'application/json',
                             Authorization: `Bearer ${newTokens.access_token}`
@@ -34,7 +36,7 @@ export function useGoogleCalendar() {
             return res.json();
         },
         select: (data) => {
-            return (data.items || []).map((event: CalendarEvent) => ({
+            return data.items.map((event: CalendarEvent) => ({
                 ...event,
                 colorId: event.colorId ?? '1',
                 extendedProperties: {
@@ -58,7 +60,7 @@ export function useGoogleCalendar() {
             return res;
         },
         select: (data) => {
-            return (data.items || [])
+            return data.items
                 .filter((event: CalendarEvent) => isHolidayEvent(event))
                 .map((event: CalendarEvent) => ({
                     ...event,
@@ -70,9 +72,10 @@ export function useGoogleCalendar() {
         },
         enabled: Boolean(tokens.access_token)
     });
-    console.log(events);
-    const mergedEvents = useMemo(() => (isShow ? [...(holidayEvents ?? []), ...(events ?? [])] : (events ?? [])), [holidayEvents, events, isShow]);
 
+    console.log(events);
+
+    const mergedEvents = useMemo(() => (isShow ? [...(holidayEvents ?? []), ...(events ?? [])] : (events ?? [])), [holidayEvents, events, isShow]);
     const sortedEventsOrderByDate = useMemo(() => {
         return [...mergedEvents].sort((a, b) => {
             const startA = a.start.dateTime ?? a.start.date;

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { trackEvent } from '@aptabase/electron/renderer';
 import { Moon, Sun } from 'lucide-react';
 
 export function DarkModeButton() {
@@ -17,7 +16,6 @@ export function DarkModeButton() {
         setDarkMode((prev) => {
             const newDark = !prev;
             localStorage.setItem('theme', newDark ? 'dark' : 'light');
-            trackEvent('ChangeDarkMode');
             return newDark;
         });
     };

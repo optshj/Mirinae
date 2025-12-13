@@ -1,8 +1,14 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
+
+const getInitialShowState = (): boolean => {
+    const isShowHoliday = localStorage.getItem('holiday');
+    return isShowHoliday === 'true';
+};
 
 export const ShowHolidayContext = createContext<{ isShow: boolean; handleShow: () => void }>({ isShow: true, handleShow: () => {} });
+
 export function ShowHolidayProvider({ children }: { children: React.ReactNode }) {
-    const [isShow, setShow] = useState(true);
+    const [isShow, setShow] = useState(getInitialShowState());
     const updateShowHoliday = (isShow: boolean) => {
         setShow(isShow);
         if (isShow) {
@@ -16,10 +22,6 @@ export function ShowHolidayProvider({ children }: { children: React.ReactNode })
         updateShowHoliday(!isShow);
     };
 
-    useEffect(() => {
-        const isShow = localStorage.holiday === 'true' || !('holiday' in localStorage);
-        updateShowHoliday(isShow);
-    }, []);
     return <ShowHolidayContext.Provider value={{ isShow, handleShow }}>{children}</ShowHolidayContext.Provider>;
 }
 

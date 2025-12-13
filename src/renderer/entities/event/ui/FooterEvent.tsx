@@ -57,7 +57,7 @@ export function FooterEvent({ items, title, description, headerButton }: FooterE
                             <span className={`h-2 w-2 rounded-full event-color-${event.colorId} bg-(--event-color)`}></span>
                             <div className="flex flex-col">
                                 <span className="text-primary line-clamp-1 font-semibold">{event.summary}</span>
-                                <span className="text-font-gray line-clamp-1 text-sm">{isTimeEvent(event) ? formatKoreanDateTime(event.start.dateTime) : formatKoreanDate(event.start.date)}</span>
+                                <span className="text-font-gray line-clamp-1 text-sm">{formatKorean(event)}</span>
                             </div>
                         </div>
                     ))
@@ -68,11 +68,12 @@ export function FooterEvent({ items, title, description, headerButton }: FooterE
 }
 
 // 예시 8월 31일 (일) 오전 9:00
-export function formatKoreanDateTime(dateStr: string): string {
-    const date = new Date(dateStr);
+function formatKorean(event: CalendarEvent): string {
+    const isTime = isTimeEvent(event);
+    const date = new Date(isTime ? event.start.dateTime : event.start.date);
     if (isNaN(date.getTime())) {
         return '';
-    } // 잘못된 날짜 처리
+    }
 
     const now = new Date();
     const currentYear = now.getFullYear();
@@ -83,36 +84,21 @@ export function formatKoreanDateTime(dateStr: string): string {
 
     const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
     const weekday = weekdays[date.getDay()];
-
-    let hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const isAm = hours < 12;
-
-    const period = isAm ? '오전' : '오후';
-    if (hours === 0) {
-        hours = 12;
-    } else if (hours > 12) {
-        hours -= 12;
-    }
-
-    // 올해가 아니면 연도 붙이기
     const yearPrefix = year !== currentYear ? `${year}년 ` : '';
 
-    return `${yearPrefix}${month}월 ${day}일 (${weekday}) ${period} ${hours}:${minutes}`;
-}
+    if (isTime) {
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const isAm = hours < 12;
 
-// 예: 2025-09-30 → "9월 30일 (화)"
-export function formatKoreanDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) {
-        return '';
+        const period = isAm ? '오전' : '오후';
+        if (hours === 0) {
+            hours = 12;
+        } else if (hours > 12) {
+            hours -= 12;
+        }
+
+        return `${yearPrefix}${month}월 ${day}일 (${weekday}) ${period} ${hours}:${minutes}`;
     }
-
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-    const weekday = weekdays[date.getDay()];
-
-    return `${month}월 ${day}일 (${weekday})`;
+    return `${yearPrefix}${month}월 ${day}일 (${weekday})`;
 }

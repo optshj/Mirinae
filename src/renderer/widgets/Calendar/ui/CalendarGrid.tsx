@@ -50,7 +50,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
                             <DialogTrigger key={i} asChild>
                                 <div className={`border-primary flex h-full w-full flex-1 flex-col overflow-hidden border py-1`} onClick={() => handleDateDoubleClick(date)}>
                                     <div className={`px-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'} `}>
-                                        <div className={`${isToday ? 'bg-main-color text-[#f3f4f6] dark:text-[#333333]' : ''} flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70`}>
+                                        <div className={`${isToday ? 'bg-main-color text-bg-gray dark:text-[#333333]' : ''} flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70`}>
                                             {date.getDate()}
                                         </div>
                                     </div>

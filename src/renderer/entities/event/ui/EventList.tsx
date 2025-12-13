@@ -1,14 +1,17 @@
 import { CalendarEvent } from '@/shared/types/EventType';
 
-// 8:00 AM 형식으로 시간 포맷팅
 function formatDateTime(date: { date?: string; dateTime?: string; timeZone?: string }) {
     if (!date.dateTime) {
         return null;
     }
     const d = new Date(date.dateTime);
+
+    const minutes = d.getMinutes();
+    const shouldDisplayMinutes = minutes !== 0;
+
     const formatter = new Intl.DateTimeFormat('en-US', {
         hour: 'numeric',
-        minute: '2-digit',
+        ...(shouldDisplayMinutes ? { minute: '2-digit' } : {}),
         hour12: true,
         timeZone: date.timeZone || 'UTC'
     });

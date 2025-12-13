@@ -8,8 +8,6 @@ export interface Api {
     refreshToken: () => Promise<any>;
     logoutGoogleOAuth: () => Promise<boolean>;
 
-    safeReload: () => void;
-
     startDragging: () => void;
     stopDragging: () => void;
 
@@ -40,7 +38,7 @@ const api = {
     refreshToken: () => ipcRenderer.invoke('try-auto-login'),
 
     logoutGoogleOAuth: () => ipcRenderer.invoke('logout-google-oauth'),
-    safeReload: () => ipcRenderer.send('safe-reload'),
+
     startDragging: () => ipcRenderer.send('start-dragging'),
     stopDragging: () => ipcRenderer.send('stop-dragging'),
 
