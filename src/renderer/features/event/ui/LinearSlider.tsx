@@ -77,7 +77,7 @@ export function LinearSlider({ updateForm, colorId = '1', defaultTime = ['08:00'
 
                 {/* 선택된 구간 */}
                 <div
-                    className={`absolute top-1/2 h-2 rounded-full ${disabled ? 'opacity-40' : ''} event-color-${colorId} bg-[var(--event-color)]`}
+                    className={`absolute top-1/2 h-2 rounded-full ${disabled ? 'opacity-40' : ''} event-color-${colorId} bg-(--event-color)`}
                     style={{
                         left: `${(start / 1440) * 100}%`,
                         width: `${((end - start) / 1440) * 100}%`,
@@ -95,7 +95,7 @@ export function LinearSlider({ updateForm, colorId = '1', defaultTime = ['08:00'
                             transform: 'translateX(-50%)'
                         }}
                     >
-                        <div className={`mx-auto mb-1 h-4 w-[1px] ${disabled ? 'bg-zinc-500' : 'bg-zinc-400'}`} />
+                        <div className={`mx-auto mb-1 h-4 w-px ${disabled ? 'bg-zinc-500' : 'bg-zinc-400'}`} />
                         {label}
                     </div>
                 ))}

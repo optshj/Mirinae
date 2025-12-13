@@ -54,7 +54,7 @@ export function FooterEvent({ items, title, description, headerButton }: FooterE
                 ) : (
                     visibleItems.map((event) => (
                         <div key={event.id} className="flex items-center gap-3 px-3">
-                            <span className={`h-2 w-2 rounded-full event-color-${event.colorId} bg-[var(--event-color)]`}></span>
+                            <span className={`h-2 w-2 rounded-full event-color-${event.colorId} bg-(--event-color)`}></span>
                             <div className="flex flex-col">
                                 <span className="text-primary line-clamp-1 font-semibold">{event.summary}</span>
                                 <span className="text-font-gray line-clamp-1 text-sm">{isTimeEvent(event) ? formatKoreanDateTime(event.start.dateTime) : formatKoreanDate(event.start.date)}</span>

@@ -12,7 +12,6 @@ export function Footer() {
 
     const handleColorChange = (newColor: string) => {
         setColorId(newColor);
-
         localStorage.setItem(COLOR_STORAGE_KEY, newColor);
     };
 

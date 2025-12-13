@@ -9,7 +9,6 @@ export const checkVersionAndShowPatchNotes = () => {
 
     if (!lastVersion) {
         store.set('last-version', currentVersion);
-        console.log('최초 실행입니다. 패치 노트 없이 현재 버전 저장.');
         return;
     }
 

@@ -5,19 +5,18 @@ export interface Api {
     startGoogleOauth: () => void;
     onGoogleOauthSuccess: (callback: (tokens: any) => void) => () => void;
     onGoogleOauthError: (callback: (error: any) => void) => () => void;
-    tryAutoLogin: () => Promise<any>;
+    refreshToken: () => Promise<any>;
     logoutGoogleOAuth: () => Promise<boolean>;
 
     safeReload: () => void;
+
     startDragging: () => void;
     stopDragging: () => void;
+
     quitApp: () => void;
+
     setOpacity: (opacity: number) => void;
     getInitialOpacity: () => Promise<number>;
-
-    setColorId: (color: string) => void;
-    getInitialColorId: () => Promise<string>;
-    onColorIdChange: (callback: (colorId: string) => void) => void;
 
     onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void;
 
@@ -55,6 +54,7 @@ const api = {
         ipcRenderer.on('show-patch-notes', listener);
         return () => ipcRenderer.removeListener('show-patch-notes', listener);
     },
+
     onUpdateClickable: (callback: (isExplorer: boolean) => void) => {
         const listener = (_, isExplorer: boolean) => callback(isExplorer);
         ipcRenderer.removeListener('update-clickable', listener);
