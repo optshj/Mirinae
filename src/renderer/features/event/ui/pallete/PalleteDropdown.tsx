@@ -13,7 +13,7 @@ export function PalleteDropdown({ colorId, onColorIdChange }: PalleteDropdownPro
             <DropDown
                 trigger={
                     <button
-                        className={`relative flex h-7 w-7 items-center justify-center rounded-full border border-white/30 shadow-md transition-all hover:scale-110 event-color-${colorId} bg-(--event-color)`}
+                        className={`relative flex h-7 w-7 items-center justify-center rounded-full border border-white/30 shadow-md transition-all hover:scale-110 event-color-${colorId} bg-(--event-color) dark:saturate-70`}
                     >
                         <Palette className="h-3.5 w-3.5 text-white" />
                     </button>

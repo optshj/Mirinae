@@ -41,7 +41,7 @@ export function useGoogleCalendar() {
                 colorId: event.colorId ?? '1',
                 extendedProperties: {
                     private: {
-                        isCompleted: event.extendedProperties?.private?.isCompleted ?? ''
+                        isCompleted: event.extendedProperties?.private?.isCompleted === 'true' ? 'true' : 'false'
                     }
                 }
             }));

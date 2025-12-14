@@ -11,10 +11,12 @@ import { CalendarEvent, isAllDayEvent, isHolidayEvent, isTimeEvent } from '@/sha
 //2025-09-17T18:00:00+09:00 -> 18:00
 function ISO8601toSimpleTime(isoString: string) {
     const date = new Date(isoString);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const paddedMinutes = String(minutes).padStart(2, '0');
-    return `${hours}:${paddedMinutes}`;
+    return date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Seoul'
+    });
 }
 
 interface EditEventFormProps {
@@ -90,7 +92,7 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
 function Event({ event, openForm, deleteButton, completeButton }: { event: CalendarEvent; openForm: () => void; deleteButton: React.ReactNode; completeButton: React.ReactNode }) {
     return (
         <div
-            className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted ? 'opacity-50' : ''}`}
+            className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted === 'true' ? 'opacity-50' : ''}`}
             onClick={openForm}
         >
             <div className={`h-full w-2 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />

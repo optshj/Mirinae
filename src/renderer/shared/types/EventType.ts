@@ -154,7 +154,7 @@ type Events = {
     eventType: string;
     extendedProperties: {
         private: {
-            isCompleted: string;
+            isCompleted: 'true' | 'false';
         };
     };
 };
