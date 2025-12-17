@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { trackEvent } from '@aptabase/electron/renderer';
 
@@ -25,11 +25,9 @@ interface EditEventFormProps {
     completeButton: React.ReactNode;
 }
 export function EditEventForm({ event, deleteButton, completeButton }: EditEventFormProps) {
-    const [showForm, setShowForm] = useState(false);
     const { editEvent } = useEditEvent();
 
     const date = isTimeEvent(event) ? new Date(event.start.dateTime) : new Date(event.start.date);
-    // form 초기화
     const [form, setForm] = useState<FormState>({
         summary: event.summary,
         colorId: event.colorId,
@@ -39,7 +37,6 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
     });
     const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }));
 
-    // 제출 처리
     const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
         e?.preventDefault();
         if (!form.summary.trim()) {
@@ -51,7 +48,6 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
             date,
             ...form
         });
-        setShowForm(false);
         trackEvent('EditEvent');
         const desc = form.allDay ? '하루 종일 일정으로 수정되었습니다.' : `${form.start} - ${form.end}에 일정이 수정되었습니다.`;
         toast.success(`"${form.summary}" 일정이 수정되었습니다`, {
@@ -59,43 +55,15 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
         });
     };
 
-    const openForm = () => {
-        if (!isHolidayEvent(event)) {
-            setShowForm(true);
-        }
-    };
-
-    // Ctrl + Enter 단축키
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.key === 'Enter') {
-                if (showForm) {
-                    handleSubmit();
-                }
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [showForm, form]);
-
-    return (
-        <>
-            {showForm ? (
-                <EventForm id={'edit-event-form'} form={form} updateForm={updateForm} onCancel={() => setShowForm(false)} onSubmit={handleSubmit} onSubmitText="수정" />
-            ) : (
-                <Event event={event} openForm={openForm} deleteButton={deleteButton} completeButton={completeButton} />
-            )}
-        </>
-    );
+    return <EventForm form={form} updateForm={updateForm} onSubmit={handleSubmit} type="edit" trigger={<Event event={event} deleteButton={deleteButton} completeButton={completeButton} />} />;
 }
 
-function Event({ event, openForm, deleteButton, completeButton }: { event: CalendarEvent; openForm: () => void; deleteButton: React.ReactNode; completeButton: React.ReactNode }) {
+function Event({ event, deleteButton, completeButton }: { event: CalendarEvent; deleteButton: React.ReactNode; completeButton: React.ReactNode }) {
     return (
         <div
             className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted === 'true' ? 'opacity-50' : ''}`}
-            onClick={openForm}
         >
-            <div className={`h-full w-2 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />
+            <div className={`h-10 w-2 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />
             <div className="text-primary flex-1 pl-4">
                 <span className="font-semibold">{event.summary}</span>
                 <div className="mt-1 text-xs">
@@ -103,7 +71,7 @@ function Event({ event, openForm, deleteButton, completeButton }: { event: Calen
                 </div>
             </div>
             {!isHolidayEvent(event) && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
                     {completeButton}
                     {deleteButton}
                 </div>
