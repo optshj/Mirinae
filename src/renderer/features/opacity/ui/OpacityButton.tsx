@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@/shared/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { Button } from '@/shared/ui/button';
 
 export function OpacityButton() {
     const [opacity, setOpacity] = useState(1.0);
+
     useEffect(() => {
         async function fetchOpacity() {
             const initialOpacity = await window.api.getInitialOpacity();

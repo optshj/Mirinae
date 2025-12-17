@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { trackEvent } from '@aptabase/electron/renderer';
 
-import { EventForm } from '../EventForm';
+import { EventForm } from '../components/EventForm';
 import { useEditEvent } from './EditEventForm.mutation';
 import { FormState } from '../../types/FormType';
 

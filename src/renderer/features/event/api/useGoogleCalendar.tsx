@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { useShowHoliday } from '@/features/event/model/ShowHolidayContext';
 import { CalendarEvent, isHolidayEvent } from '@/shared/types/EventType';
 import { useLogin } from '@/shared/hooks/useLogin';
 
@@ -10,7 +9,6 @@ const REFETCH_INTERVAL = 1000 * 60 * 60; // 1 hour
 
 export function useGoogleCalendar() {
     const { tokens, refreshToken } = useLogin();
-    const { isShow } = useShowHoliday();
 
     const { data: events } = useQuery({
         queryKey: ['googleCalendarEvents'],
@@ -73,9 +71,7 @@ export function useGoogleCalendar() {
         enabled: Boolean(tokens.access_token)
     });
 
-    console.log(events);
-
-    const mergedEvents = useMemo(() => (isShow ? [...(holidayEvents ?? []), ...(events ?? [])] : (events ?? [])), [holidayEvents, events, isShow]);
+    const mergedEvents = useMemo(() => [...(holidayEvents ?? []), ...(events ?? [])], [holidayEvents, events]);
     const sortedEventsOrderByDate = useMemo(() => {
         return [...mergedEvents].sort((a, b) => {
             const startA = a.start.dateTime ?? a.start.date;

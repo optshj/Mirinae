@@ -1,6 +1,10 @@
 import { useLogin } from '@/shared/hooks/useLogin';
 
-export function LoginButton({ closeDropDown, closeOnClick = true }: { closeDropDown?: () => void; closeOnClick?: boolean }) {
+interface LoginButtonProps {
+    closeDropDown?: () => void;
+    closeOnClick?: boolean;
+}
+export function LoginButton({ closeDropDown, closeOnClick = true }: LoginButtonProps) {
     const { login, logout, tokens } = useLogin();
     const onLogout = () => {
         if (closeOnClick && closeDropDown) {

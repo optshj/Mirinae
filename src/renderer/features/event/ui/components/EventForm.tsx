@@ -1,10 +1,12 @@
+import { useEffect, useState } from 'react';
 import { Check, ArrowRight } from 'lucide-react';
+
 import { HangulInput } from '@/shared/ui/input';
 import { Switch } from '@/shared/ui/switch';
-import { LinearSlider } from './LinearSlider';
-import { FormState } from '../types/FormType';
-import { useEffect, useState } from 'react';
 import { COLORPALLETTE } from '@/shared/const/color';
+
+import { LinearSlider } from './LinearSlider';
+import { FormState } from '../../types/FormType';
 
 interface EventFormProps {
     form: FormState;

@@ -1,6 +1,6 @@
 import { AlarmClock, AlarmClockOff } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { FormState } from '../types/FormType';
+import { FormState } from '../../types/FormType';
 
 interface SliderProps {
     updateForm: (key: keyof FormState, value: FormState[keyof FormState]) => void;
