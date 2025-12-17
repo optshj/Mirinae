@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { FlipCalendarButton } from '@/features/flip';
 import { RefreshButton } from '@/features/refresh';
-import { DateProps } from '@/shared/lib/useDate';
+import { DateProps } from '@/shared/hooks/useDate';
 import { HeaderDropDownButton } from './HeaderDropDownButton';
 
 const dragStyle = { WebkitAppRegion: 'drag' } as React.CSSProperties;

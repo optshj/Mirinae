@@ -7,7 +7,7 @@ interface HangulInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
     value: string;
     onChange: (newValue: string) => void;
 }
-export default function HangulInput({ value, onChange, ...props }: HangulInputProps) {
+export function HangulInput({ value, onChange, ...props }: HangulInputProps) {
     const [inputMode, setInputMode] = useState<'ko' | 'en'>('ko');
     const inputRef = useRef<HTMLInputElement>(null);
     const cursorRef = useRef<number | null>(null);
@@ -38,7 +38,9 @@ export default function HangulInput({ value, onChange, ...props }: HangulInputPr
         }
 
         const input = inputRef.current;
-        if (!input) return;
+        if (!input) {
+            return;
+        }
 
         const start = input.selectionStart || 0;
         const end = input.selectionEnd || 0;
@@ -57,7 +59,9 @@ export default function HangulInput({ value, onChange, ...props }: HangulInputPr
                 return;
             }
 
-            if (textBefore.length === 0) return;
+            if (textBefore.length === 0) {
+                return;
+            }
 
             if (inputMode === 'ko') {
                 const lastChar = textBefore.slice(-1);
@@ -123,7 +127,9 @@ export default function HangulInput({ value, onChange, ...props }: HangulInputPr
         e.preventDefault();
         const pastedText = e.clipboardData.getData('text');
         const input = inputRef.current;
-        if (!input) return;
+        if (!input) {
+            return;
+        }
 
         const start = input.selectionStart || 0;
         const end = input.selectionEnd || 0;

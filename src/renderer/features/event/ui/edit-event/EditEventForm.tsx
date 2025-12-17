@@ -9,7 +9,7 @@ import { FormState } from '../../types/FormType';
 import { CalendarEvent, isAllDayEvent, isHolidayEvent, isTimeEvent } from '@/shared/types/EventType';
 
 //2025-09-17T18:00:00+09:00 -> 18:00
-function ISO8601toSimpleTime(isoString: string) {
+function formatToHHmm(isoString: string) {
     const date = new Date(isoString);
     return date.toLocaleTimeString('en-US', {
         hour: '2-digit',
@@ -31,8 +31,8 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
     const [form, setForm] = useState<FormState>({
         summary: event.summary,
         colorId: event.colorId,
-        start: isTimeEvent(event) ? ISO8601toSimpleTime(event.start.dateTime) : '08:00',
-        end: isTimeEvent(event) ? ISO8601toSimpleTime(event.end.dateTime) : '12:00',
+        start: isTimeEvent(event) ? formatToHHmm(event.start.dateTime) : '08:00',
+        end: isTimeEvent(event) ? formatToHHmm(event.end.dateTime) : '12:00',
         allDay: isAllDayEvent(event)
     });
     const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -59,9 +59,17 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
 }
 
 function Event({ event, deleteButton, completeButton }: { event: CalendarEvent; deleteButton: React.ReactNode; completeButton: React.ReactNode }) {
+    const isHoliday = isHolidayEvent(event);
+
+    const preventHolidayClick = (e: React.MouseEvent) => {
+        if (isHoliday) {
+            e.stopPropagation();
+        }
+    };
     return (
         <div
             className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted === 'true' ? 'opacity-50' : ''}`}
+            onClick={preventHolidayClick}
         >
             <div className={`h-10 w-2 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />
             <div className="text-primary flex-1 pl-4">
@@ -70,8 +78,8 @@ function Event({ event, deleteButton, completeButton }: { event: CalendarEvent; 
                     {isTimeEvent(event) ? `${new Date(event.start.dateTime).toLocaleString()} ~ ${new Date(event.end.dateTime).toLocaleString()}` : `${event.start.date}`}
                 </div>
             </div>
-            {!isHolidayEvent(event) && (
-                <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
+            {!isHoliday && (
+                <div className="flex items-center gap-2">
                     {completeButton}
                     {deleteButton}
                 </div>

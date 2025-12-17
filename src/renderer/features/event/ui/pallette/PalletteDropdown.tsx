@@ -1,12 +1,16 @@
-import DropDown from '@/shared/ui/dropdown';
+import { DropDown } from '@/shared/ui/dropdown';
+import { COLOR_STORAGE_KEY, COLORPALLETTE } from '@/shared/const/color';
 import { Check, Palette } from 'lucide-react';
 
-interface PalleteDropdownProps {
+interface PalletteDropdownProps {
     colorId: string;
-    onColorIdChange: (colorId: string) => void;
+    setColorId: (colorId: string) => void;
 }
-export function PalleteDropdown({ colorId, onColorIdChange }: PalleteDropdownProps) {
-    const COLORPALLETE = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+export function PalletteDropdown({ colorId, setColorId }: PalletteDropdownProps) {
+    const handleColorChange = (newColor: string) => {
+        setColorId(newColor);
+        localStorage.setItem(COLOR_STORAGE_KEY, newColor);
+    };
 
     return (
         <>
@@ -20,11 +24,11 @@ export function PalleteDropdown({ colorId, onColorIdChange }: PalleteDropdownPro
                 }
             >
                 <div className="grid grid-cols-6 gap-2 px-2">
-                    {COLORPALLETE.map((key) => (
+                    {COLORPALLETTE.map((key) => (
                         <div
                             key={key}
                             className={`flex h-5 w-5 items-center justify-center rounded-full transition-all hover:scale-150 dark:saturate-70 event-color-${key} bg-(--event-color)`}
-                            onClick={() => onColorIdChange(key)}
+                            onClick={() => handleColorChange(key)}
                         >
                             {colorId === key && <Check className="text-white" strokeWidth={3} size={12} />}
                         </div>

@@ -1,11 +1,10 @@
 import { Check, ArrowRight } from 'lucide-react';
-import HangulInput from '@/shared/ui/HangulInput';
+import { HangulInput } from '@/shared/ui/input';
 import { Switch } from '@/shared/ui/switch';
 import { LinearSlider } from './LinearSlider';
 import { FormState } from '../types/FormType';
 import { useEffect, useState } from 'react';
-
-const COLORPALLETE = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+import { COLORPALLETTE } from '@/shared/const/color';
 
 interface EventFormProps {
     form: FormState;
@@ -91,7 +90,7 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
 
                     {/** 컬러 팔레트 */}
                     <div className="grid grid-cols-6 gap-2 px-2">
-                        {COLORPALLETE.map((key) => (
+                        {COLORPALLETTE.map((key) => (
                             <div
                                 key={key}
                                 className={`flex h-6 w-6 items-center justify-center rounded-full transition-all hover:scale-150 dark:saturate-70 event-color-${key} bg-(--event-color)`}

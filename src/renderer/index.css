@@ -2,6 +2,8 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 *:focus {
     outline: none !important;
 }
@@ -85,7 +87,6 @@ body {
     }
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
 @layer base {
     .event-color-1 {
         --event-color: #a4bdfc;

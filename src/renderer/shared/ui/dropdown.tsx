@@ -1,5 +1,4 @@
-import React, { useCallback } from 'react';
-import { useRef, useState, useEffect } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 interface DropDownProps {
@@ -8,7 +7,7 @@ interface DropDownProps {
     align?: 'left' | 'right';
     closeOnClick?: boolean;
 }
-export default function DropDown({ trigger, children, align = 'left', closeOnClick = true }: DropDownProps) {
+export function DropDown({ trigger, children, align = 'left', closeOnClick = true }: DropDownProps) {
     const [open, setOpen] = useState(false);
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const triggerRef = useRef<HTMLDivElement>(null);

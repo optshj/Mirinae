@@ -9,7 +9,7 @@ import { EventList } from '@/entities/event';
 import { isSameDay } from '@/shared/lib/dateFunction';
 import { Dialog, DialogTrigger } from '@/shared/ui/dialog';
 import { isTimeEvent } from '@/shared/types/EventType';
-import { DateProps } from '@/shared/lib/useDate';
+import { DateProps } from '@/shared/hooks/useDate';
 
 export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>) {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());

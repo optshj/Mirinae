@@ -1,4 +1,4 @@
-import { useDate } from '@/shared/lib/useDate';
+import { useDate } from '@/shared/hooks/useDate';
 
 import { Header } from '@/widgets/Header';
 import { Footer } from '@/widgets/Footer';

@@ -1,4 +1,4 @@
-import DropDown from '@/shared/ui/dropdown';
+import { DropDown } from '@/shared/ui/dropdown';
 import { Settings } from 'lucide-react';
 
 import { LoginButton } from '@/features/user';

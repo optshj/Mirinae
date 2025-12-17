@@ -11,7 +11,7 @@ export function CompleteEventButton({ eventId, isCompleted }: CompleteEventButto
 
     const handleToggle = (e: React.MouseEvent) => {
         e.stopPropagation();
-        toast.info(isCompleted ? '일정이 미완료로 표시되었습니다.' : '일정이 완료로 표시되었습니다.');
+        toast.info(isCompleted === 'true' ? '일정이 미완료로 표시되었습니다.' : '일정이 완료로 표시되었습니다.');
         completeEvent({
             eventId,
             isCompleted: isCompleted === 'true' ? 'false' : 'true'
