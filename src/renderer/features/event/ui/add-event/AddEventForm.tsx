@@ -26,7 +26,7 @@ export function AddEventForm({ date }: { date: Date }) {
         e?.preventDefault();
         if (!form.summary.trim()) {
             toast.warning('일정 제목을 입력해주세요');
-            return;
+            return false;
         }
         addEvent({ date, ...form });
         trackEvent('AddEvent');
@@ -35,6 +35,7 @@ export function AddEventForm({ date }: { date: Date }) {
             description: `${date.toLocaleDateString()} ${desc}`
         });
         resetForm();
+        return true;
     };
 
     return (

@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
 import { CalendarEvent, isHolidayEvent } from '@/shared/types/EventType';
 
+const MAX_VISIBLE = 3; // 보여줄 최대 개수
+
 function formatDateTime(dateField: { date?: string; dateTime?: string; timeZone?: string }) {
     if (!dateField.dateTime) {
         return null;
@@ -13,9 +15,12 @@ function formatDateTime(dateField: { date?: string; dateTime?: string; timeZone?
 }
 
 export function EventList({ items }: { items: CalendarEvent[] }) {
+    const visibleItems = items.slice(0, MAX_VISIBLE);
+    const remainingCount = items.length - MAX_VISIBLE;
+
     return (
         <>
-            {items.slice(0, 4).map((event, i) => {
+            {visibleItems.map((event, i) => {
                 const isCompleted = event.extendedProperties?.private?.isCompleted === 'true';
                 const isHoliday = isHolidayEvent(event);
 
@@ -33,6 +38,7 @@ export function EventList({ items }: { items: CalendarEvent[] }) {
                     </div>
                 );
             })}
+            {remainingCount > 0 && <div className="text-secondary mx-1 mt-1 ml-4 truncate text-sm">+{remainingCount}</div>}
         </>
     );
 }

@@ -31,7 +31,7 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
         e?.preventDefault();
         if (!form.summary.trim()) {
             toast.warning('일정 제목을 입력해주세요');
-            return;
+            return false;
         }
         editEvent({
             eventId: event.id,
@@ -43,6 +43,7 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
         toast.success(`"${form.summary}" 일정이 수정되었습니다`, {
             description: `${date.toLocaleDateString()} ${desc}`
         });
+        return true;
     };
 
     return <EventForm form={form} updateForm={updateForm} onSubmit={handleSubmit} type="edit" trigger={<Event event={event} deleteButton={deleteButton} completeButton={completeButton} />} />;

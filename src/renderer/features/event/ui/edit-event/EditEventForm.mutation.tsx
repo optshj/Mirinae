@@ -1,7 +1,7 @@
 import { useLogin } from '@/shared/hooks/useLogin';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarEvent } from '@/shared/types/EventType';
-import { createEventBody } from '@/features/event/lib/createEventBody';
+import { createEventBody } from '../../lib/createEventBody';
 
 interface EditEventProp {
     eventId: string;

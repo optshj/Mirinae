@@ -11,7 +11,7 @@ import { FormState } from '../../types/FormType';
 interface EventFormProps {
     form: FormState;
     updateForm: (key: keyof FormState, value: FormState[keyof FormState]) => void;
-    onSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
+    onSubmit: (e?: React.FormEvent<HTMLFormElement>) => boolean;
     trigger: React.ReactNode;
     type: 'add' | 'edit';
 }
@@ -26,8 +26,10 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
             if (e.ctrlKey && e.key === 'Enter') {
                 if (showForm) {
                     e.preventDefault();
-                    onSubmit();
-                    setShowForm(false);
+                    const isSuccess = onSubmit();
+                    if (isSuccess) {
+                        setShowForm(false);
+                    }
                     return;
                 }
                 if (document.getElementById('edit-event-form')) {
