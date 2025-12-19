@@ -5,19 +5,16 @@ export interface Api {
     startGoogleOauth: () => void;
     onGoogleOauthSuccess: (callback: (tokens: any) => void) => () => void;
     onGoogleOauthError: (callback: (error: any) => void) => () => void;
-    tryAutoLogin: () => Promise<any>;
+    refreshToken: () => Promise<any>;
     logoutGoogleOAuth: () => Promise<boolean>;
 
-    safeReload: () => void;
     startDragging: () => void;
     stopDragging: () => void;
+
     quitApp: () => void;
+
     setOpacity: (opacity: number) => void;
     getInitialOpacity: () => Promise<number>;
-
-    setColorId: (color: string) => void;
-    getInitialColorId: () => Promise<string>;
-    onColorIdChange: (callback: (colorId: string) => void) => void;
 
     onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void;
 
@@ -38,9 +35,10 @@ const api = {
         return () => ipcRenderer.removeListener('google-oauth-error', listener);
     },
 
-    tryAutoLogin: () => ipcRenderer.invoke('try-auto-login'),
+    refreshToken: () => ipcRenderer.invoke('try-auto-login'),
+
     logoutGoogleOAuth: () => ipcRenderer.invoke('logout-google-oauth'),
-    safeReload: () => ipcRenderer.send('safe-reload'),
+
     startDragging: () => ipcRenderer.send('start-dragging'),
     stopDragging: () => ipcRenderer.send('stop-dragging'),
 
@@ -49,19 +47,12 @@ const api = {
     setOpacity: (opacity: number) => ipcRenderer.send('set-opacity', opacity),
     getInitialOpacity: () => ipcRenderer.invoke('get-initial-opacity'),
 
-    setColorId: (color: string) => ipcRenderer.send('set-colorId', color),
-    getInitialColorId: () => ipcRenderer.invoke('get-initial-colorId'),
-
-    onColorIdChange: (callback) => {
-        const listener = (_, colorId: string) => callback(colorId);
-        ipcRenderer.on('colorId-changed', listener);
-        return () => ipcRenderer.removeListener('colorId-changed', listener);
-    },
     onShowPatchNotes: (callback) => {
         const listener = (_, ...args) => callback(...args);
         ipcRenderer.on('show-patch-notes', listener);
         return () => ipcRenderer.removeListener('show-patch-notes', listener);
     },
+
     onUpdateClickable: (callback: (isExplorer: boolean) => void) => {
         const listener = (_, isExplorer: boolean) => callback(isExplorer);
         ipcRenderer.removeListener('update-clickable', listener);

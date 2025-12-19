@@ -13,6 +13,7 @@ export const registerIPCHandlers = () => {
     ipcMain.on('quit-app', () => {
         app.quit();
     });
+
     ipcMain.on('start-dragging', () => {
         detach(mainWindow);
         mainWindow.setResizable(true);
@@ -23,20 +24,13 @@ export const registerIPCHandlers = () => {
         const { width, height, x, y } = mainWindow.getBounds();
         store.set('window-bounds', { width, height, x, y });
     });
+
     ipcMain.on('set-opacity', (_, newOpacity) => {
         mainWindow.setOpacity(newOpacity);
         store.set('window-opacity', newOpacity);
     });
+
     ipcMain.handle('get-initial-opacity', () => store.get('window-opacity'));
-
-    ipcMain.on('set-colorId', (_, colorId: string) => {
-        store.set('important-colorId', colorId);
-        if (mainWindow) {
-            mainWindow.webContents.send('colorId-changed', colorId);
-        }
-    });
-
-    ipcMain.handle('get-initial-colorId', async () => store.get('important-colorId', '11'));
 
     ipcMain.on('renderer-ready', async (event) => {
         const window = await activeWindow();

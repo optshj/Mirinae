@@ -1,0 +1,54 @@
+import { useCallback, useEffect, useState } from 'react';
+import { initialTokens, Tokens } from '@/shared/types/userType';
+
+export function useLogin() {
+    const [tokens, setTokens] = useState<Tokens>(initialTokens);
+
+    const login = () => {
+        window.api.startGoogleOauth();
+    };
+
+    const logout = () => {
+        setTokens(initialTokens);
+        window.api.logoutGoogleOAuth();
+    };
+
+    const handleLogin = useCallback((receivedTokens) => {
+        setTokens(receivedTokens);
+    }, []);
+
+    const handleError = useCallback((error) => {
+        console.error('OAuth Error:', error);
+    }, []);
+
+    const refreshToken = useCallback(async () => {
+        if (window.api.refreshToken) {
+            try {
+                const restoredTokens = await window.api.refreshToken();
+                if (restoredTokens?.access_token) {
+                    setTokens(restoredTokens);
+                    return restoredTokens;
+                }
+            } catch (err) {
+                console.error('Auto login failed:', err);
+            }
+        }
+        return null;
+    }, []);
+
+    useEffect(() => {
+        refreshToken();
+        window.addEventListener('online', refreshToken);
+
+        const removeSuccessListener = window.api.onGoogleOauthSuccess(handleLogin);
+        const removeErrorListener = window.api.onGoogleOauthError(handleError);
+
+        return () => {
+            removeSuccessListener();
+            removeErrorListener();
+            window.removeEventListener('online', refreshToken);
+        };
+    }, [handleLogin, handleError, refreshToken]);
+
+    return { login, logout, tokens, refreshToken };
+}
