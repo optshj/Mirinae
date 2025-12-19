@@ -15,7 +15,7 @@ export function CalendarItemsProvider({ children }: { children: React.ReactNode 
 export const useCalendarItems = () => {
     const context = useContext(CalendarItemsContext);
     if (context === undefined) {
-        throw new Error('useRefreshCalendar must be used within a RefreshCalendarProvider');
+        throw new Error('useCalendarItems must be used within a CalendarItemsProvider');
     }
     return context;
 };

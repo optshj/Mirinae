@@ -15,6 +15,7 @@ interface EventFormProps {
     trigger: React.ReactNode;
     type: 'add' | 'edit';
 }
+
 export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFormProps) {
     const formId = `${type}-event-form`;
     const submitButtonText = type === 'add' ? '추가' : '수정';
@@ -61,35 +62,44 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
                         />
                     </div>
 
-                    {/** 하루종일 스위치 */}
                     <div className="flex items-center gap-4">
                         <span className={`event-color-${form.colorId} text-(--event-color)`}>하루종일</span>
                         <Switch onClick={() => updateForm('allDay', !form.allDay)} isOn={form.allDay} />
                     </div>
 
-                    {/** 시간 선택: 하루종일이면 숨김 */}
                     <div>
-                        <label className={`event-color-${form.colorId} text-(--event-color)`}>시간 선택</label>
-                        <div className="relative flex flex-col items-center justify-center">
+                        <div className="mb-2 flex items-center justify-between">
+                            <label className={`event-color-${form.colorId} text-(--event-color)`}>시간 설정</label>
+                        </div>
+
+                        <div className="-50 relative flex flex-col items-center justify-center p-4">
                             <LinearSlider updateForm={updateForm} colorId={form.colorId} defaultTime={[form.start, form.end]} disabled={form.allDay} />
+
                             {!form.allDay && (
-                                <div className="flex w-full justify-between px-24">
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-md text-secondary">시작</span>
-                                        <span className={`w-[52px] text-center text-lg font-bold event-color-${form.colorId} text-(--event-color)`}>{form.start}</span>
+                                <div className="mt-4 flex w-full items-center justify-around px-10">
+                                    <div className="flex flex-1 flex-col items-center">
+                                        <span className="mb-1 text-xs tracking-wider text-zinc-400 uppercase">시작시간</span>
+                                        <div className={`w-full max-w-[100px] rounded-xl border border-zinc-100 bg-white px-3 py-1 text-center shadow-sm dark:border-zinc-700 dark:bg-zinc-800`}>
+                                            <span className={`text-lg font-bold event-color-${form.colorId} text-(--event-color)`}>{form.start}</span>
+                                        </div>
                                     </div>
 
-                                    <ArrowRight className="text-primary mt-2 h-5 w-5" />
+                                    {/* 연결 화살표 */}
+                                    <div className="flex px-4 pt-4">
+                                        <ArrowRight className="h-4 w-4 text-zinc-400" />
+                                    </div>
 
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-md text-secondary">종료</span>
-                                        <span className={`event-color-${form.colorId} w-[52px] text-center text-lg font-bold text-(--event-color)`}>{form.end}</span>
+                                    {/* 종료 시간 박스 */}
+                                    <div className="flex flex-1 flex-col items-center">
+                                        <span className="mb-1 text-xs tracking-wider text-zinc-400 uppercase">종료시간</span>
+                                        <div className={`w-full max-w-[100px] rounded-xl border border-zinc-100 bg-white px-3 py-1 text-center shadow-sm dark:border-zinc-700 dark:bg-zinc-800`}>
+                                            <span className={`text-lg font-bold event-color-${form.colorId} text-(--event-color)`}>{form.end}</span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
                         </div>
                     </div>
-
                     {/** 컬러 팔레트 */}
                     <div className="grid grid-cols-6 gap-2 px-2">
                         {COLORPALLETTE.map((key) => (

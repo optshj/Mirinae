@@ -95,7 +95,7 @@ export function LinearSlider({ updateForm, colorId = '1', defaultTime = ['08:00'
                             transform: 'translateX(-50%)'
                         }}
                     >
-                        <div className={`mx-auto mb-1 h-4 w-px ${disabled ? 'bg-zinc-500' : 'bg-zinc-400'}`} />
+                        <div className={`mx-auto mb-2 h-4 w-px ${disabled ? 'bg-zinc-500' : 'bg-zinc-400'}`} />
                         {label}
                     </div>
                 ))}

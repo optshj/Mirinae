@@ -72,6 +72,7 @@ export function useGoogleCalendar() {
     });
 
     const mergedEvents = useMemo(() => [...(holidayEvents ?? []), ...(events ?? [])], [holidayEvents, events]);
+
     const sortedEventsOrderByDate = useMemo(() => {
         return [...mergedEvents].sort((a, b) => {
             const startA = a.start.dateTime ?? a.start.date;

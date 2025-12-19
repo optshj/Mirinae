@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 interface EventBodyParams {
     date: Date;
     start: string;
@@ -6,65 +8,30 @@ interface EventBodyParams {
     colorId: string;
     allDay: boolean;
 }
-export function createEventBody({ date, start, end, summary, allDay, colorId = '1' }: EventBodyParams) {
-    if (allDay) {
-        const startDate = formatDateLocal(date);
-        const endDateObj = new Date(date);
-        endDateObj.setDate(endDateObj.getDate() + 1);
-        const endDate = formatDateLocal(endDateObj);
 
+export function createEventBody({ date, start, end, summary, allDay, colorId = '1' }: EventBodyParams) {
+    const baseDate = dayjs(date);
+
+    if (allDay) {
         return {
             summary,
-            start: { date: startDate },
-            end: { date: endDate },
-            colorId: colorId
+            colorId,
+            start: { date: baseDate.format('YYYY-MM-DD') },
+            end: { date: baseDate.add(1, 'day').format('YYYY-MM-DD') }
         };
     }
 
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const startDateTime = makeDateTime(date, start);
-    const endDateTime = makeDateTime(date, end);
+    const [startHour, startMin] = start.split(':').map(Number);
+    const [endHour, endMin] = end.split(':').map(Number);
+
+    const startDateTime = baseDate.hour(startHour).minute(startMin).second(0);
+    const endDateTime = baseDate.hour(endHour).minute(endMin).second(0);
 
     return {
         summary,
-        start: { dateTime: toIsoStringWithOffset(startDateTime), timeZone },
-        end: { dateTime: toIsoStringWithOffset(endDateTime), timeZone },
-        colorId: colorId
+        colorId,
+        start: { dateTime: startDateTime.format(), timeZone },
+        end: { dateTime: endDateTime.format(), timeZone }
     };
-}
-
-export function toIsoStringWithOffset(date: Date) {
-    const tzo = -date.getTimezoneOffset();
-    const dif = tzo >= 0 ? '+' : '-';
-    const pad = (num: number) => {
-        const norm = Math.floor(Math.abs(num));
-        return (norm < 10 ? '0' : '') + norm;
-    };
-
-    const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1);
-    const day = pad(date.getDate());
-    const hour = pad(date.getHours());
-    const minute = pad(date.getMinutes());
-    const second = pad(date.getSeconds());
-
-    const offsetHour = pad(tzo / 60);
-    const offsetMinute = pad(tzo % 60);
-
-    return `${year}-${month}-${day}T${hour}:${minute}:${second}${dif}${offsetHour}:${offsetMinute}`;
-}
-
-// 예: Date + 09:30 -> 2025-10-01T09:30:00.000+09:00
-export function makeDateTime(date: Date, time: string) {
-    const [hour, minute] = time.split(':').map(Number);
-    const result = new Date(date);
-    result.setHours(hour, minute, 0, 0);
-    return result;
-}
-
-export function formatDateLocal(date: Date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
 }
