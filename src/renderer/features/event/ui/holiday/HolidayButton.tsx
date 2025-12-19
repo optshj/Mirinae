@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { Switch } from '@/shared/ui/switch';
 
 export function HolidayButton() {
-    const [isShow, setIsShow] = useState(false);
+    const [isShow, setIsShow] = useState(true);
 
     useEffect(() => {
         const saved = localStorage.getItem('holiday');
-        if (saved === 'true') {
+        if (saved === 'true' || saved === null) {
             setIsShow(true);
             document.documentElement.classList.add('show-holiday');
         }
