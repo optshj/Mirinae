@@ -1,6 +1,8 @@
 import activeWindow from 'active-win';
 import type { BrowserWindow } from 'electron';
 
+const WINDOWS_EXPLORER_PATH = 'C:\\Windows\\explorer.exe';
+
 let windowCheckInterval: NodeJS.Timeout | undefined;
 let lastIsExplorer: boolean | undefined;
 
@@ -12,8 +14,7 @@ export function startActiveWindowWatcher(mainWindow: BrowserWindow) {
     windowCheckInterval = setInterval(async () => {
         try {
             const window = await activeWindow();
-
-            const isExplorer = process.platform === 'win32' ? window?.title === 'Program Manager' : process.platform === 'darwin' ? window?.owner?.name === 'Finder' : false;
+            const isExplorer = window?.owner?.path === WINDOWS_EXPLORER_PATH;
 
             if (isExplorer !== lastIsExplorer) {
                 lastIsExplorer = isExplorer;

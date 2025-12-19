@@ -14,6 +14,7 @@ import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindo
 const SERVICE_NAME = 'Mirinae';
 
 export let mainWindow: BrowserWindow;
+let isWindowAttached = false;
 
 // Enable auto launch on system startup
 new AutoLaunch({
@@ -53,14 +54,13 @@ function createWindow(): void {
             experimentalFeatures: false
         }
     });
-
     mainWindow.on('ready-to-show', () => {
-        if (!(mainWindow as any)._isAttached) {
+        if (!isWindowAttached) {
             attach(mainWindow, {
                 forwardMouseInput: true,
                 forwardKeyboardInput: true
             });
-            (mainWindow as any)._isAttached = true;
+            isWindowAttached = true;
         }
 
         mainWindow.setOpacity(savedOpacity);
