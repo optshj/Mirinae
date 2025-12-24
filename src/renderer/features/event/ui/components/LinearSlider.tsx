@@ -99,9 +99,9 @@ export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'] }: S
                 />
 
                 {['00', '06', '12', '18', '24'].map((h) => (
-                    <div key={h} className="absolute mt-2 -ml-2 flex flex-col items-center" style={{ left: `${(parseInt(h) / 24) * 100}%` }}>
+                    <div key={h} className="absolute mt-2 flex flex-col" style={{ left: `${(parseInt(h) / 24) * 100}%` }}>
                         <div className="mb-3 h-2 w-px bg-zinc-400" />
-                        <span className="text-xs font-medium text-zinc-500">{h}</span>
+                        <span className="-ml-1.5 text-xs font-medium text-zinc-500">{h}</span>
                     </div>
                 ))}
 

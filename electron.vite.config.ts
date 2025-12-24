@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
                 csp({
                     policy: {
                         'default-src': ["'self'"],
-                        'connect-src': ["'self'", 'https://www.googleapis.com']
+                        'connect-src': ["'self'", 'https://www.googleapis.com', 'https://discord.com']
                     }
                 })
             ]
