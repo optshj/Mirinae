@@ -45,10 +45,17 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [showForm, form, onSubmit, type]);
 
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        const isSuccess = onSubmit(e);
+        if (isSuccess) {
+            setShowForm(false);
+        }
+    };
+
     return (
         <>
             {showForm ? (
-                <form onSubmit={onSubmit} className={`flex flex-col gap-4 rounded-xl border event-color-${form.colorId} border-(--event-color) p-4 dark:saturate-70`} id={formId}>
+                <form onSubmit={handleSubmit} className={`flex flex-col gap-4 rounded-xl border event-color-${form.colorId} border-(--event-color) p-4 dark:saturate-70`} id={formId}>
                     <div className="flex flex-col gap-1">
                         <label htmlFor="summary" className="text-(--event-color)">
                             일정 제목
