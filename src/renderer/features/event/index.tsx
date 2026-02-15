@@ -1,4 +1,3 @@
-export { CalendarItemsProvider, useCalendarItems } from './model/CalendarItemsContext';
 export { HolidayButton } from './ui/holiday/HolidayButton';
 
 export { AddEventForm } from './ui/add-event/AddEventForm';

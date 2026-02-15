@@ -1,38 +1,44 @@
 import { useLogin } from '@/shared/hooks/useLogin';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarEvent } from '@/shared/types/EventType';
-import { createEventBody } from '../../lib/createEventBody';
 import { eventApi } from '@/entities/event';
 
-interface EditEventProp {
+interface CompleteEventProp {
   eventId: string;
-  date: Date;
-  start: string;
-  end: string;
-  summary: string;
-  colorId: string;
-  allDay: boolean;
+  isCompleted: string;
 }
-export function useEditEvent() {
+export function useCompleteEvent() {
   const { tokens } = useLogin();
   const queryClient = useQueryClient();
 
-  const editEventMutation = useMutation({
-    mutationKey: ['editEvent'],
-    mutationFn: async ({ eventId, ...bodyProps }: EditEventProp) => {
-      const eventData = createEventBody(bodyProps);
-      return eventApi.update({ accessToken: tokens.access_token, eventId, eventData });
+  const completeEventMutation = useMutation({
+    mutationKey: ['completeEvent'],
+    mutationFn: async ({ eventId, isCompleted }: CompleteEventProp) => {
+      const patchBody = {
+        extendedProperties: {
+          private: {
+            isCompleted: isCompleted
+          }
+        }
+      };
+      return eventApi.complete({ accessToken: tokens.access_token, eventId, patchBody });
     },
-    onMutate: async ({ eventId, ...bodyProps }) => {
+    onMutate: async ({ eventId, isCompleted }) => {
       await queryClient.cancelQueries({ queryKey: ['googleCalendarEvents'] });
       const previousData = queryClient.getQueryData<{ items: CalendarEvent[] }>(['googleCalendarEvents']);
-      const updatedEventPart = createEventBody(bodyProps);
 
       if (previousData) {
         queryClient.setQueryData(['googleCalendarEvents'], {
           items: previousData.items.map((item) => {
             if (item.id === eventId) {
-              return { ...item, ...updatedEventPart, id: eventId };
+              return {
+                ...item,
+                extendedProperties: {
+                  private: {
+                    isCompleted: isCompleted
+                  }
+                }
+              };
             }
             return item;
           })
@@ -46,8 +52,10 @@ export function useEditEvent() {
         queryClient.setQueryData(['googleCalendarEvents'], context.previousData);
       }
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] })
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['googleCalendarEvents'] });
+    }
   });
 
-  return { editEvent: editEventMutation.mutate };
+  return { completeEvent: completeEventMutation.mutate };
 }
