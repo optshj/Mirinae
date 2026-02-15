@@ -19,7 +19,7 @@ export function EventList({ items }: { items: CalendarEvent[] }) {
     const remainingCount = items.length - MAX_VISIBLE;
 
     return (
-        <>
+        <div className="flex flex-col gap-1 px-1">
             {visibleItems.map((event, i) => {
                 const isCompleted = event.extendedProperties?.private?.isCompleted === 'true';
                 const isHoliday = isHolidayEvent(event);
@@ -27,18 +27,15 @@ export function EventList({ items }: { items: CalendarEvent[] }) {
                 const statusClasses = [isCompleted ? 'opacity-50' : 'opacity-100', isHoliday ? '[html:not(.show-holiday)_&]:hidden' : ''].join(' ');
 
                 return (
-                    <div
-                        key={event.id || i}
-                        className={`mx-1 mt-1 line-clamp-1 flex items-center truncate overflow-hidden rounded-sm pr-1 text-sm dark:saturate-70 event-color-${event.colorId} bg-(--event-color)/20 ${statusClasses}`}
-                    >
-                        <div className={`mr-1 w-2 shrink-0 self-stretch rounded-l-sm event-color-${event.colorId} bg-(--event-color)`} />
+                    <div key={event.id || i} className={`line-clamp-1 flex items-center rounded-sm pr-1 text-sm dark:saturate-70 event-color-${event.colorId} bg-(--event-color)/20 ${statusClasses}`}>
+                        <div className={`mr-1 w-2 self-stretch rounded-l-sm bg-(--event-color)`} />
                         <span className="text-primary truncate py-0.5 text-xs">
                             {formatDateTime(event.start)} {event.summary}
                         </span>
                     </div>
                 );
             })}
-            {remainingCount > 0 && <div className="text-secondary mx-1 mt-1 ml-4 truncate text-sm">+{remainingCount}</div>}
-        </>
+            {remainingCount > 0 && <div className="text-secondary ml-2 truncate text-xs">+{remainingCount}</div>}
+        </div>
     );
 }

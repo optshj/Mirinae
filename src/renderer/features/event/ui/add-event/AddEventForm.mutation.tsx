@@ -2,6 +2,7 @@ import { useLogin } from '@/shared/hooks/useLogin';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarEvent } from '@/shared/types/EventType';
 import { createEventBody } from '@/features/event/lib/createEventBody';
+import { http } from '@/shared/lib/http';
 
 interface AddEventProp {
     date: Date;
@@ -19,20 +20,12 @@ export function useAddEvent() {
         mutationKey: ['addEvent'],
         mutationFn: async (variables: AddEventProp) => {
             const eventData = createEventBody(variables);
-            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events`, {
-                method: 'POST',
+            const response = await http.post<CalendarEvent>(`https://www.googleapis.com/calendar/v3/calendars/primary/events`, eventData, {
                 headers: {
-                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${tokens.access_token}`
-                },
-                body: JSON.stringify(eventData)
+                }
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to add event');
-            }
-
-            return response.json();
+            return response;
         },
         onMutate: async (newEvent) => {
             await queryClient.cancelQueries({ queryKey: ['googleCalendarEvents'] });

@@ -20,8 +20,8 @@ export const registerIPCHandlers = () => {
     });
     ipcMain.on('stop-dragging', () => {
         mainWindow.setResizable(false);
-        attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true });
         const { width, height, x, y } = mainWindow.getBounds();
+        attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true });
         store.set('window-bounds', { width, height, x, y });
     });
 

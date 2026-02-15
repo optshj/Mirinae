@@ -2,6 +2,7 @@ import { useLogin } from '@/shared/hooks/useLogin';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarEvent } from '@/shared/types/EventType';
 import { createEventBody } from '../../lib/createEventBody';
+import { http } from '@/shared/lib/http';
 
 interface EditEventProp {
     eventId: string;
@@ -20,20 +21,12 @@ export function useEditEvent() {
         mutationKey: ['editEvent'],
         mutationFn: async ({ eventId, ...bodyProps }: EditEventProp) => {
             const eventData = createEventBody(bodyProps);
-            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
-                method: 'PUT',
+            const response = await http.put<CalendarEvent>(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, eventData, {
                 headers: {
-                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${tokens.access_token}`
-                },
-                body: JSON.stringify(eventData)
+                }
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to edit event');
-            }
-
-            return response.json();
+            return response;
         },
         onMutate: async ({ eventId, ...bodyProps }) => {
             await queryClient.cancelQueries({ queryKey: ['googleCalendarEvents'] });

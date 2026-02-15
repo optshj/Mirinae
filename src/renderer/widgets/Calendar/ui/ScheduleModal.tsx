@@ -6,6 +6,7 @@ import { DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 
 export function ScheduleModal({ date }: { date: Date }) {
     const { items } = useCalendarItems();
+
     const events = items.filter((event) => {
         const eventDate = isTimeEvent(event) ? new Date(event.start.dateTime) : new Date(event.start.date);
 

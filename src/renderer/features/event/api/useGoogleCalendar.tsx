@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { CalendarEvent, isHolidayEvent } from '@/shared/types/EventType';
 import { useLogin } from '@/shared/hooks/useLogin';
+import { http } from '@/shared/lib/http';
 
 const CALENDAR_API_URL = 'https://www.googleapis.com/calendar/v3/calendars';
 const REFETCH_INTERVAL = 1000 * 60 * 60; // 1 hour
@@ -51,11 +52,10 @@ export function useGoogleCalendar() {
     const { data: holidayEvents } = useQuery({
         queryKey: ['googleCalendarHolidays'],
         queryFn: async () => {
-            const res = await fetch(`${CALENDAR_API_URL}/ko.south_korea%23holiday%40group.v.calendar.google.com/events?maxResults=2500`, {
-                method: 'GET',
+            const response = await http.get<{ items: CalendarEvent[] }>(`${CALENDAR_API_URL}/ko.south_korea%23holiday%40group.v.calendar.google.com/events?maxResults=2500`, {
                 headers: { Authorization: `Bearer ${tokens.access_token}` }
-            }).then((res) => res.json());
-            return res;
+            });
+            return response;
         },
         select: (data) => {
             return data.items

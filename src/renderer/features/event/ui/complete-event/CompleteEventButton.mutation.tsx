@@ -1,6 +1,7 @@
 import { useLogin } from '@/shared/hooks/useLogin';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarEvent } from '@/shared/types/EventType';
+import { http } from '@/shared/lib/http';
 
 interface CompleteEventProp {
     eventId: string;
@@ -20,20 +21,12 @@ export function useCompleteEvent() {
                     }
                 }
             };
-            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
-                method: 'PATCH',
+            const response = await http.patch<CalendarEvent>(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, patchBody, {
                 headers: {
-                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${tokens.access_token}`
-                },
-                body: JSON.stringify(patchBody)
+                }
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to complete event');
-            }
-
-            return response.json();
+            return response;
         },
         onMutate: async ({ eventId, isCompleted }) => {
             await queryClient.cancelQueries({ queryKey: ['googleCalendarEvents'] });

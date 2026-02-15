@@ -1,4 +1,5 @@
 import { useLogin } from '@/shared/hooks/useLogin';
+import { http } from '@/shared/lib/http';
 import { CalendarEvent } from '@/shared/types/EventType';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -8,16 +9,11 @@ export function useDeleteEvent() {
     const deleteEventMutation = useMutation({
         mutationKey: ['deleteEvent'],
         mutationFn: async (eventId: string) => {
-            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
-                method: 'DELETE',
+            await http.delete(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
                 headers: {
                     Authorization: `Bearer ${tokens.access_token}`
                 }
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to delete event');
-            }
             return eventId;
         },
         onMutate: async (eventId) => {
