@@ -20,9 +20,10 @@ export const registerIPCHandlers = () => {
   });
   ipcMain.on('stop-dragging', () => {
     mainWindow.setResizable(false);
-    const { width, height, x, y } = mainWindow.getBounds();
+    const bound = mainWindow.getBounds();
     attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true });
-    store.set('window-bounds', { width, height, x, y });
+    mainWindow.setBounds(bound);
+    store.set('window-bounds', bound);
   });
 
   ipcMain.on('set-opacity', (_, newOpacity) => {
