@@ -6,6 +6,7 @@ interface LoginButtonProps {
 }
 export function LoginButton({ closeDropDown, closeOnClick = true }: LoginButtonProps) {
     const { login, logout, tokens } = useLogin();
+
     const onLogout = () => {
         if (closeOnClick && closeDropDown) {
             closeDropDown();

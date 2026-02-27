@@ -10,5 +10,5 @@ export function FlipCalendarButton() {
         setIsFlip((prev) => !prev);
         trackEvent('FlipButton');
     };
-    return <>{isFlip ? <UnfoldVertical strokeWidth={1.0} role="button" size={24} onClick={handleClick} /> : <FoldVertical strokeWidth={1.5} role="button" size={24} onClick={handleClick} />}</>;
+    return <>{isFlip ? <UnfoldVertical strokeWidth={1.0} role="button" size={24} onClick={handleClick} /> : <FoldVertical strokeWidth={1.0} role="button" size={24} onClick={handleClick} />}</>;
 }
