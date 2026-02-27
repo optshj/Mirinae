@@ -1,4 +1,4 @@
-type Events = {
+export type Events = {
   kind: 'calendar#event';
   etag: string;
   id: string;
@@ -156,6 +156,16 @@ type Events = {
     private: {
       isCompleted: 'true' | 'false';
     };
+  };
+  start: {
+    date?: string;
+    dateTime?: string;
+    timeZone?: string;
+  };
+  end: {
+    date?: string;
+    dateTime?: string;
+    timeZone?: string;
   };
 };
 type BaseEvent = Omit<Events, 'start' | 'end'>;

@@ -1,5 +1,5 @@
+import { useCompleteEvent } from '@/entities/event';
 import { Check } from 'lucide-react';
-import { useCompleteEvent } from './CompleteEventButton.mutation';
 import { toast } from 'sonner';
 
 interface CompleteEventButtonProps {

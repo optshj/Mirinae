@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { trackEvent } from '@aptabase/electron/renderer';
 
-import { EventForm } from '../components/EventForm';
-import { useEditEvent } from './EditEventForm.mutation';
-import { FormState } from '../../types/FormType';
+import { EventForm } from './components/EventForm';
+import { FormState } from '../types/FormType';
 
 import { CalendarEvent } from '@/shared/types/EventType';
+import { useEditEvent } from '@/entities/event/hooks/useEditEvent';
 
 interface EditEventFormProps {
   event: CalendarEvent;

@@ -3,8 +3,8 @@ import { toast } from 'sonner';
 import { trackEvent } from '@aptabase/electron/renderer';
 
 import { useAddEvent } from '@/entities/event';
-import { EventForm } from '../components/EventForm';
-import { FormState } from '../../types/FormType';
+import { EventForm } from './components/EventForm';
+import { FormState } from '../types/FormType';
 import { Kbd } from '@/shared/ui/kbd';
 import { useLogin } from '@/shared/hooks/useLogin';
 

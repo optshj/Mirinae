@@ -7,7 +7,7 @@ export function useCalendarItems() {
   const { data: holidayData } = useHolidayEvents();
 
   const eventItems: CalendarEvent[] = (eventData?.items ?? []).map((event) => {
-    const isCompleted = event.extendedProperties?.private?.isCompleted === 'true' ? 'true' : 'false';
+    const isCompleted = event.extendedProperties?.private?.isCompleted === 'true' ? ('true' as const) : ('false' as const);
     const common = {
       ...event,
       colorId: event.colorId ?? '1',
@@ -19,7 +19,7 @@ export function useCalendarItems() {
         ...common,
         category: 'time',
         start: { dateTime: event.start.dateTime, timeZone: event.start.timeZone ?? '' },
-        end: { end: event.end.dateTime, timeZone: event.end.timeZone ?? '' }
+        end: { dateTime: event.end.dateTime, timeZone: event.end.timeZone ?? '' }
       };
     }
 
@@ -52,6 +52,7 @@ export function useCalendarItems() {
     });
   }, [eventItems, holidayItems]);
 
+  // 날짜별로 이벤트를 그룹화
   const eventsByDate = useMemo(() => {
     const grouped: Record<string, CalendarEvent[]> = {};
 
