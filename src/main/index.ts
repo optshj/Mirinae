@@ -18,84 +18,84 @@ let isWindowAttached = false;
 
 // Enable auto launch on system startup
 new AutoLaunch({
-    name: SERVICE_NAME,
-    path: process.execPath
+  name: SERVICE_NAME,
+  path: process.execPath
 }).enable();
 
 // Initialize Aptabase analytics
 initialize('A-US-3842104393');
 
 function createWindow(): void {
-    const { height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
-    const savedBounds = store.get('window-bounds');
-    const savedOpacity = store.get('window-opacity');
+  const { height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
+  const savedBounds = store.get('window-bounds');
+  const savedOpacity = store.get('window-opacity');
 
-    mainWindow = new BrowserWindow({
-        x: savedBounds.x,
-        y: savedBounds.y,
-        width: savedBounds.width,
-        height: savedBounds.height ? savedBounds.height : screenHeight,
-        show: false,
-        frame: false,
-        focusable: true,
-        transparent: true,
-        skipTaskbar: true,
-        type: 'desktop',
-        webPreferences: {
-            preload: join(__dirname, '../preload/index.js'),
-            nodeIntegration: false,
-            contextIsolation: true,
-            sandbox: false,
-            backgroundThrottling: false,
-            spellcheck: false,
-            plugins: false,
-            webgl: false,
-            images: false,
-            experimentalFeatures: false
-        }
-    });
-    mainWindow.on('ready-to-show', () => {
-        if (!isWindowAttached) {
-            attach(mainWindow, {
-                forwardMouseInput: true,
-                forwardKeyboardInput: true
-            });
-            isWindowAttached = true;
-        }
-
-        mainWindow.setOpacity(savedOpacity);
-        mainWindow.setMenu(null);
-        mainWindow.show();
-    });
-
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-        mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
-    } else {
-        mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
+  mainWindow = new BrowserWindow({
+    x: savedBounds.x,
+    y: savedBounds.y,
+    width: savedBounds.width,
+    height: savedBounds.height ? savedBounds.height : screenHeight,
+    show: false,
+    frame: false,
+    focusable: true,
+    transparent: true,
+    skipTaskbar: true,
+    type: 'desktop',
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: false,
+      backgroundThrottling: false,
+      spellcheck: false,
+      plugins: false,
+      webgl: false,
+      images: false,
+      experimentalFeatures: false
     }
+  });
+  mainWindow.on('ready-to-show', () => {
+    if (!isWindowAttached) {
+      attach(mainWindow, {
+        forwardMouseInput: true,
+        forwardKeyboardInput: true
+      });
+      isWindowAttached = true;
+    }
+
+    mainWindow.setOpacity(savedOpacity);
+    mainWindow.setMenu(null);
+    mainWindow.show();
+  });
+
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
+  } else {
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
+  }
 }
 
 app.whenReady().then(() => {
-    electronApp.setAppUserModelId('com.mirinae');
-    app.on('browser-window-created', (_, window) => optimizer.watchWindowShortcuts(window));
+  electronApp.setAppUserModelId('com.mirinae');
+  app.on('browser-window-created', (_, window) => optimizer.watchWindowShortcuts(window));
 
-    createWindow();
-    initTray();
-    initAutoUpdater();
-    registerIPCHandlers();
-    checkVersionAndShowPatchNotes();
-    startActiveWindowWatcher(mainWindow);
+  createWindow();
+  initTray();
+  initAutoUpdater();
+  registerIPCHandlers();
+  checkVersionAndShowPatchNotes();
+  startActiveWindowWatcher(mainWindow);
 
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
-        }
-    });
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
 });
 
 app.on('window-all-closed', () => {
-    stopActiveWindowWatcher();
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+  stopActiveWindowWatcher();
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
