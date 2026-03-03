@@ -8,7 +8,6 @@ interface EventBodyParams {
   colorId: string;
   allDay: boolean;
 }
-
 export function createEventBody({ date, start, end, summary, allDay, colorId = '1' }: EventBodyParams) {
   const baseDate = dayjs(date);
 

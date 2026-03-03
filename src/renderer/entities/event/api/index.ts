@@ -1,6 +1,6 @@
 import { http } from '@/shared/lib/http';
 import { CalendarEvent, Events } from '@/shared/types/EventType';
-import { AddEventProp } from '../types';
+import { GoogleEventBody } from '../types';
 
 const CALENDAR_API_URL = 'https://www.googleapis.com/calendar/v3/calendars';
 
@@ -15,8 +15,9 @@ export const eventApi = {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
   },
-  create: ({ accessToken, eventData }: { accessToken: string; eventData: AddEventProp }) => {
-    return http.post<CalendarEvent>(`${CALENDAR_API_URL}/primary/events`, eventData, {
+  create: ({ accessToken, eventData }: { accessToken: string; eventData: GoogleEventBody }) => {
+    console.log('Creating event with data:', eventData);
+    return http.post(`${CALENDAR_API_URL}/primary/events`, eventData, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
@@ -29,14 +30,15 @@ export const eventApi = {
       }
     });
   },
-  update: ({ accessToken, eventId, eventData }: { accessToken: string; eventId: string; eventData: any }) => {
+  update: ({ accessToken, eventId, eventData }: { accessToken: string; eventId: string; eventData: GoogleEventBody }) => {
+    console.log('Updating event:', { eventId, eventData });
     return http.put<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, eventData, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
     });
   },
-  complete: ({ accessToken, eventId, patchBody }: { accessToken: string; eventId: string; patchBody: any }) => {
+  complete: ({ accessToken, eventId, patchBody }: { accessToken: string; eventId: string; patchBody: GoogleEventBody }) => {
     return http.patch<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, patchBody, {
       headers: {
         Authorization: `Bearer ${accessToken}`
