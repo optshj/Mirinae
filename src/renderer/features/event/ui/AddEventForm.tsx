@@ -6,7 +6,6 @@ import { useAddEvent } from '@/entities/event';
 import { EventForm } from './components/EventForm';
 import { FormState } from '../types/FormType';
 import { Kbd } from '@/shared/ui/kbd';
-import { useLogin } from '@/shared/hooks/useLogin';
 
 const initialFormState: FormState = {
   summary: '',
@@ -16,7 +15,6 @@ const initialFormState: FormState = {
   allDay: false
 };
 export function AddEventForm({ date }: { date: Date }) {
-  const { tokens } = useLogin();
   const [form, setForm] = useState<FormState>(initialFormState);
 
   const resetForm = () => setForm(initialFormState);
@@ -30,7 +28,7 @@ export function AddEventForm({ date }: { date: Date }) {
       toast.warning('일정 제목을 입력해주세요');
       return false;
     }
-    addEvent({ eventData: { ...form, date }, accessToken: tokens.access_token });
+    addEvent({ ...form, date });
     trackEvent('AddEvent');
     const desc = form.allDay ? '하루 종일 일정으로 추가되었습니다.' : `${form.start} - ${form.end}에 일정이 추가되었습니다.`;
     toast.success(`"${form.summary}" 일정이 추가되었습니다`, {
