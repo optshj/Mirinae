@@ -1,6 +1,6 @@
 import { http } from '@/shared/lib/http';
 import { CalendarEvent, Events } from '@/shared/types/EventType';
-import { GoogleEventBody } from '../types';
+import { CompleteEventBody, GoogleEventBody } from '../types';
 
 const CALENDAR_API_URL = 'https://www.googleapis.com/calendar/v3/calendars';
 
@@ -38,7 +38,7 @@ export const eventApi = {
       }
     });
   },
-  complete: ({ accessToken, eventId, patchBody }: { accessToken: string; eventId: string; patchBody: GoogleEventBody }) => {
+  complete: ({ accessToken, eventId, patchBody }: { accessToken: string; eventId: string; patchBody: CompleteEventBody }) => {
     return http.patch<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, patchBody, {
       headers: {
         Authorization: `Bearer ${accessToken}`
