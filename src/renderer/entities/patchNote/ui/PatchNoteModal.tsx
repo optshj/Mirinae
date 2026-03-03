@@ -16,8 +16,7 @@ export function PatchNoteModal() {
       <DialogContent onInteractOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>새롭게 변경된 기능</DialogTitle>
-          <DialogDescription>1. 캘린더 성능이 최적화 되었습니다.</DialogDescription>
-          <DialogDescription>1. 일부 오류가 수정되었습니다.</DialogDescription>
+          <DialogDescription>1. 문의로 주신 이벤트 추가가 안되는 오류가 수정되었습니다.</DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>
