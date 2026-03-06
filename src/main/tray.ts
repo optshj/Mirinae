@@ -1,7 +1,7 @@
 import { app, Menu, nativeImage, Tray, screen } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
 import { join } from 'path';
-import { mainWindow } from '.';
+import { getVirtualScreenOffset, mainWindow } from '.';
 import { store } from './store';
 
 export function initTray() {
@@ -15,7 +15,7 @@ export function initTray() {
     {
       label: '열기',
       click: (): void => {
-        mainWindow?.show();
+        mainWindow.show();
       }
     },
     { type: 'separator' },
@@ -67,11 +67,28 @@ export function initTray() {
 
   contextMenu.on('menu-will-show', () => {
     detach(mainWindow);
+    const { x, y, width, height } = mainWindow.getBounds();
+    const { minX, minY } = getVirtualScreenOffset();
+
+    mainWindow.setBounds({
+      x: x + minX,
+      y: y + minY,
+      width,
+      height
+    });
   });
   contextMenu.on('menu-will-close', () => {
-    attach(mainWindow, {
-      forwardKeyboardInput: true,
-      forwardMouseInput: true
-    });
+    const { x, y, width, height } = mainWindow.getBounds();
+    const { minX, minY } = getVirtualScreenOffset();
+
+    attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true });
+
+    const finalBounds = {
+      x: x - minX,
+      y: y - minY,
+      width,
+      height
+    };
+    mainWindow.setBounds(finalBounds);
   });
 }
