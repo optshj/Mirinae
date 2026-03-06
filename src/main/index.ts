@@ -25,6 +25,13 @@ new AutoLaunch({
 // Initialize Aptabase analytics
 initialize('A-US-3842104393');
 
+export const getVirtualScreenOffset = () => {
+  const displays = screen.getAllDisplays();
+  const minX = Math.min(...displays.map((d) => d.bounds.x));
+  const minY = Math.min(...displays.map((d) => d.bounds.y));
+  return { minX, minY };
+};
+
 function createWindow(): void {
   const { height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
   const savedBounds = store.get('window-bounds');
@@ -40,7 +47,6 @@ function createWindow(): void {
     focusable: true,
     transparent: true,
     skipTaskbar: true,
-    type: 'desktop',
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       nodeIntegration: false,
@@ -54,18 +60,19 @@ function createWindow(): void {
       experimentalFeatures: false
     }
   });
+
   mainWindow.on('ready-to-show', () => {
+    mainWindow.setOpacity(savedOpacity);
+    mainWindow.setMenu(null);
+    mainWindow.show();
     if (!isWindowAttached) {
       attach(mainWindow, {
         forwardMouseInput: true,
         forwardKeyboardInput: true
       });
+      mainWindow.setBounds(savedBounds);
       isWindowAttached = true;
     }
-
-    mainWindow.setOpacity(savedOpacity);
-    mainWindow.setMenu(null);
-    mainWindow.show();
   });
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
