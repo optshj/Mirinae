@@ -1,6 +1,6 @@
 import { ipcMain, app } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
-import { mainWindow } from '.';
+import { mainWindow, getVirtualScreenOffset } from '.';
 import { tryAutoLogin, logoutGoogleOAuth, startGoogleOAuth } from './oauth';
 import { store } from './store';
 import activeWindow from 'active-win';
@@ -16,14 +16,35 @@ export const registerIPCHandlers = () => {
 
   ipcMain.on('start-dragging', () => {
     detach(mainWindow);
+    const { x, y, width, height } = mainWindow.getBounds();
+    const { minX, minY } = getVirtualScreenOffset();
+
+    mainWindow.setBounds({
+      x: x + minX,
+      y: y + minY,
+      width,
+      height
+    });
     mainWindow.setResizable(true);
   });
+
   ipcMain.on('stop-dragging', () => {
     mainWindow.setResizable(false);
-    const bound = mainWindow.getBounds();
+
+    const { x, y, width, height } = mainWindow.getBounds();
+    const { minX, minY } = getVirtualScreenOffset();
+
     attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true });
-    mainWindow.setBounds(bound);
-    store.set('window-bounds', bound);
+
+    const finalBounds = {
+      x: x - minX,
+      y: y - minY,
+      width,
+      height
+    };
+
+    mainWindow.setBounds(finalBounds);
+    store.set('window-bounds', finalBounds);
   });
 
   ipcMain.on('set-opacity', (_, newOpacity) => {
