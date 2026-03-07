@@ -1,11 +1,14 @@
+import { CalendarOff } from 'lucide-react';
 import { useCalendarItems } from '@/entities/event';
 import { AddEventForm, CompleteEventButton, DeleteEventButton, EditEventForm } from '@/features/event';
 
 import { isSameDay } from '@/shared/lib/dateFunction';
 import { DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
-import { CalendarOff } from 'lucide-react';
+import { getDDay } from '../lib/getDDay';
 
 export function ScheduleModal({ date }: { date: Date }) {
+  const dDay = getDDay(date);
+  const isToday = dDay === 'Today';
   const { items } = useCalendarItems();
 
   const events = items.filter((event) => {
@@ -16,9 +19,12 @@ export function ScheduleModal({ date }: { date: Date }) {
 
   return (
     <DialogContent>
-      <DialogHeader className="mb-2">
-        <DialogTitle>
-          {date.getMonth() + 1}월 {date.getDate()}일
+      <DialogHeader className="mb-2 text-left">
+        <DialogTitle className="flex flex-row items-baseline gap-3">
+          <span className="text-foreground text-3xl font-bold tracking-tight">
+            {date.getMonth() + 1}월 {date.getDate()}일
+          </span>
+          <span className={`text-secondary text-sm font-medium tracking-wide`}>{isToday ? 'Today' : dDay}</span>
         </DialogTitle>
       </DialogHeader>
       {events.map((event) => (
