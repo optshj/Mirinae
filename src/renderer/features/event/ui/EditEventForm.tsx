@@ -39,10 +39,7 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
       ...form
     });
     trackEvent('EditEvent');
-    const desc = form.allDay ? '하루 종일 일정으로 수정되었습니다.' : `${form.start} - ${form.end}에 일정이 수정되었습니다.`;
-    toast.success(`"${form.summary}" 일정이 수정되었습니다`, {
-      description: `${date.toLocaleDateString()} ${desc}`
-    });
+    toast.success(`일정이 수정되었습니다`);
     return true;
   };
 
@@ -65,18 +62,19 @@ function Event({ event, deleteButton, completeButton }: { event: CalendarEvent; 
     }
     return event.start.date;
   };
+
   return (
     <div
-      className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted === 'true' ? 'opacity-50' : ''}`}
+      className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 [html.show-event-form_&]:hidden event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted === 'true' ? 'opacity-50' : ''}`}
       onClick={preventHolidayClick}
     >
       <div className={`h-10 w-2 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />
-      <div className="text-primary flex-1 pl-4">
+      <div className="text-primary flex-1 pl-3">
         <span className="font-semibold">{event.summary}</span>
-        <div className="mt-1 text-xs">{renderTimeRange()}</div>
+        <div className="text-xs">{renderTimeRange()}</div>
       </div>
       {!isHoliday && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {completeButton}
           {deleteButton}
         </div>

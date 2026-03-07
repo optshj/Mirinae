@@ -16,7 +16,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
 
   return (
     <div className="bg-primary flex flex-1 flex-col overflow-hidden rounded-xl">
-      <div className="bg-background-primary grid grid-cols-7 py-2 text-center font-semibold">
+      <div className="bg-background-primary grid grid-cols-7 py-2 text-center">
         <div className="text-red-400" aria-label="일요일">
           일
         </div>
@@ -46,7 +46,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
                 setOpen(true);
               }}
             >
-              <div className={`p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'} `}>
+              <div className={`p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'} flex justify-center`}>
                 <div className={`${isToday ? 'bg-main-color text-bg-gray dark:text-[#333333]' : ''} flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70`}>{date.getDate()}</div>
               </div>
               <EventList items={events} />
