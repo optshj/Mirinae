@@ -30,10 +30,7 @@ export function AddEventForm({ date }: { date: Date }) {
     }
     addEvent({ ...form, date });
     trackEvent('AddEvent');
-    const desc = form.allDay ? '하루 종일 일정으로 추가되었습니다.' : `${form.start} - ${form.end}에 일정이 추가되었습니다.`;
-    toast.success(`"${form.summary}" 일정이 추가되었습니다`, {
-      description: `${date.toLocaleDateString()} ${desc}`
-    });
+    toast.success(`일정이 추가되었습니다`);
     resetForm();
     return true;
   };
@@ -46,7 +43,7 @@ export function AddEventForm({ date }: { date: Date }) {
       type="add"
       trigger={
         <button
-          className="text-secondary mt-2 w-full rounded-xl border-2 border-dashed py-3 text-center"
+          className="text-secondary w-full rounded-xl border-2 border-dashed py-3 text-center [html.show-event-form_&]:hidden"
           onClick={() => {
             resetForm();
           }}
