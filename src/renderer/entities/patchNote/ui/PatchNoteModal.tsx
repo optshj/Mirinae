@@ -16,7 +16,9 @@ export function PatchNoteModal() {
       <DialogContent onInteractOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>새롭게 변경된 기능</DialogTitle>
-          <DialogDescription>1. 문의로 주신 이벤트 추가가 안되는 오류가 수정되었습니다.</DialogDescription>
+          <DialogDescription>1. 듀얼모니터에서 어색한 위치로 이동하는 오류가 수정되었습니다.</DialogDescription>
+          <DialogDescription>2. 날짜 클릭 시 D-Day가 표시됩니다.</DialogDescription>
+          <DialogDescription>3. 일정 추가 폼 디자인이 수정되었습니다.</DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>
