@@ -8,6 +8,9 @@
   outline: none !important;
 }
 
+html.disable-click {
+  pointer-events: none;
+}
 * {
   user-select: none;
   -webkit-user-select: none;
