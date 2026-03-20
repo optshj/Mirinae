@@ -7,10 +7,10 @@ import 'dayjs/locale/ko';
 dayjs.locale('ko');
 
 export default function App() {
-    return (
-        <Provider>
-            <Calendar />
-            <Toaster position="top-center" richColors />
-        </Provider>
-    );
+  return (
+    <Provider>
+      <Calendar />
+      <Toaster />
+    </Provider>
+  );
 }
