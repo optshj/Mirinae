@@ -41,7 +41,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
             <div
               key={dateKey}
               className={`border-primary flex h-full w-full flex-1 flex-col overflow-hidden border`}
-              onClick={() => {
+              onDoubleClick={() => {
                 setSelectedDate(date);
                 setOpen(true);
               }}
