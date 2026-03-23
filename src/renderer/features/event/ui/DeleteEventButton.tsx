@@ -14,7 +14,7 @@ export function DeleteEventButton({ eventId }: { eventId: string }) {
         e.stopPropagation();
         deleteEvent({ eventId, accessToken: tokens.access_token });
         trackEvent('DeleteEvent');
-        toast.success('일정이 삭제되었습니다.');
+        toast.error('일정이 삭제되었습니다.');
       }}
       tabIndex={-1}
     >
