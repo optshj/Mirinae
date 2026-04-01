@@ -21,8 +21,8 @@ export function HolidayButton() {
 
   return (
     <div className="flex flex-row items-center justify-between gap-4">
-      <label>공휴일 표시</label>
-      <Switch onClick={handleToggle} isOn={isShow} />
+      <label htmlFor="holiday-toggle">공휴일 표시</label>
+      <Switch id="holiday-toggle" onClick={handleToggle} isOn={isShow} />
     </div>
   );
 }
