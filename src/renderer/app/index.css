@@ -8,7 +8,7 @@
   outline: none !important;
 }
 
-html.disable-click * {
+#root.disable-click * {
   pointer-events: none !important;
 }
 
