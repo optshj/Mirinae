@@ -1,39 +1,39 @@
 {
-    "productName": "미리내",
-    "appId": "com.mirinae",
-    "publish": {
-        "provider": "github",
-        "owner": "optshj",
-        "repo": "Mirinae"
-    },
-    "asar": true,
-    "files": [
-        "out/**/*",
-        "package.json",
-        "!**/node_modules/electron-as-wallpaper/target/**",
-        "!**/test/**",
-        "!src/**",
-        "!**/*.{md,markdown,txt}",
-        "!**/*.{ts,tsx,map,pdb}",
-        "!**/tsconfig.json",
-        "!**/eslint*",
-        "!src/**",
-        "!test/**",
-        "!scripts/**"
-    ],
-    "directories": {
-        "output": "release"
-    },
-    "win": {
-        "target": "nsis",
-        "icon": "resources/icon.png"
-    },
-    "extraResources": [
-        {
-            "from": "resources",
-            "to": "resources"
-        }
-    ],
-    "compression": "maximum",
-    "electronLanguages": ["en", "ko"]
+  "productName": "미리내",
+  "appId": "com.mirinae",
+  "publish": {
+    "provider": "github",
+    "owner": "optshj",
+    "repo": "Mirinae"
+  },
+  "asar": true,
+  "files": [
+    "out/**/*",
+    "package.json",
+    "!**/node_modules/electron-as-wallpaper/target/**",
+    "!**/test/**",
+    "!src/**",
+    "!**/*.{md,markdown,txt}",
+    "!**/*.{ts,tsx,map,pdb}",
+    "!**/tsconfig.json",
+    "!**/eslint*",
+    "!src/**",
+    "!test/**",
+    "!scripts/**"
+  ],
+  "directories": {
+    "output": "release"
+  },
+  "win": {
+    "target": "nsis",
+    "icon": "resources/icon.png"
+  },
+  "extraResources": [
+    {
+      "from": "resources",
+      "to": "resources"
+    }
+  ],
+  "compression": "maximum",
+  "electronLanguages": ["en", "ko"]
 }

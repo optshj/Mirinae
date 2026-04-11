@@ -15,8 +15,8 @@ export function PatchNoteModal() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent onInteractOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>새롭게 변경된 기능</DialogTitle>
-          <DialogDescription>1. 위치 수정 시 종료가 안되는 오류가 수정되었습니다.</DialogDescription>
+          <DialogTitle>업데이트 내용</DialogTitle>
+          <DialogDescription>1. 캘린더 폰트가 제대로 적용되지 않는 오류를 수정했습니다.</DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>

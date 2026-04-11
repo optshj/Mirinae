@@ -40,7 +40,9 @@ export function MoveActiveButton({ closeDropDown, closeOnClick = true }: { close
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
-            <Button type="button">적용</Button>
+            <Button className="pointer-events-auto!" type="button">
+              적용
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

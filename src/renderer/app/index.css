@@ -1,15 +1,19 @@
-@import 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css';
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../../../resources/PretendardVariable.woff2') format('woff2');
+}
+
 *:focus {
   outline: none !important;
 }
 
-#root.disable-click * {
-  pointer-events: none !important;
+html.disable-click * {
+  pointer-events: none;
 }
 
 * {
