@@ -1,5 +1,6 @@
 import Provider from './provider';
 import { Calendar } from '@/pages';
+import { PatchNoteModal } from '@/entities/patchNote';
 import { Toaster } from '@/shared/ui/sonner';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
@@ -11,6 +12,7 @@ export default function App() {
     <Provider>
       <Calendar />
       <Toaster />
+      <PatchNoteModal />
     </Provider>
   );
 }
