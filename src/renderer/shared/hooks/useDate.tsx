@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import dayjs from 'dayjs';
+import { useMemo, useState } from 'react';
 
 export type DateProps = {
   days: Date[];
@@ -9,23 +10,20 @@ export type DateProps = {
   handleNextMonth: () => void;
 };
 
-export function useDate(): DateProps {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const displayMonth = (month + 1) % 12 || 12;
-  const firstDayOfMonth = new Date(year, month, 1);
-  const startDayOfWeek = firstDayOfMonth.getDay();
+export function useDate() {
+  const [viewDate, setViewDate] = useState(dayjs());
 
-  const calendarStartDate = new Date(year, month, 1 - startDayOfWeek);
-  const days: Date[] = [];
-  for (let i = 0; i < 42; i++) {
-    const date = new Date(calendarStartDate);
-    date.setDate(calendarStartDate.getDate() + i);
-    days.push(date);
-  }
-  const handlePrevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
-  const handleNextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
+  const year = viewDate.year();
+  const month = viewDate.month();
+  const displayMonth = viewDate.month() + 1;
+
+  const days = useMemo(() => {
+    const startDay = viewDate.startOf('month').startOf('week');
+    return Array.from({ length: 42 }, (_, i) => startDay.add(i, 'day').toDate());
+  }, [viewDate]);
+
+  const handlePrevMonth = () => setViewDate(viewDate.subtract(1, 'month'));
+  const handleNextMonth = () => setViewDate(viewDate.add(1, 'month'));
 
   return {
     days,

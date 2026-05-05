@@ -10,6 +10,7 @@ export function useLogin() {
 
   const logout = () => {
     setIsAuthenticated(false);
+    setAuthToken(null);
     window.api.logoutGoogleOAuth();
   };
 

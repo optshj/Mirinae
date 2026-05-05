@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useState } from 'react';
 
 import { ScheduleModal } from './ScheduleModal';
@@ -6,7 +7,6 @@ import { EventList, useCalendarItems } from '@/entities/event';
 
 import { Dialog } from '@/shared/ui/dialog';
 import { DateProps } from '@/shared/hooks/useDate';
-import dayjs from 'dayjs';
 
 export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
