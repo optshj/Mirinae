@@ -22,6 +22,16 @@ const startAuthServer = (resolve: (code: string) => void, reject: (error: Error)
   const successPath = app.isPackaged ? join(process.resourcesPath, 'resources', 'success.html') : join(__dirname, '../../resources/success.html');
   let server: http.Server | null = null;
 
+  // 5분 타임아웃 설정
+  const timeout = setTimeout(
+    () => {
+      if (server) {
+        server.close();
+        reject(new Error('Authentication timeout'));
+      }
+    },
+    5 * 60 * 1000
+  );
   server = http
     .createServer((req, res) => {
       const url = new URL(req.url!, `http://${req.headers.host}`);
@@ -34,7 +44,7 @@ const startAuthServer = (resolve: (code: string) => void, reject: (error: Error)
         res.end('<h1>Authentication failed. Please try again.</h1>');
         reject(new Error('No authorization code received'));
       }
-
+      clearTimeout(timeout);
       server?.close();
       server = null;
     })
@@ -58,9 +68,8 @@ const fetchAccessTokens = async (code: string, codeVerifier: string) => {
     body: params
   });
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch tokens (status: ${response.status})`);
-  }
+  if (!response.ok) throw new Error(`Failed to fetch tokens (status: ${response.status})`);
+
   return await response.json();
 };
 
@@ -88,9 +97,7 @@ const refreshAccessToken = async (refresh_token: string) => {
 // 자동 로그인 시도
 export const tryAutoLogin = async () => {
   const refreshToken = await keytar.getPassword(SERVICE_NAME, ACCOUNT_NAME);
-  if (!refreshToken) {
-    return null;
-  }
+  if (!refreshToken) return null;
 
   const tokenData = await refreshAccessToken(refreshToken);
   if (tokenData.refresh_token) {
@@ -117,7 +124,6 @@ export const startGoogleOAuth = async (event: Electron.IpcMainEvent) => {
   authUrl.searchParams.append('code_challenge', codeChallenge);
   authUrl.searchParams.append('code_challenge_method', 'S256');
   authUrl.searchParams.append('access_type', 'offline');
-  authUrl.searchParams.append('prompt', 'consent');
 
   try {
     shell.openExternal(authUrl.toString());

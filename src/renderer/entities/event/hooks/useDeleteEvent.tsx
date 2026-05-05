@@ -17,7 +17,7 @@ export function useDeleteEvent() {
       if (previousData) {
         queryClient.setQueryData(eventKeys.events, {
           ...previousData,
-          items: previousData.items.filter((event) => event.id !== eventId.eventId)
+          items: previousData.items.filter((event) => event.id !== eventId)
         });
       }
       return { previousData };
