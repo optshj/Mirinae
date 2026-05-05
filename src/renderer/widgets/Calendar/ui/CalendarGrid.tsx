@@ -4,7 +4,6 @@ import { ScheduleModal } from './ScheduleModal';
 
 import { EventList, useCalendarItems } from '@/entities/event';
 
-import { isSameDay } from '@/shared/lib/dateFunction';
 import { Dialog } from '@/shared/ui/dialog';
 import { DateProps } from '@/shared/hooks/useDate';
 import dayjs from 'dayjs';
@@ -33,7 +32,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
       <div className="grid h-[calc(100vh-20rem)] grid-cols-7 grid-rows-[repeat(6,1fr)] transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-7.5rem)] [html.resizable_&]:transition-none">
         {days.map((date) => {
           const isCurrentMonth = date.getMonth() === month;
-          const isToday = isSameDay(new Date(), date);
+          const isToday = dayjs(date).isSame(dayjs(), 'day');
           const dateKey = dayjs(date).format('YYYY-MM-DD');
           const events = eventsByDate[dateKey] ?? [];
 

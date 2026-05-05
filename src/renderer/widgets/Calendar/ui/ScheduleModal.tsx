@@ -2,9 +2,9 @@ import { CalendarOff } from 'lucide-react';
 import { useCalendarItems } from '@/entities/event';
 import { AddEventForm, CompleteEventButton, DeleteEventButton, EditEventForm } from '@/features/event';
 
-import { isSameDay } from '@/shared/lib/dateFunction';
 import { DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 import { getDDay } from '../lib/getDDay';
+import dayjs from 'dayjs';
 
 export function ScheduleModal({ date }: { date: Date }) {
   const dDay = getDDay(date);
@@ -13,8 +13,7 @@ export function ScheduleModal({ date }: { date: Date }) {
 
   const events = items.filter((event) => {
     const eventDate = event.category === 'time' ? new Date(event.start.dateTime) : new Date(event.start.date);
-
-    return isSameDay(eventDate, date);
+    return dayjs(eventDate).isSame(dayjs(date), 'day');
   });
 
   return (

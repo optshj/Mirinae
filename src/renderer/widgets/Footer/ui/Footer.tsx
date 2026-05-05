@@ -1,8 +1,8 @@
+import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { FooterEvent, useCalendarItems } from '@/entities/event';
 import { PalletteDropdown } from '@/features/event';
 
-import { isSameDay } from '@/shared/lib/dateFunction';
 import { COLOR_STORAGE_KEY } from '@/shared/const/color';
 
 export function Footer() {
@@ -20,9 +20,9 @@ export function Footer() {
     () =>
       items.filter((event) => {
         if (event.category === 'time') {
-          return isSameDay(new Date(event.start.dateTime), new Date());
+          return dayjs(event.start.dateTime).isSame(dayjs(), 'day');
         } else {
-          return isSameDay(new Date(event.start.date), new Date());
+          return dayjs(event.start.date).isSame(dayjs(), 'day');
         }
       }),
     [items]
