@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PalletteDropdown } from '@/features/event';
 import { FooterEvent, useCalendarItems } from '@/entities/event';
 import { COLOR_STORAGE_KEY } from '@/shared/const/color';
@@ -7,8 +7,18 @@ import { COLOR_STORAGE_KEY } from '@/shared/const/color';
 export function Footer() {
   const { items } = useCalendarItems();
   const [colorId, setColorId] = useState<string>(localStorage.getItem(COLOR_STORAGE_KEY) ?? '11');
+  const [tomorrow, setTomorrow] = useState(() => dayjs().add(1, 'day').startOf('day').toDate());
 
-  const tomorrow = useMemo(() => dayjs().add(1, 'day').startOf('day').toDate(), []);
+  // 매일 자정마다 tomorrow 상태를 업데이트하여 오늘과 내일 일정을 정확히 구분할 수 있도록 함
+  useEffect(() => {
+    const msUntilMidnight = dayjs().endOf('day').diff(dayjs()) + 1;
+
+    const timeout = setTimeout(() => {
+      setTomorrow(dayjs().add(1, 'day').startOf('day').toDate());
+    }, msUntilMidnight);
+
+    return () => clearTimeout(timeout);
+  }, [tomorrow]);
 
   const todayEvent = useMemo(
     () =>

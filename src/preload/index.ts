@@ -11,6 +11,9 @@ export interface Api {
   startDragging: () => void;
   stopDragging: () => void;
 
+  getMaxLanes: () => Promise<number>;
+  setMaxLanes: (value: number) => void;
+
   quitApp: () => void;
 
   setOpacity: (opacity: number) => void;
@@ -54,12 +57,6 @@ const api = {
     const listener = (_, ...args) => callback(...args);
     ipcRenderer.on('show-patch-notes', listener);
     return () => ipcRenderer.removeListener('show-patch-notes', listener);
-  },
-
-  onMaxLanesUpdate: (callback) => {
-    const listener = (_, value) => callback(value);
-    ipcRenderer.on('max-lanes-updated', listener);
-    return () => ipcRenderer.removeListener('max-lanes-updated', listener);
   },
 
   onUpdateClickable: (callback: (isExplorer: boolean) => void) => {
