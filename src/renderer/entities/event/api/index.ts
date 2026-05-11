@@ -5,44 +5,22 @@ import { CompleteEventBody, GoogleEventBody } from '../types';
 const CALENDAR_API_URL = 'https://www.googleapis.com/calendar/v3/calendars';
 
 export const eventApi = {
-  getEvents: (accessToken: string) => {
-    return http.get<{ items: Events[] }>(`${CALENDAR_API_URL}/primary/events?maxResults=2500`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
+  getEvents: () => {
+    return http.get<{ items: Events[] }>(`${CALENDAR_API_URL}/primary/events?maxResults=2500`, {});
   },
-  getHolidays: (accessToken: string) => {
-    return http.get<{ items: Events[] }>(`${CALENDAR_API_URL}/ko.south_korea%23holiday%40group.v.calendar.google.com/events?maxResults=2500`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
+  getHolidays: () => {
+    return http.get<{ items: Events[] }>(`${CALENDAR_API_URL}/ko.south_korea%23holiday%40group.v.calendar.google.com/events?maxResults=2500`, {});
   },
-  create: ({ accessToken, eventData }: { accessToken: string; eventData: GoogleEventBody }) => {
-    console.log('Creating event with data:', eventData);
-    return http.post(`${CALENDAR_API_URL}/primary/events`, eventData, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
+  create: (eventData: GoogleEventBody) => {
+    return http.post(`${CALENDAR_API_URL}/primary/events`, eventData);
   },
-  delete: async ({ accessToken, eventId }: { accessToken: string; eventId: string }) => {
-    return http.delete(`${CALENDAR_API_URL}/primary/events/${eventId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
+  delete: async (eventId: string) => {
+    return http.delete(`${CALENDAR_API_URL}/primary/events/${eventId}`);
   },
-  update: ({ accessToken, eventId, eventData }: { accessToken: string; eventId: string; eventData: GoogleEventBody }) => {
-    console.log('Updating event:', { eventId, eventData });
-    return http.put<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, eventData, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
+  update: ({ eventId, eventData }: { eventId: string; eventData: GoogleEventBody }) => {
+    return http.put<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, eventData);
   },
-  complete: ({ accessToken, eventId, patchBody }: { accessToken: string; eventId: string; patchBody: CompleteEventBody }) => {
-    return http.patch<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, patchBody, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
+  complete: ({ eventId, patchBody }: { eventId: string; patchBody: CompleteEventBody }) => {
+    return http.patch<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, patchBody);
   }
 };

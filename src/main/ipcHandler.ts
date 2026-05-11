@@ -54,6 +54,9 @@ export const registerIPCHandlers = () => {
 
   ipcMain.handle('get-initial-opacity', () => store.get('window-opacity'));
 
+  ipcMain.handle('get-max-lanes', () => store.get('max-lanes'));
+  ipcMain.on('set-max-lanes', (_, value) => store.set('max-lanes', value));
+
   ipcMain.on('renderer-ready', async (event) => {
     const window = await activeWindow();
     const isExplorer = window?.title === 'Program Manager';

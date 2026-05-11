@@ -22,11 +22,8 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
   const submitButtonText = type === 'add' ? '추가' : '수정';
 
   useEffect(() => {
-    if (showForm) {
-      document.documentElement.classList.add('show-event-form');
-    } else {
-      document.documentElement.classList.remove('show-event-form');
-    }
+    if (showForm) document.documentElement.classList.add('show-event-form');
+    else document.documentElement.classList.remove('show-event-form');
   }, [showForm, formId]);
 
   useEffect(() => {

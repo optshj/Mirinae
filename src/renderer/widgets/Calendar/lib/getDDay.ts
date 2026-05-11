@@ -6,11 +6,7 @@ export function getDDay(targetDate: Date | string): string {
 
   const diffDays = target.diff(today, 'day');
 
-  if (diffDays === 0) {
-    return 'Today';
-  }
-  if (diffDays > 0) {
-    return `D-${diffDays}`;
-  }
+  if (diffDays === 0) return 'Today';
+  if (diffDays > 0) return `D-${diffDays}`;
   return `D+${Math.abs(diffDays)}`;
 }

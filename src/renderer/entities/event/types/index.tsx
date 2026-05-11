@@ -6,6 +6,9 @@ export interface AddEventProp {
   colorId: string;
   allDay: boolean;
 }
+export interface EditEventProp extends AddEventProp {
+  eventId: string;
+}
 
 export interface GoogleEventBody {
   summary: string;
