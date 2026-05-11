@@ -1,7 +1,6 @@
-import { useLogin } from '@/shared/hooks/useLogin';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CalendarEvent } from '@/shared/types/EventType';
 import { eventApi } from '@/entities/event';
+import { CalendarEvent } from '@/shared/types/EventType';
 import { eventKeys } from '../api/queries';
 
 interface CompleteEventProp {
@@ -9,7 +8,6 @@ interface CompleteEventProp {
   isCompleted: string;
 }
 export function useCompleteEvent() {
-  const { tokens } = useLogin();
   const queryClient = useQueryClient();
 
   const completeEventMutation = useMutation({
@@ -21,7 +19,7 @@ export function useCompleteEvent() {
           }
         }
       };
-      return eventApi.complete({ accessToken: tokens.access_token, eventId, patchBody });
+      return eventApi.complete({ eventId, patchBody });
     },
     onMutate: async ({ eventId, isCompleted }) => {
       await queryClient.cancelQueries({ queryKey: eventKeys.events });
@@ -48,9 +46,7 @@ export function useCompleteEvent() {
       return { previousData };
     },
     onError: (_err, _variables, context) => queryClient.setQueryData(eventKeys.events, context?.previousData),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: eventKeys.events });
-    }
+    onSettled: () => queryClient.invalidateQueries({ queryKey: eventKeys.events })
   });
 
   return { completeEvent: completeEventMutation.mutate };

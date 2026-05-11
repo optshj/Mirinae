@@ -1,20 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
-import { initialTokens, Tokens } from '@/shared/types/userType';
+import { setAuthToken } from '../lib/http';
 
 export function useLogin() {
-  const [tokens, setTokens] = useState<Tokens>(initialTokens);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = () => {
     window.api.startGoogleOauth();
   };
 
   const logout = () => {
-    setTokens(initialTokens);
+    setIsAuthenticated(false);
+    setAuthToken(null);
     window.api.logoutGoogleOAuth();
   };
 
   const handleLogin = useCallback((receivedTokens) => {
-    setTokens(receivedTokens);
+    setAuthToken(receivedTokens.access_token);
+    setIsAuthenticated(true);
   }, []);
 
   const handleError = useCallback((error) => {
@@ -26,7 +28,8 @@ export function useLogin() {
       try {
         const restoredTokens = await window.api.refreshToken();
         if (restoredTokens?.access_token) {
-          setTokens(restoredTokens);
+          setAuthToken(restoredTokens.access_token);
+          setIsAuthenticated(true);
           return restoredTokens;
         }
       } catch (err) {
@@ -50,5 +53,5 @@ export function useLogin() {
     };
   }, [handleLogin, handleError, refreshToken]);
 
-  return { login, logout, tokens, refreshToken };
+  return { login, logout, isAuthenticated, refreshToken };
 }

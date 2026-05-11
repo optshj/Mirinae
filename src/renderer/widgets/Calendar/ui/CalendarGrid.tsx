@@ -1,18 +1,23 @@
-import { useState } from 'react';
+import dayjs from 'dayjs';
+import { useState, useMemo } from 'react';
 
 import { ScheduleModal } from './ScheduleModal';
+import { EventList, useCalendarItems, buildWeekSegments, useMaxLanes } from '@/entities/event';
 
-import { EventList, useCalendarItems } from '@/entities/event';
-
-import { isSameDay } from '@/shared/lib/dateFunction';
 import { Dialog } from '@/shared/ui/dialog';
 import { DateProps } from '@/shared/hooks/useDate';
-import dayjs from 'dayjs';
+import { CalendarEvent } from '@/shared/types/EventType';
 
 export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
-  const { eventsByDate } = useCalendarItems();
+  const { items } = useCalendarItems();
+  const { maxLanes } = useMaxLanes();
+  console.log('CalendarGrid rendered with maxLanes:', maxLanes);
+
+  const weekArray = useMemo(() => {
+    return Array.from({ length: 6 }, (_, i) => days.slice(i * 7, i * 7 + 7));
+  }, [days]);
 
   return (
     <div className="bg-primary flex flex-1 flex-col overflow-hidden rounded-xl">
@@ -20,9 +25,9 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
         <div className="text-red-400" aria-label="일요일">
           일
         </div>
-        {['월', '화', '수', '목', '금'].map((day) => (
-          <div className="text-primary" key={day}>
-            {day}
+        {['월', '화', '수', '목', '금'].map((d) => (
+          <div className="text-primary" key={d}>
+            {d}
           </div>
         ))}
         <div className="text-blue-400" aria-label="토요일">
@@ -30,32 +35,65 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
         </div>
       </div>
 
-      <div className="grid h-[calc(100vh-20rem)] grid-cols-7 grid-rows-[repeat(6,1fr)] transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-7.5rem)] [html.resizable_&]:transition-none">
-        {days.map((date) => {
-          const isCurrentMonth = date.getMonth() === month;
-          const isToday = isSameDay(new Date(), date);
-          const dateKey = dayjs(date).format('YYYY-MM-DD');
-          const events = eventsByDate[dateKey] ?? [];
+      <div className="grid h-[calc(100vh-20rem)] grid-rows-6 transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-7.5rem)] [html.resizable_&]:transition-none">
+        {weekArray.map((week, weekIndex) => (
+          <WeekRow
+            key={weekIndex}
+            week={week}
+            month={month}
+            items={items}
+            maxLanes={maxLanes}
+            onPickDate={(date) => {
+              setSelectedDate(date);
+              setOpen(true);
+            }}
+          />
+        ))}
 
-          return (
-            <div
-              key={dateKey}
-              className={`border-primary flex h-full w-full flex-1 flex-col overflow-hidden border`}
-              onDoubleClick={() => {
-                setSelectedDate(date);
-                setOpen(true);
-              }}
-            >
-              <div className={`p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'} flex justify-center`}>
-                <div className={`${isToday ? 'bg-main-color text-bg-gray dark:text-[#333333]' : ''} flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70`}>{date.getDate()}</div>
-              </div>
-              <EventList items={events} />
-            </div>
-          );
-        })}
         <Dialog open={open} onOpenChange={setOpen}>
           <ScheduleModal date={selectedDate} />
         </Dialog>
+      </div>
+    </div>
+  );
+}
+
+interface WeekRowProps {
+  week: Date[];
+  month: number;
+  items: CalendarEvent[];
+  maxLanes: number;
+  onPickDate: (date: Date) => void;
+}
+function WeekRow({ week, month, items, maxLanes, onPickDate }: WeekRowProps) {
+  const weekStart = dayjs(week[0]).format('YYYY-MM-DD');
+  const weekEnd = dayjs(week[6]).format('YYYY-MM-DD');
+
+  const { visible, overflowByDate } = useMemo(() => buildWeekSegments(items, weekStart, weekEnd, maxLanes), [items, weekStart, weekEnd, maxLanes]);
+
+  return (
+    <div className="relative grid grid-cols-7">
+      {week.map((date) => {
+        const isCurrentMonth = date.getMonth() === month;
+        const isToday = dayjs(date).isSame(dayjs(), 'day');
+        const dateKey = dayjs(date).format('YYYY-MM-DD');
+        const more = overflowByDate[dateKey] ?? 0;
+
+        return (
+          <div key={dateKey} className="border-primary flex h-full w-full flex-col overflow-hidden border" onDoubleClick={() => onPickDate(date)}>
+            <div className={`flex justify-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
+              <div className={`flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70 ${isToday && 'bg-main-color text-bg-gray dark:text-[#333333]'}`}>{date.getDate()}</div>
+            </div>
+
+            {more > 0 && <div className="text-secondary mt-auto px-1 pt-0.5 text-[12px]">+{more}개 일정</div>}
+          </div>
+        );
+      })}
+
+      <div className="pointer-events-none absolute inset-x-0 top-8 grid grid-cols-7" style={{ gridTemplateRows: `repeat(${maxLanes}, 24px)` }}>
+        {visible.map((seg) => (
+          <EventList key={seg.event.id + seg.start} seg={seg} weekStart={weekStart} onDoubleClick={onPickDate} />
+        ))}
       </div>
     </div>
   );

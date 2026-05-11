@@ -2,17 +2,15 @@ import { useDeleteEvent } from '@/entities/event';
 import { trackEvent } from '@aptabase/electron/renderer';
 import { toast } from 'sonner';
 import { X } from 'lucide-react';
-import { useLogin } from '@/shared/hooks/useLogin';
 
 export function DeleteEventButton({ eventId }: { eventId: string }) {
-  const { tokens } = useLogin();
   const { deleteEvent } = useDeleteEvent();
 
   return (
     <button
       onClick={(e) => {
         e.stopPropagation();
-        deleteEvent({ eventId, accessToken: tokens.access_token });
+        deleteEvent(eventId);
         trackEvent('DeleteEvent');
         toast.error('일정이 삭제되었습니다.');
       }}

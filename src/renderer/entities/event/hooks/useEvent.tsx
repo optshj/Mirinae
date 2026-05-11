@@ -3,17 +3,17 @@ import { eventOptions } from '../api/queries';
 import { useLogin } from '@/shared/hooks/useLogin';
 
 export const useEvents = () => {
-  const { tokens } = useLogin();
+  const { isAuthenticated } = useLogin();
   return useQuery({
-    ...eventOptions.events(tokens.access_token),
-    enabled: Boolean(tokens.access_token)
+    ...eventOptions.events(),
+    enabled: isAuthenticated
   });
 };
 
 export const useHolidayEvents = () => {
-  const { tokens } = useLogin();
+  const { isAuthenticated } = useLogin();
   return useQuery({
-    ...eventOptions.holidays(tokens.access_token),
-    enabled: Boolean(tokens.access_token)
+    ...eventOptions.holidays(),
+    enabled: isAuthenticated
   });
 };

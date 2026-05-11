@@ -9,19 +9,19 @@ export const eventKeys = {
 };
 
 export const eventOptions = {
-  events: (accessToken: string) =>
+  events: () =>
     queryOptions({
       queryKey: eventKeys.events,
-      queryFn: () => eventApi.getEvents(accessToken),
+      queryFn: () => eventApi.getEvents(),
       staleTime: TWO_HOURS_IN_MS,
       refetchInterval: TWO_HOURS_IN_MS,
       refetchIntervalInBackground: true
     }),
 
-  holidays: (accessToken: string) =>
+  holidays: () =>
     queryOptions({
       queryKey: eventKeys.holidays,
-      queryFn: () => eventApi.getHolidays(accessToken),
+      queryFn: () => eventApi.getHolidays(),
       staleTime: TWO_HOURS_IN_MS,
       refetchInterval: TWO_HOURS_IN_MS
     })

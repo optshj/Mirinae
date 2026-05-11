@@ -1,20 +1,25 @@
-const BASE_URL = '';
+let authToken: string | null = null;
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number>;
 }
+
+export const setAuthToken = (token: string | null) => {
+  authToken = token;
+};
 
 const fetcher = async <T>(url: string, options: RequestOptions = {}): Promise<T> => {
   const { params, headers, ...customOptions } = options;
 
   const queryString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : '';
 
-  const fullUrl = url.startsWith('http') ? `${url}${queryString}` : `${BASE_URL}${url}${queryString}`;
+  const authHeaders: Record<string, string> = authToken ? { Authorization: `Bearer ${authToken}` } : {};
 
-  const response = await fetch(fullUrl, {
+  const response = await fetch(`${url}${queryString}`, {
     ...customOptions,
     headers: {
       'Content-Type': 'application/json',
+      ...authHeaders,
       ...headers
     }
   });
