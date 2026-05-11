@@ -17,7 +17,7 @@ export function EventList({ seg, weekStart, onDoubleClick }: EventListProps) {
 
   return (
     <div
-      className={`pointer-events-auto flex h-5 items-center overflow-hidden text-sm dark:saturate-70 ${seg.start && 'rounded-l-sm'} ${seg.end && 'rounded-r-sm'} event-color-${event.colorId} bg-(--event-color)/20 ${isCompleted ? 'opacity-50' : 'opacity-100'} ${isHoliday && '[html:not(.show-holiday)_&]:hidden'}`}
+      className={`pointer-events-auto flex h-5 items-center overflow-hidden text-sm md:bg-(--event-color)/20 dark:saturate-70 event-color-${event.colorId} ${seg.isStart ? 'rounded-l-sm' : ''} ${seg.isEnd ? 'rounded-r-sm' : ''} ${isCompleted ? 'opacity-50' : 'opacity-100'} ${isHoliday ? '[html:not(.show-holiday)_&]:hidden' : ''}`}
       style={{
         gridColumnStart: colStart + 1,
         gridColumnEnd: colStart + span + 1,
@@ -27,9 +27,10 @@ export function EventList({ seg, weekStart, onDoubleClick }: EventListProps) {
       }}
       onDoubleClick={() => onDoubleClick(new Date(seg.start))}
     >
-      {seg.isStart && <div className="mr-1 inline-block w-2 shrink-0 self-stretch bg-(--event-color)" />}
+      <div className="h-2.5 w-full rounded-full bg-(--event-color) md:hidden" />
 
-      <span className="text-primary truncate py-0.5 pr-1 text-xs">
+      {seg.isStart && <div className="mr-1 hidden w-2 shrink-0 self-stretch bg-(--event-color) md:inline-block" />}
+      <span className="text-primary hidden truncate py-0.5 pr-1 text-xs md:block">
         {seg.isStart && (
           <>
             {timeLabel && <span className="mr-1">{timeLabel}</span>}
@@ -40,7 +41,6 @@ export function EventList({ seg, weekStart, onDoubleClick }: EventListProps) {
     </div>
   );
 }
-
 function formatDateTime(dateField: { date?: string; dateTime?: string; timeZone?: string }) {
   if (!dateField.dateTime) return null;
   const d = dayjs(dateField.dateTime).locale('en');
