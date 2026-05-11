@@ -47,10 +47,19 @@ const api = {
   setOpacity: (opacity: number) => ipcRenderer.send('set-opacity', opacity),
   getInitialOpacity: () => ipcRenderer.invoke('get-initial-opacity'),
 
+  getMaxLanes: () => ipcRenderer.invoke('get-max-lanes'),
+  setMaxLanes: (value: number) => ipcRenderer.send('set-max-lanes', value),
+
   onShowPatchNotes: (callback) => {
     const listener = (_, ...args) => callback(...args);
     ipcRenderer.on('show-patch-notes', listener);
     return () => ipcRenderer.removeListener('show-patch-notes', listener);
+  },
+
+  onMaxLanesUpdate: (callback) => {
+    const listener = (_, value) => callback(value);
+    ipcRenderer.on('max-lanes-updated', listener);
+    return () => ipcRenderer.removeListener('max-lanes-updated', listener);
   },
 
   onUpdateClickable: (callback: (isExplorer: boolean) => void) => {

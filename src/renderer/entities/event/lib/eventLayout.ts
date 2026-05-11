@@ -1,8 +1,6 @@
 import dayjs from 'dayjs';
 import { CalendarEvent } from '@/shared/types/EventType';
 
-const MAX_LANES = 3;
-
 export type EventSegment = {
   event: CalendarEvent;
   start: string; // YYYY-MM-DD (clipped to week)
@@ -32,7 +30,7 @@ function getEventDuration(event: CalendarEvent) {
   return dayjs(end).diff(start, 'day');
 }
 
-export function buildWeekSegments(events: CalendarEvent[], weekStart: string, weekEnd: string) {
+export function buildWeekSegments(events: CalendarEvent[], weekStart: string, weekEnd: string, maxLanes: number) {
   // 1. 이번 주 범위에 걸쳐 있는 이벤트들만 필터링하고 주 단위로 자름(clipping)
   const segmentsInWeek = events.flatMap((event) => {
     const [fullStart, fullEnd] = getEventRange(event);
@@ -70,8 +68,8 @@ export function buildWeekSegments(events: CalendarEvent[], weekStart: string, we
     return { ...seg, lane: assignedLane };
   });
 
-  const visible = segments.filter((s) => s.lane < MAX_LANES);
-  const hidden = segments.filter((s) => s.lane >= MAX_LANES);
+  const visible = segments.filter((s) => s.lane < maxLanes);
+  const hidden = segments.filter((s) => s.lane >= maxLanes);
 
   const overflowByDate: Record<string, number> = {};
   hidden.forEach((seg) => {

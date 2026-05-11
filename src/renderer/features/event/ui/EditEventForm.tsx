@@ -5,9 +5,9 @@ import { trackEvent } from '@aptabase/electron/renderer';
 
 import { EventForm } from './components/EventForm';
 import { FormState } from '../types/FormType';
-import { useEditEvent, getEventRange } from '@/entities/event';
 
 import { CalendarEvent } from '@/shared/types/EventType';
+import { useEditEvent, getEventRange } from '@/entities/event';
 
 interface EditEventFormProps {
   event: CalendarEvent;
@@ -18,7 +18,6 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
   const { editEvent } = useEditEvent();
 
   const date = event.category === 'time' ? new Date(event.start.dateTime) : new Date(event.start.date);
-
   const [form, setForm] = useState<FormState>({
     summary: event.summary,
     colorId: event.colorId,
@@ -26,7 +25,6 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
     end: event.category === 'time' ? dayjs(event.end.dateTime).format('HH:mm') : '12:00',
     allDay: event.category === 'allDay'
   });
-
   const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }));
 
   const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {

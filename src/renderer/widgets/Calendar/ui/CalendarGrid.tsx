@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { useState, useMemo } from 'react';
 
 import { ScheduleModal } from './ScheduleModal';
-import { EventList, useCalendarItems, buildWeekSegments } from '@/entities/event';
+import { EventList, useCalendarItems, buildWeekSegments, useMaxLanes } from '@/entities/event';
 
 import { Dialog } from '@/shared/ui/dialog';
 import { DateProps } from '@/shared/hooks/useDate';
@@ -12,6 +12,8 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
   const { items } = useCalendarItems();
+  const { maxLanes } = useMaxLanes();
+  console.log('CalendarGrid rendered with maxLanes:', maxLanes);
 
   const weekArray = useMemo(() => {
     return Array.from({ length: 6 }, (_, i) => days.slice(i * 7, i * 7 + 7));
@@ -40,6 +42,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
             week={week}
             month={month}
             items={items}
+            maxLanes={maxLanes}
             onPickDate={(date) => {
               setSelectedDate(date);
               setOpen(true);
@@ -59,13 +62,14 @@ interface WeekRowProps {
   week: Date[];
   month: number;
   items: CalendarEvent[];
+  maxLanes: number;
   onPickDate: (date: Date) => void;
 }
-function WeekRow({ week, month, items, onPickDate }: WeekRowProps) {
+function WeekRow({ week, month, items, maxLanes, onPickDate }: WeekRowProps) {
   const weekStart = dayjs(week[0]).format('YYYY-MM-DD');
   const weekEnd = dayjs(week[6]).format('YYYY-MM-DD');
 
-  const { visible, overflowByDate } = useMemo(() => buildWeekSegments(items, weekStart, weekEnd), [items, weekStart, weekEnd]);
+  const { visible, overflowByDate } = useMemo(() => buildWeekSegments(items, weekStart, weekEnd, maxLanes), [items, weekStart, weekEnd, maxLanes]);
 
   return (
     <div className="relative grid grid-cols-7">
@@ -81,12 +85,12 @@ function WeekRow({ week, month, items, onPickDate }: WeekRowProps) {
               <div className={`flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70 ${isToday && 'bg-main-color text-bg-gray dark:text-[#333333]'}`}>{date.getDate()}</div>
             </div>
 
-            {more > 0 && <div className="text-secondary mt-auto px-1 pt-0.5 text-[12px]">+{more}개</div>}
+            {more > 0 && <div className="text-secondary mt-auto px-1 pt-0.5 text-[12px]">+{more}개 일정</div>}
           </div>
         );
       })}
 
-      <div className="pointer-events-none absolute inset-x-0 top-8 grid grid-cols-7 grid-rows-[repeat(3,24px)]">
+      <div className="pointer-events-none absolute inset-x-0 top-8 grid grid-cols-7" style={{ gridTemplateRows: `repeat(${maxLanes}, 24px)` }}>
         {visible.map((seg) => (
           <EventList key={seg.event.id + seg.start} seg={seg} weekStart={weekStart} onDoubleClick={onPickDate} />
         ))}
