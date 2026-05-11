@@ -5,9 +5,9 @@ import { trackEvent } from '@aptabase/electron/renderer';
 
 import { EventForm } from './components/EventForm';
 import { FormState } from '../types/FormType';
+import { useEditEvent, getEventRange } from '@/entities/event';
 
 import { CalendarEvent } from '@/shared/types/EventType';
-import { useEditEvent } from '@/entities/event/hooks/useEditEvent';
 
 interface EditEventFormProps {
   event: CalendarEvent;
@@ -18,6 +18,7 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
   const { editEvent } = useEditEvent();
 
   const date = event.category === 'time' ? new Date(event.start.dateTime) : new Date(event.start.date);
+
   const [form, setForm] = useState<FormState>({
     summary: event.summary,
     colorId: event.colorId,
@@ -25,6 +26,7 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
     end: event.category === 'time' ? dayjs(event.end.dateTime).format('HH:mm') : '12:00',
     allDay: event.category === 'allDay'
   });
+
   const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }));
 
   const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
@@ -48,25 +50,21 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
 
 function Event({ event, deleteButton, completeButton }: { event: CalendarEvent; deleteButton: React.ReactNode; completeButton: React.ReactNode }) {
   const isHoliday = event.category === 'holiday';
+  const [start, end] = getEventRange(event);
+  const isMultiDay = start !== end;
 
-  const preventHolidayClick = (e: React.MouseEvent) => {
-    if (isHoliday) {
-      e.stopPropagation();
-    }
-  };
   const renderTimeRange = () => {
-    if (event.category === 'time') {
-      const start = dayjs(event.start.dateTime).format('A h:mm');
-      const end = dayjs(event.end.dateTime).format('A h:mm');
-      return `${start} ~ ${end}`;
-    }
-    return event.start.date;
+    if (event.category !== 'time') return '하루 종일';
+    if (isMultiDay) return `${dayjs(event.start.dateTime).format('M월 D일 A h:mm')} ~ ${dayjs(event.end.dateTime).format('M월 D일 A h:mm')}`;
+    return `${dayjs(event.start.dateTime).format('A h:mm')} ~ ${dayjs(event.end.dateTime).format('A h:mm')}`;
   };
 
   return (
     <div
-      className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 [html.show-event-form_&]:hidden event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted === 'true' ? 'opacity-50' : ''}`}
-      onClick={preventHolidayClick}
+      className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 [html.show-event-form_&]:hidden event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted === 'true' && 'opacity-50'}`}
+      onClick={(e) => {
+        if (isHoliday) e.stopPropagation();
+      }}
     >
       <div className={`h-10 w-2 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />
       <div className="text-primary flex-1 pl-3">

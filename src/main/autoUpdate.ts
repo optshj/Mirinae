@@ -6,12 +6,12 @@ export const initAutoUpdater = () => {
   let shouldInstallOnDownload = false;
 
   autoUpdater.logger = log;
-  log.info('[Updater] 자동 업데이트 초기화 시작');
+  log.info('[Updater] Auto Updater Initialized');
 
   autoUpdater.autoInstallOnAppQuit = false;
 
   // 업데이트 체크 시작
-  log.info('[Updater] 업데이트 체크 시작 (현재 버전:', app.getVersion(), ')');
+  log.info('[Updater] Current version:', app.getVersion());
   autoUpdater.checkForUpdatesAndNotify();
 
   // 업데이트 발견 시
