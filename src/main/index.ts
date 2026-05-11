@@ -34,7 +34,8 @@ export const getVirtualScreenOffset = () => {
 
 function createWindow(): void {
   const { height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
-  const savedBounds = store.get('window-bounds');
+  const defaultBounds = { x: 0, y: 0, width: 800, height: screenHeight };
+  const savedBounds = store.get('window-bounds') || defaultBounds;
   const savedOpacity = store.get('window-opacity');
 
   mainWindow = new BrowserWindow({
