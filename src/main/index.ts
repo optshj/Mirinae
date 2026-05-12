@@ -34,8 +34,7 @@ export const getVirtualScreenOffset = () => {
 
 function createWindow(): void {
   const { height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
-  const defaultBounds = { x: 0, y: 0, width: 800, height: screenHeight };
-  const savedBounds = store.get('window-bounds') || defaultBounds;
+  const savedBounds = store.get('window-bounds');
   const savedOpacity = store.get('window-opacity');
 
   mainWindow = new BrowserWindow({
@@ -71,7 +70,12 @@ function createWindow(): void {
         forwardMouseInput: true,
         forwardKeyboardInput: true
       });
-      mainWindow.setBounds(savedBounds);
+      mainWindow.setBounds({
+        x: savedBounds.x || 0,
+        y: savedBounds.y || 0,
+        width: savedBounds.width,
+        height: savedBounds.height
+      });
       isWindowAttached = true;
     }
   });
