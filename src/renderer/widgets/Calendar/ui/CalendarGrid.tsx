@@ -84,7 +84,7 @@ function WeekRow({ week, month, items, maxLanes, onPickDate }: WeekRowProps) {
             <div className={`grid grid-cols-[1fr_auto_1fr] items-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
               <div />
               <div className={`flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70 ${isToday && 'bg-main-color text-bg-gray dark:text-[#333333]'}`}>{date.getDate()}</div>
-              <div className="pl-1 text-left">{more > 0 && <span className="text-secondary text-[11px] font-normal whitespace-nowrap">+{more}개 일정</span>}</div>
+              <div className="pl-1 text-left">{more > 0 && <span className="text-secondary text-[10px] font-normal whitespace-nowrap">+{more}개 일정</span>}</div>
             </div>
 
             <div className="min-h-0 flex-1" />
