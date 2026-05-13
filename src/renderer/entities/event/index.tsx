@@ -8,4 +8,5 @@ export { useEditEvent } from './hooks/useEditEvent';
 export { useEvents, useHolidayEvents } from './hooks/useEvent';
 export { useCalendarItems } from './hooks/useCalendarItems';
 export { MaxLanesProvider, useMaxLanes } from './context/MaxLanesContext';
+export { HolidayProvider, useHoliday } from './context/HolidayContext';
 export * from './lib/eventLayout';

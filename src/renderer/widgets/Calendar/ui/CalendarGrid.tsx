@@ -86,12 +86,14 @@ function WeekRow({ week, month, items, maxLanes, onPickDate }: WeekRowProps) {
               <div className={`flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70 ${isToday && 'bg-main-color text-bg-gray dark:text-[#333333]'}`}>{date.getDate()}</div>
               <div className="pl-1 text-left">{more > 0 && <span className="text-secondary text-[11px] font-normal whitespace-nowrap">+{more}개 일정</span>}</div>
             </div>
+
+            <div className="min-h-0 flex-1" />
           </div>
         );
       })}
 
       <div
-        className="absolute inset-x-0 top-8 bottom-0 grid grid-cols-7 gap-y-1"
+        className="pointer-events-none absolute inset-x-0 top-8 bottom-0 grid grid-cols-7 gap-y-1"
         style={{
           gridTemplateRows: `repeat(${maxLanes}, minmax(0, 20px))`
         }}

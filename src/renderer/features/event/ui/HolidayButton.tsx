@@ -1,28 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useHoliday } from '@/entities/event';
 import { Switch } from '@/shared/ui/switch';
 
 export function HolidayButton() {
-  const [isShow, setIsShow] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('holiday');
-      return saved === null ? true : saved === 'true';
-    }
-    return true;
-  });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('show-holiday', isShow);
-    localStorage.setItem('holiday', isShow.toString());
-  }, [isShow]);
+  const { showHoliday, setShowHoliday } = useHoliday();
 
   const handleToggle = () => {
-    setIsShow((prev) => !prev);
+    setShowHoliday(!showHoliday);
   };
 
   return (
     <div className="flex flex-row items-center justify-between gap-4">
       <label htmlFor="holiday-toggle">공휴일 표시</label>
-      <Switch id="holiday-toggle" onClick={handleToggle} isOn={isShow} />
+      <Switch id="holiday-toggle" onClick={handleToggle} isOn={showHoliday} />
     </div>
   );
 }

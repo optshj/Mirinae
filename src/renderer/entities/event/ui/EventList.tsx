@@ -11,13 +11,12 @@ export function EventList({ seg, weekStart, onDoubleClick }: EventListProps) {
   const span = dayjs(seg.end).diff(seg.start, 'day') + 1;
 
   const event = seg.event;
-  const isHoliday = event.category === 'holiday';
   const isCompleted = event.extendedProperties.private.isCompleted === 'true';
   const timeLabel = event.category === 'time' ? formatDateTime(event.start) : null;
 
   return (
     <div
-      className={`pointer-events-auto flex max-h-5 items-center overflow-hidden text-sm md:bg-(--event-color)/20 dark:saturate-70 event-color-${event.colorId} ${seg.isStart && 'rounded-l-sm'} ${seg.isEnd && 'rounded-r-sm'} ${isCompleted ? 'opacity-50' : 'opacity-100'} ${isHoliday && '[html:not(.show-holiday)_&]:hidden'}`}
+      className={`pointer-events-auto flex max-h-5 items-center overflow-hidden text-sm md:bg-(--event-color)/20 dark:saturate-70 event-color-${event.colorId} ${seg.isStart && 'rounded-l-sm'} ${seg.isEnd && 'rounded-r-sm'} ${isCompleted ? 'opacity-50' : 'opacity-100'}`}
       style={{
         gridColumnStart: colStart + 1,
         gridColumnEnd: colStart + span + 1,
