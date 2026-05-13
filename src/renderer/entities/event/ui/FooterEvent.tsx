@@ -41,7 +41,7 @@ export function FooterEvent({ items, title, description, headerButton }: FooterE
 
       <div className="flex max-h-30 flex-col gap-4">
         {items.length === 0 ? (
-          <span className="text-font-gray py-8 text-center whitespace-nowrap">{description}</span>
+          <span className="text-font-gray py-8 text-center font-medium whitespace-nowrap">{description}</span>
         ) : (
           visibleItems.map((event) => (
             <div key={event.id} className="flex items-center gap-3 px-3">

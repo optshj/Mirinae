@@ -53,7 +53,7 @@ export function AskButton({ closeDropDown }: { closeDropDown?: () => void }) {
           <DialogDescription>문의 내용은 단순 텍스트로, 개인정보는 수집되지 않습니다.</DialogDescription>
         </DialogHeader>
         <HangulTextArea
-          className="min-h-[150px] rounded-md border p-3 dark:border-zinc-700"
+          className="min-h-[200px] rounded-md border p-3 text-sm dark:border-zinc-700"
           autoFocus
           placeholder="문의 내용을 입력하세요..."
           value={content}

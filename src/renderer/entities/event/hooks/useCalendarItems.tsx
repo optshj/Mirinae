@@ -1,10 +1,12 @@
 import { CalendarEvent, HolidayEvent } from '@/shared/types/EventType';
 import { useMemo } from 'react';
 import { useEvents, useHolidayEvents } from './useEvent';
+import { useHoliday } from '../context/HolidayContext';
 
 export function useCalendarItems() {
   const { data: eventData } = useEvents();
   const { data: holidayData } = useHolidayEvents();
+  const { showHoliday } = useHoliday();
 
   const items = useMemo<CalendarEvent[]>(() => {
     const eventItems: CalendarEvent[] = (eventData?.items ?? []).map((event) => {
@@ -31,21 +33,23 @@ export function useCalendarItems() {
       };
     });
 
-    const holidayItems: HolidayEvent[] = (holidayData?.items ?? []).map((event) => ({
-      ...event,
-      category: 'holiday',
-      colorId: '10',
-      start: { date: event.start?.date ?? '' },
-      end: { date: event.end?.date ?? '' },
-      extendedProperties: { private: { isCompleted: 'false' } }
-    }));
+    const holidayItems: HolidayEvent[] = showHoliday
+      ? (holidayData?.items ?? []).map((event) => ({
+          ...event,
+          category: 'holiday',
+          colorId: '10',
+          start: { date: event.start?.date ?? '' },
+          end: { date: event.end?.date ?? '' },
+          extendedProperties: { private: { isCompleted: 'false' } }
+        }))
+      : [];
 
     return [...holidayItems, ...eventItems].sort((a, b) => {
       const sa = a.category === 'time' ? a.start.dateTime : a.start.date;
       const sb = b.category === 'time' ? b.start.dateTime : b.start.date;
       return sa.localeCompare(sb);
     });
-  }, [eventData, holidayData]);
+  }, [eventData, holidayData, showHoliday]);
 
   return { items };
 }
