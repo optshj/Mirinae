@@ -81,16 +81,23 @@ function WeekRow({ week, month, items, maxLanes, onPickDate }: WeekRowProps) {
 
         return (
           <div key={dateKey} className="border-primary flex h-full w-full flex-col overflow-hidden border" onDoubleClick={() => onPickDate(date)}>
-            <div className={`flex justify-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
+            <div className={`grid grid-cols-[1fr_auto_1fr] items-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
+              <div />
               <div className={`flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70 ${isToday && 'bg-main-color text-bg-gray dark:text-[#333333]'}`}>{date.getDate()}</div>
+              <div className="pl-1 text-left">{more > 0 && <span className="text-secondary text-[10px] font-normal whitespace-nowrap">+{more}개 일정</span>}</div>
             </div>
 
-            {more > 0 && <div className="text-secondary mt-auto px-1 pt-0.5 text-[12px]">+{more}개 일정</div>}
+            <div className="min-h-0 flex-1" />
           </div>
         );
       })}
 
-      <div className="pointer-events-none absolute inset-x-0 top-8 grid grid-cols-7" style={{ gridTemplateRows: `repeat(${maxLanes}, 24px)` }}>
+      <div
+        className="pointer-events-none absolute inset-x-0 top-8 bottom-0 grid grid-cols-7 gap-y-1"
+        style={{
+          gridTemplateRows: `repeat(${maxLanes}, minmax(0, 20px))`
+        }}
+      >
         {visible.map((seg) => (
           <EventList key={seg.event.id + seg.start} seg={seg} weekStart={weekStart} onDoubleClick={onPickDate} />
         ))}
