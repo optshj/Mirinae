@@ -1,4 +1,4 @@
-import { ipcMain, app } from 'electron';
+import { ipcMain, app, shell } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
 import { mainWindow, getVirtualScreenOffset } from '.';
 import { tryAutoLogin, logoutGoogleOAuth, startGoogleOAuth } from './oauth';
@@ -6,6 +6,10 @@ import { store } from './store';
 import activeWindow from 'active-win';
 
 export const registerIPCHandlers = () => {
+  ipcMain.on('open-external', (_, url) => {
+    shell.openExternal(url);
+  });
+
   ipcMain.handle('try-auto-login', tryAutoLogin);
   ipcMain.handle('logout-google-oauth', logoutGoogleOAuth);
   ipcMain.on('start-google-oauth', startGoogleOAuth);
