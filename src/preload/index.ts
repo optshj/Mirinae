@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
 
 export interface Api {
+  openExternal: (url: string) => void;
   startGoogleOauth: () => void;
   onGoogleOauthSuccess: (callback: (tokens: any) => void) => () => void;
   onGoogleOauthError: (callback: (error: any) => void) => () => void;
@@ -25,6 +26,7 @@ export interface Api {
 }
 
 const api = {
+  openExternal: (url: string) => ipcRenderer.send('open-external', url),
   startGoogleOauth: () => ipcRenderer.send('start-google-oauth'),
 
   onGoogleOauthSuccess: (callback) => {
