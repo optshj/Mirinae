@@ -13,7 +13,6 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
   const [open, setOpen] = useState(false);
   const { items } = useCalendarItems();
   const { maxLanes } = useMaxLanes();
-  console.log('CalendarGrid rendered with maxLanes:', maxLanes);
 
   const weekArray = useMemo(() => {
     return Array.from({ length: 6 }, (_, i) => days.slice(i * 7, i * 7 + 7));
