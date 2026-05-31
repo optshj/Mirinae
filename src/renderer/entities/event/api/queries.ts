@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import { eventApi } from '.';
 
-const TWO_HOURS_IN_MS = 2 * 60 * 60 * 1000; // 2 hours
+const TEN_MINUTES_IN_MS = 10 * 60 * 1000; // 10 minutes
 
 export const eventKeys = {
   events: ['googleCalendarEvents'] as const,
@@ -13,16 +13,14 @@ export const eventOptions = {
     queryOptions({
       queryKey: eventKeys.events,
       queryFn: () => eventApi.getEvents(),
-      staleTime: TWO_HOURS_IN_MS,
-      refetchInterval: TWO_HOURS_IN_MS,
+      staleTime: TEN_MINUTES_IN_MS,
+      refetchInterval: TEN_MINUTES_IN_MS,
       refetchIntervalInBackground: true
     }),
 
   holidays: () =>
     queryOptions({
       queryKey: eventKeys.holidays,
-      queryFn: () => eventApi.getHolidays(),
-      staleTime: TWO_HOURS_IN_MS,
-      refetchInterval: TWO_HOURS_IN_MS
+      queryFn: () => eventApi.getHolidays()
     })
 };

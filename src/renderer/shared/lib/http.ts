@@ -8,14 +8,10 @@ export const setAuthToken = (token: string | null) => {
   authToken = token;
 };
 
-const fetcher = async <T>(url: string, options: RequestOptions = {}): Promise<T> => {
-  const { params, headers, ...customOptions } = options;
-
-  const queryString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : '';
-
+const executeRequest = async (url: string, queryString: string, customOptions: RequestInit, headers: HeadersInit | undefined): Promise<Response> => {
   const authHeaders: Record<string, string> = authToken ? { Authorization: `Bearer ${authToken}` } : {};
 
-  const response = await fetch(`${url}${queryString}`, {
+  return fetch(`${url}${queryString}`, {
     ...customOptions,
     headers: {
       'Content-Type': 'application/json',
@@ -23,6 +19,30 @@ const fetcher = async <T>(url: string, options: RequestOptions = {}): Promise<T>
       ...headers
     }
   });
+};
+
+const fetcher = async <T>(url: string, options: RequestOptions = {}): Promise<T> => {
+  const { params, headers, ...customOptions } = options;
+
+  const queryString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : '';
+
+  let response = await executeRequest(url, queryString, customOptions, headers);
+
+  if (response.status === 401) {
+    try {
+      const newTokens = await window.api.refreshToken?.();
+      if (newTokens?.access_token) {
+        setAuthToken(newTokens.access_token);
+        response = await executeRequest(url, queryString, customOptions, headers);
+      } else {
+        setAuthToken(null);
+        window.dispatchEvent(new CustomEvent('auth-expired'));
+      }
+    } catch {
+      setAuthToken(null);
+      window.dispatchEvent(new CustomEvent('auth-expired'));
+    }
+  }
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
