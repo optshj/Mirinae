@@ -8,11 +8,11 @@ export function useLogin() {
     window.api.startGoogleOauth();
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setIsAuthenticated(false);
     setAuthToken(null);
     window.api.logoutGoogleOAuth();
-  };
+  }, []);
 
   const handleLogin = useCallback((receivedTokens) => {
     setAuthToken(receivedTokens.access_token);
@@ -42,6 +42,7 @@ export function useLogin() {
   useEffect(() => {
     refreshToken();
     window.addEventListener('online', refreshToken);
+    window.addEventListener('auth-expired', logout);
 
     const removeSuccessListener = window.api.onGoogleOauthSuccess(handleLogin);
     const removeErrorListener = window.api.onGoogleOauthError(handleError);
@@ -50,8 +51,9 @@ export function useLogin() {
       removeSuccessListener();
       removeErrorListener();
       window.removeEventListener('online', refreshToken);
+      window.removeEventListener('auth-expired', logout);
     };
-  }, [handleLogin, handleError, refreshToken]);
+  }, [handleLogin, handleError, refreshToken, logout]);
 
   return { login, logout, isAuthenticated, refreshToken };
 }
