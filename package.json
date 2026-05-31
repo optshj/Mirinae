@@ -1,7 +1,7 @@
 {
   "name": "mirinae",
   "productName": "Mirinae",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "미리내",
   "main": "./out/main/index.js",
   "author": "Mirinae",

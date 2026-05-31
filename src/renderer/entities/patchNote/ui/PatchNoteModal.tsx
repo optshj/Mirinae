@@ -17,6 +17,7 @@ export function PatchNoteModal() {
             <span className="text-foreground text-2xl font-bold tracking-tight">업데이트 내용</span>
           </DialogTitle>
           <DialogDescription>1. 간혹 일정 추가/수정/삭제가 안되는 오류가 수정되었습니다.</DialogDescription>
+          <DialogDescription>2. 반복 일정이 정상적으로 표시됩니다.</DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>
