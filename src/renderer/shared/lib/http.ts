@@ -8,6 +8,8 @@ export const setAuthToken = (token: string | null) => {
   authToken = token;
 };
 
+export const getAuthToken = () => authToken;
+
 const executeRequest = async (url: string, queryString: string, customOptions: RequestInit, headers: HeadersInit | undefined): Promise<Response> => {
   const authHeaders: Record<string, string> = authToken ? { Authorization: `Bearer ${authToken}` } : {};
 
