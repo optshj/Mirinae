@@ -30,7 +30,7 @@ export function ScheduleModal({ date }: { date: Date }) {
           <EditEventForm
             key={event.id}
             event={event}
-            deleteButton={<DeleteEventButton eventId={event.id} />}
+            deleteButton={<DeleteEventButton event={event} />}
             completeButton={<CompleteEventButton eventId={event.id} isCompleted={event.extendedProperties.private.isCompleted} />}
           />
         );

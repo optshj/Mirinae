@@ -11,6 +11,7 @@ import { OpacityButton } from '@/features/opacity';
 import { DarkModeButton } from '@/features/darkmode';
 import { HolidayButton, MaxLanesButton } from '@/features/event';
 import { QuitAppButton } from '@/features/quit';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
 
 const dragStyle = { WebkitAppRegion: 'drag' } as React.CSSProperties;
 const noDragStyle = { WebkitAppRegion: 'no-drag' } as React.CSSProperties;
@@ -25,10 +26,26 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
         </div>
         <ChevronRight strokeWidth={1.25} onClick={handleNextMonth} />
       </div>
-
       <div className="flex gap-4" style={noDragStyle}>
         <FlipCalendarButton />
         <RefreshButton />
+        {/* <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Settings strokeWidth={1} size={24} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <LoginButton />
+            <MoveActiveButton />
+            <AskButton />
+            <div className="h-px w-full rounded-full bg-zinc-300"></div>
+            <OpacityButton />
+            <MaxLanesButton />
+            <DarkModeButton />
+            <HolidayButton />
+            <FlipFooterButton />
+            <QuitAppButton />
+          </DropdownMenuContent>
+        </DropdownMenu> */}
         <DropDown trigger={<Settings strokeWidth={1} size={24} />} align="right" closeOnClick={false}>
           {/** 드랍다운 메뉴 */}
           <LoginButton />

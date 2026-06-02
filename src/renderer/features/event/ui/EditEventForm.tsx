@@ -23,7 +23,8 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
     colorId: event.colorId,
     start: event.category === 'time' ? dayjs(event.start.dateTime).format('HH:mm') : '08:00',
     end: event.category === 'time' ? dayjs(event.end.dateTime).format('HH:mm') : '12:00',
-    allDay: event.category === 'allDay'
+    allDay: event.category === 'allDay',
+    recurrence: null
   });
   const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }));
 

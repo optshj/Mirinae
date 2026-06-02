@@ -12,7 +12,8 @@ const initialFormState: FormState = {
   colorId: '1',
   start: '08:00',
   end: '12:00',
-  allDay: false
+  allDay: false,
+  recurrence: null
 };
 export function AddEventForm({ date }: { date: Date }) {
   const [form, setForm] = useState<FormState>(initialFormState);
