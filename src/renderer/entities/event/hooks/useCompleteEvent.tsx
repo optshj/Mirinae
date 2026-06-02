@@ -5,7 +5,7 @@ import { eventKeys } from '../api/queries';
 
 interface CompleteEventProp {
   eventId: string;
-  isCompleted: string;
+  isCompleted: boolean;
 }
 export function useCompleteEvent() {
   const queryClient = useQueryClient();
@@ -15,7 +15,7 @@ export function useCompleteEvent() {
       const patchBody = {
         extendedProperties: {
           private: {
-            isCompleted: isCompleted
+            isCompleted: String(isCompleted)
           }
         }
       };
@@ -31,11 +31,7 @@ export function useCompleteEvent() {
             if (item.id === eventId) {
               return {
                 ...item,
-                extendedProperties: {
-                  private: {
-                    isCompleted: isCompleted
-                  }
-                }
+                extendedProperties: { private: { isCompleted } }
               };
             }
             return item;

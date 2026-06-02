@@ -59,7 +59,7 @@ function Event({ event, deleteButton, completeButton }: { event: CalendarEvent; 
 
   return (
     <div
-      className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 [html.show-event-form_&]:hidden event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted === 'true' && 'opacity-50'}`}
+      className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 [html.show-event-form_&]:hidden event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted && 'opacity-50'}`}
       onClick={(e) => {
         if (isHoliday) e.stopPropagation();
       }}

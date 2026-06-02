@@ -10,7 +10,7 @@ export function useCalendarItems() {
 
   const items = useMemo<CalendarEvent[]>(() => {
     const eventItems: CalendarEvent[] = (eventData?.items ?? []).map((event) => {
-      const isCompleted = event.extendedProperties?.private?.isCompleted === 'true' ? ('true' as const) : ('false' as const);
+      const isCompleted = event.extendedProperties?.private?.isCompleted === 'true';
       const common = {
         ...event,
         colorId: event.colorId ?? '1',
@@ -40,7 +40,7 @@ export function useCalendarItems() {
           colorId: '10',
           start: { date: event.start?.date ?? '' },
           end: { date: event.end?.date ?? '' },
-          extendedProperties: { private: { isCompleted: 'false' } }
+          extendedProperties: { private: { isCompleted: false } }
         }))
       : [];
 
