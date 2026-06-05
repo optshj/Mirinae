@@ -16,8 +16,8 @@ export function PatchNoteModal() {
           <DialogTitle className="flex flex-row items-baseline gap-3">
             <span className="text-foreground text-2xl font-bold tracking-tight">업데이트 내용</span>
           </DialogTitle>
-          <DialogDescription>1. 간혹 일정 추가/수정/삭제가 안되는 오류가 수정되었습니다.</DialogDescription>
-          <DialogDescription>2. 반복 일정이 정상적으로 표시됩니다.</DialogDescription>
+          <DialogDescription>1. 반복일정을 설정할 수 있도록 추가되었습니다.</DialogDescription>
+          <DialogDescription>2. 일정을 색상별로 필터링하여 볼 수 있습니다.</DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>

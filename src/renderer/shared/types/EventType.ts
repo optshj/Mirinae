@@ -168,7 +168,13 @@ export type Events = {
     timeZone?: string;
   };
 };
-type BaseEvent = Omit<Events, 'start' | 'end'>;
+type BaseEvent = Omit<Events, 'start' | 'end' | 'extendedProperties'> & {
+  extendedProperties: {
+    private: {
+      isCompleted: boolean;
+    };
+  };
+};
 
 export interface TimeEvent extends BaseEvent {
   category: 'time';

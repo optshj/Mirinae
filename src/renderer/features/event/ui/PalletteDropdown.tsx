@@ -1,6 +1,6 @@
-import { DropDown } from '@/shared/ui/dropdown';
 import { COLOR_STORAGE_KEY, COLORPALLETTE } from '@/shared/const/color';
 import { Check, Palette } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
 
 interface PalletteDropdownProps {
   colorId: string;
@@ -13,16 +13,15 @@ export function PalletteDropdown({ colorId, setColorId }: PalletteDropdownProps)
   };
 
   return (
-    <>
-      <DropDown
-        trigger={
-          <button
-            className={`relative flex h-7 w-7 items-center justify-center rounded-full border border-white/30 shadow-md transition-all hover:scale-110 event-color-${colorId} bg-(--event-color) dark:saturate-70`}
-          >
-            <Palette className="h-3.5 w-3.5 text-white" />
-          </button>
-        }
-      >
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={`relative flex h-7 w-7 items-center justify-center rounded-full border border-white/30 shadow-md transition-all hover:scale-110 event-color-${colorId} bg-(--event-color) dark:saturate-70`}
+        >
+          <Palette className="h-3.5 w-3.5 text-white" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-auto py-2">
         <div className="grid grid-cols-6 gap-2 px-2">
           {COLORPALLETTE.map((key) => (
             <div
@@ -34,7 +33,7 @@ export function PalletteDropdown({ colorId, setColorId }: PalletteDropdownProps)
             </div>
           ))}
         </div>
-      </DropDown>
-    </>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

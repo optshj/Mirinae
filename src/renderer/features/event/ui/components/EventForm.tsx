@@ -6,7 +6,15 @@ import { Switch } from '@/shared/ui/switch';
 import { COLORPALLETTE } from '@/shared/const/color';
 
 import { LinearSlider } from './LinearSlider';
-import { FormState } from '../../types/FormType';
+import { FormState, RecurrenceType } from '../../types/FormType';
+
+const RECURRENCE_OPTIONS: { label: string; value: RecurrenceType }[] = [
+  { label: '없음', value: null },
+  { label: '1일마다', value: 'DAILY' },
+  { label: '1주마다', value: 'WEEKLY' },
+  { label: '1개월마다', value: 'MONTHLY' },
+  { label: '1년마다', value: 'YEARLY' }
+];
 
 interface EventFormProps {
   form: FormState;
@@ -85,6 +93,27 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
             <label className="text-primary text-sm">시간 설정</label>
             <div className={`relative flex flex-col items-center justify-center px-4 py-2 ${form.allDay ? 'pointer-events-none opacity-50' : ''}`}>
               <LinearSlider updateForm={updateForm} defaultTime={[form.start, form.end]} />
+            </div>
+          </div>
+
+          {/** 반복 설정 */}
+          <div>
+            <label className="text-primary text-sm">반복 설정</label>
+            <div className="mt-2 flex flex-wrap gap-1.5 px-2">
+              {RECURRENCE_OPTIONS.map(({ label, value }) => (
+                <button
+                  key={label}
+                  type="button"
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    form.recurrence === value
+                      ? 'bg-zinc-700 text-white dark:bg-zinc-300 dark:text-zinc-800'
+                      : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600'
+                  }`}
+                  onClick={() => updateForm('recurrence', value)}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
