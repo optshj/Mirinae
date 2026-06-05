@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { setAuthToken } from '../lib/http';
+import { setAuthToken, getAuthToken } from '../lib/http';
 
 export function useLogin() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getAuthToken()));
 
   const login = () => {
     window.api.startGoogleOauth();

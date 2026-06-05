@@ -5,6 +5,7 @@ export interface AddEventProp {
   summary: string;
   colorId: string;
   allDay: boolean;
+  recurrence?: string | null;
 }
 export interface EditEventProp extends AddEventProp {
   eventId: string;

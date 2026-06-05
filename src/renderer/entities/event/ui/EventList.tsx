@@ -11,7 +11,7 @@ export function EventList({ seg, weekStart, onDoubleClick }: EventListProps) {
   const span = dayjs(seg.end).diff(seg.start, 'day') + 1;
 
   const event = seg.event;
-  const isCompleted = event.extendedProperties.private.isCompleted === 'true';
+  const isCompleted = event.extendedProperties.private.isCompleted;
   const timeLabel = event.category === 'time' ? formatDateTime(event.start) : null;
 
   return (

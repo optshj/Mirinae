@@ -2,15 +2,17 @@ import { CalendarEvent, HolidayEvent } from '@/shared/types/EventType';
 import { useMemo } from 'react';
 import { useEvents, useHolidayEvents } from './useEvent';
 import { useHoliday } from '../context/HolidayContext';
+import { useColorFilter } from '../context/ColorFilterContext';
 
 export function useCalendarItems() {
   const { data: eventData } = useEvents();
   const { data: holidayData } = useHolidayEvents();
   const { showHoliday } = useHoliday();
+  const { filteredColors } = useColorFilter();
 
   const items = useMemo<CalendarEvent[]>(() => {
     const eventItems: CalendarEvent[] = (eventData?.items ?? []).map((event) => {
-      const isCompleted = event.extendedProperties?.private?.isCompleted === 'true' ? ('true' as const) : ('false' as const);
+      const isCompleted = event.extendedProperties?.private?.isCompleted === 'true';
       const common = {
         ...event,
         colorId: event.colorId ?? '1',
@@ -40,16 +42,19 @@ export function useCalendarItems() {
           colorId: '10',
           start: { date: event.start?.date ?? '' },
           end: { date: event.end?.date ?? '' },
-          extendedProperties: { private: { isCompleted: 'false' } }
+          extendedProperties: { private: { isCompleted: false } }
         }))
       : [];
 
-    return [...holidayItems, ...eventItems].sort((a, b) => {
+    const all = [...holidayItems, ...eventItems];
+    const filtered = filteredColors.size > 0 ? all.filter((e) => filteredColors.has(e.colorId)) : all;
+
+    return filtered.sort((a, b) => {
       const sa = a.category === 'time' ? a.start.dateTime : a.start.date;
       const sb = b.category === 'time' ? b.start.dateTime : b.start.date;
       return sa.localeCompare(sb);
     });
-  }, [eventData, holidayData, showHoliday]);
+  }, [eventData, holidayData, showHoliday, filteredColors]);
 
   return { items };
 }
