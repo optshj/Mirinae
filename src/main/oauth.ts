@@ -9,7 +9,7 @@ const SERVICE_NAME = 'Mirinae';
 const ACCOUNT_NAME = 'google-refresh-token';
 const CLIENT_ID = process.env.VITE_CLIENT_ID;
 const CLIENT_SECRET = process.env.VITE_CLIENT_SECRET;
-const REDIRECT_URI = 'http://localhost:5858/callback';
+const LOOPBACK_HOST = '127.0.0.1';
 const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.owned';
 
 const generatePKCE = () => {
@@ -18,46 +18,65 @@ const generatePKCE = () => {
   return { codeVerifier, codeChallenge };
 };
 
-const startAuthServer = (resolve: (code: string) => void, reject: (error: Error) => void) => {
-  const successPath = app.isPackaged ? join(process.resourcesPath, 'resources', 'success.html') : join(__dirname, '../../resources/success.html');
-  let server: http.Server | null = null;
+const startAuthServer = (onListening: (redirectUri: string) => void): Promise<string> => {
+  return new Promise<string>((resolve, reject) => {
+    const successPath = app.isPackaged ? join(process.resourcesPath, 'resources', 'success.html') : join(__dirname, '../../resources/success.html');
+    let server: http.Server | null = null;
+    let timeout: NodeJS.Timeout | null = null;
 
-  // 5분 타임아웃 설정
-  const timeout = setTimeout(
-    () => {
-      if (server) {
-        server.close();
-        reject(new Error('Authentication timeout'));
-      }
-    },
-    5 * 60 * 1000
-  );
-  server = http
-    .createServer((req, res) => {
+    const cleanup = () => {
+      if (timeout) clearTimeout(timeout);
+      server?.close();
+      server = null;
+    };
+
+    server = http.createServer((req, res) => {
       const url = new URL(req.url!, `http://${req.headers.host}`);
       const code = url.searchParams.get('code');
 
       if (code) {
         res.end(readFileSync(successPath));
+        cleanup();
         resolve(code);
       } else {
         res.end('<h1>Authentication failed. Please try again.</h1>');
+        cleanup();
         reject(new Error('No authorization code received'));
       }
-      clearTimeout(timeout);
-      server?.close();
-      server = null;
-    })
-    .listen(5858);
+    });
+
+    server.on('error', (err: NodeJS.ErrnoException) => {
+      cleanup();
+      reject(new Error(`인증 서버를 시작하지 못했습니다 (${err.code ?? err.message})`));
+    });
+
+    server.listen(0, LOOPBACK_HOST, () => {
+      const address = server?.address();
+      if (!address || typeof address === 'string') {
+        cleanup();
+        reject(new Error('인증 서버 포트를 확인하지 못했습니다'));
+        return;
+      }
+
+      timeout = setTimeout(
+        () => {
+          cleanup();
+          reject(new Error('Authentication timeout'));
+        },
+        5 * 60 * 1000
+      );
+
+      onListening(`http://${LOOPBACK_HOST}:${address.port}/callback`);
+    });
+  });
 };
 
-// Access / Refresh 토큰 요청
-const fetchAccessTokens = async (code: string, codeVerifier: string) => {
+const fetchAccessTokens = async (code: string, codeVerifier: string, redirectUri: string) => {
   const params = new URLSearchParams({
     code,
     client_id: CLIENT_ID!,
     client_secret: CLIENT_SECRET!,
-    redirect_uri: REDIRECT_URI,
+    redirect_uri: redirectUri,
     grant_type: 'authorization_code',
     code_verifier: codeVerifier
   });
@@ -115,24 +134,25 @@ export const logoutGoogleOAuth = async () => {
 // Google OAuth 시작
 export const startGoogleOAuth = async (event: Electron.IpcMainEvent) => {
   const { codeVerifier, codeChallenge } = generatePKCE();
-
-  const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-  authUrl.searchParams.append('client_id', CLIENT_ID!);
-  authUrl.searchParams.append('redirect_uri', REDIRECT_URI);
-  authUrl.searchParams.append('response_type', 'code');
-  authUrl.searchParams.append('scope', SCOPES);
-  authUrl.searchParams.append('code_challenge', codeChallenge);
-  authUrl.searchParams.append('code_challenge_method', 'S256');
-  authUrl.searchParams.append('access_type', 'offline');
+  let redirectUri = '';
 
   try {
-    shell.openExternal(authUrl.toString());
+    const authCode = await startAuthServer((listeningRedirectUri) => {
+      redirectUri = listeningRedirectUri;
 
-    const authCode = await new Promise<string>((resolve, reject) => {
-      startAuthServer(resolve, reject);
+      const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+      authUrl.searchParams.append('client_id', CLIENT_ID!);
+      authUrl.searchParams.append('redirect_uri', redirectUri);
+      authUrl.searchParams.append('response_type', 'code');
+      authUrl.searchParams.append('scope', SCOPES);
+      authUrl.searchParams.append('code_challenge', codeChallenge);
+      authUrl.searchParams.append('code_challenge_method', 'S256');
+      authUrl.searchParams.append('access_type', 'offline');
+
+      shell.openExternal(authUrl.toString());
     });
 
-    const tokens = await fetchAccessTokens(authCode, codeVerifier);
+    const tokens = await fetchAccessTokens(authCode, codeVerifier, redirectUri);
     if (tokens.refresh_token) {
       await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokens.refresh_token);
     }
@@ -140,6 +160,6 @@ export const startGoogleOAuth = async (event: Electron.IpcMainEvent) => {
     event.sender.send('google-oauth-token', tokens);
   } catch (error) {
     console.error('OAuth Error:', error);
-    event.sender.send('google-oauth-error');
+    event.sender.send('google-oauth-error', error instanceof Error ? error.message : String(error));
   }
 };

@@ -30,7 +30,8 @@ function generateOptimisticEvents(newEvent: AddEventProp) {
   let currentDate = dayjs(newEvent.date);
   let count = 0;
 
-  while (currentDate.isBefore(endDate) && count < 500) {
+  // 캘린더 그리드는 최대 42칸(6주 x 7일)이므로, 일간 반복이라도 50개면 화면을 채우기에 충분하다.
+  while (currentDate.isBefore(endDate) && count < 50) {
     const instanceBody = createEventBody({ ...newEvent, date: currentDate.toDate(), recurrence: null });
     instances.push({ ...instanceBody, id: `temp-id-${tempIdBase}-${count}` });
     currentDate = currentDate.add(1, unit);
