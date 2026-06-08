@@ -1,14 +1,13 @@
 {
-    "files": [],
-    "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }],
-    "include": ["./src/renderer/**/*", "src/renderer/global.d.ts"],
-    "compilerOptions": {
-        "composite": true,
-        "jsx": "react-jsx",
-        "types": ["electron-vite/node"],
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["./src/renderer/*"]
-        }
+  "files": [],
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }],
+  "include": ["./src/renderer/**/*", "src/renderer/global.d.ts"],
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "react-jsx",
+    "types": ["electron-vite/node"],
+    "paths": {
+      "@/*": ["./src/renderer/*"]
     }
+  }
 }

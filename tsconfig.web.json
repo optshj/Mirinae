@@ -1,12 +1,12 @@
 {
-    "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
-    "include": ["src/renderer/env.d.ts", "src/renderer/**/*", "src/renderer/**/*.tsx", "src/preload/*.d.ts", "src/renderer/shared", "src/renderer/global.d.ts"],
-    "compilerOptions": {
-        "composite": true,
-        "jsx": "react-jsx",
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["src/renderer/*"]
-        }
+  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+  "include": ["src/renderer/env.d.ts", "src/renderer/**/*", "src/renderer/**/*.tsx", "src/preload/*.d.ts", "src/renderer/shared", "src/renderer/global.d.ts"],
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "composite": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./src/renderer/*"]
     }
+  }
 }
