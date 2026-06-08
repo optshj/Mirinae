@@ -10,6 +10,7 @@ on:
   workflow_dispatch:
 jobs:
   chromatic:
+    environment: Notion-Git-issues
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
