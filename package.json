@@ -21,7 +21,9 @@
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
     "test": "vitest",
-    "publish": "npm run build:win && electron-builder --publish always"
+    "publish": "npm run build:win && electron-builder --publish always",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@aptabase/electron": "^0.3.1",
@@ -86,6 +88,9 @@
     "typescript": "^5.8.3",
     "vite": "^6.2.6",
     "vite-plugin-csp-guard": "^2.1.1",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "storybook": "10.4.2",
+    "@storybook/react-vite": "10.4.2",
+    "eslint-plugin-storybook": "10.4.2"
   }
 }
