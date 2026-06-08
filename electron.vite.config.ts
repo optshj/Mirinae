@@ -4,12 +4,23 @@ import csp from 'vite-plugin-csp-guard';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { loadEnv } from 'vite';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
     main: {
-      plugins: [externalizeDepsPlugin()],
+      build: {
+        sourcemap: true
+      },
+      plugins: [
+        externalizeDepsPlugin(),
+        sentryVitePlugin({
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+          org: '174d993e06c2',
+          project: 'mirinae'
+        })
+      ],
 
       define: {
         'process.env.VITE_CLIENT_ID': `"${env.VITE_CLIENT_ID}"`,

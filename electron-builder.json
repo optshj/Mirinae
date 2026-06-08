@@ -10,16 +10,24 @@
   "files": [
     "out/**/*",
     "package.json",
-    "!**/node_modules/electron-as-wallpaper/target/**",
-    "!**/test/**",
-    "!src/**",
     "!**/*.{md,markdown,txt}",
     "!**/*.{ts,tsx,map,pdb}",
     "!**/tsconfig.json",
     "!**/eslint*",
+    "!**/node_modules/electron-as-wallpaper/target/**",
+    "!**/node_modules/**/{test,__tests__,tests,example,examples}/**",
+    "!**/node_modules/**/*.{d.ts,map}",
+    "!**/node_modules/**/{README*,CHANGELOG*,LICENCE*,LICENSE*}",
     "!src/**",
     "!test/**",
-    "!scripts/**"
+    "!scripts/**",
+    "!release/**",
+
+    "!**/node_modules/active-win/build/Release/obj/**",
+    "!**/node_modules/active-win/build/Release/*.{iobj,ipdb,tlog,lastbuildstate}",
+    "!**/node_modules/active-win/prebuilds/darwin*/**",
+    "!**/node_modules/active-win/prebuilds/linux*/**",
+    "!**/node_modules/active-win/node_modules/**"
   ],
   "directories": {
     "output": "release"
@@ -31,7 +39,8 @@
   "extraResources": [
     {
       "from": "resources",
-      "to": "resources"
+      "to": "resources",
+      "filter": ["**/*", "!**/*.{ttf,otf,woff,woff2,eot}", "!**/*.pdb"]
     }
   ],
   "compression": "maximum",
