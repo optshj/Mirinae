@@ -8,3 +8,8 @@ release
 
 .env
 GEMINI.md
+# Sentry Config File
+.env.sentry-build-plugin
+
+*storybook.log
+storybook-static

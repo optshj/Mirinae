@@ -10,6 +10,7 @@ import { store } from './store';
 import { checkVersionAndShowPatchNotes } from './versionCheck';
 import { initialize } from '@aptabase/electron/main';
 import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindow';
+import * as Sentry from '@sentry/electron/main';
 
 const SERVICE_NAME = 'Mirinae';
 
@@ -24,6 +25,14 @@ new AutoLaunch({
 
 // Initialize Aptabase analytics
 initialize('A-US-3842104393');
+
+// Initialize Sentry for error tracking
+Sentry.init({
+  dsn: 'https://e14a01e7695b60bc88127406d382c174@o4511528205615104.ingest.us.sentry.io/4511528463630336',
+  tracesSampleRate: 1.0,
+  integrations: [Sentry.startupTracingIntegration()],
+  enableLogs: true
+});
 
 export const getVirtualScreenOffset = () => {
   const displays = screen.getAllDisplays();
