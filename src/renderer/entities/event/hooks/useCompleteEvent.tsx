@@ -31,7 +31,7 @@ export function useCompleteEvent() {
             if (item.id === eventId) {
               return {
                 ...item,
-                extendedProperties: { private: { isCompleted } }
+                extendedProperties: { private: { isCompleted: String(isCompleted) } }
               };
             }
             return item;
