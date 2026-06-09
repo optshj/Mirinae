@@ -1,8 +1,16 @@
 import { Switch } from '@/shared/ui/switch';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export function FlipFooterButton() {
-  const [isFlip, setIsFlip] = useState(localStorage.getItem('flipFooter') === 'true');
+  const [isFlip, setIsFlip] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('flipFooter');
+    if (saved === 'true') {
+      setIsFlip(true);
+      document.documentElement.classList.add('flip-footer');
+    }
+  }, []);
 
   const onClick = () => {
     setIsFlip((prev) => {
@@ -15,7 +23,7 @@ export function FlipFooterButton() {
 
   return (
     <div className="flex flex-row justify-between">
-      <label htmlFor="flip-footer-toggle">달력만보기</label>
+      <label htmlFor="flip-footer-toggle">달력만 보기</label>
       <Switch id="flip-footer-toggle" onClick={onClick} isOn={isFlip} />
     </div>
   );
