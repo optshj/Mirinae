@@ -1,16 +1,8 @@
 import { Switch } from '@/shared/ui/switch';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export function FlipFooterButton() {
-  const [isFlip, setIsFlip] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('flipFooter');
-    if (saved === 'true') {
-      setIsFlip(true);
-      document.documentElement.classList.add('flip-footer');
-    }
-  }, []);
+  const [isFlip, setIsFlip] = useState(localStorage.getItem('flipFooter') === 'true');
 
   const onClick = () => {
     setIsFlip((prev) => {

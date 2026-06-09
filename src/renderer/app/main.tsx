@@ -14,6 +14,10 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0
 });
 
+if (localStorage.getItem('flipFooter') === 'true') {
+  document.documentElement.classList.add('flip-footer');
+}
+
 window.api.onUpdateClickable((isExplorer: boolean) => {
   document.documentElement.classList.toggle('disable-click', !isExplorer);
 });
