@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { trackEvent } from '@aptabase/electron/renderer';
+import { posthog } from '@/shared/lib/posthog';
 
 import { EventForm } from './components/EventForm';
 import { FormState } from '../types/FormType';
@@ -39,7 +39,7 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
       date,
       ...form
     });
-    trackEvent('EditEvent');
+    posthog.capture('edit_event');
     toast.success(`일정이 수정되었습니다`);
     return true;
   };

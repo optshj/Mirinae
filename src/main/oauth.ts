@@ -4,6 +4,7 @@ import http from 'http';
 import crypto from 'crypto';
 import keytar from 'keytar';
 import { join } from 'path';
+import { posthog, getDistinctId } from './posthog';
 
 const SERVICE_NAME = 'Mirinae';
 const ACCOUNT_NAME = 'google-refresh-token';
@@ -118,16 +119,27 @@ export const tryAutoLogin = async () => {
   const refreshToken = await keytar.getPassword(SERVICE_NAME, ACCOUNT_NAME);
   if (!refreshToken) return null;
 
-  const tokenData = await refreshAccessToken(refreshToken);
-  if (tokenData.refresh_token) {
-    await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokenData.refresh_token);
+  try {
+    const tokenData = await refreshAccessToken(refreshToken);
+    if (tokenData.refresh_token) {
+      await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokenData.refresh_token);
+    }
+    return tokenData;
+  } catch (error) {
+    posthog.captureException(error, getDistinctId(), { context: 'auto_login' });
+    posthog.capture({
+      distinctId: getDistinctId(),
+      event: 'auto_login_failed',
+      properties: { error: error instanceof Error ? error.message : String(error) }
+    });
+    throw error;
   }
-  return tokenData;
 };
 
 // 로그아웃
 export const logoutGoogleOAuth = async () => {
   await keytar.deletePassword(SERVICE_NAME, ACCOUNT_NAME);
+  posthog.capture({ distinctId: getDistinctId(), event: 'user_logged_out' });
   return true;
 };
 
@@ -157,9 +169,16 @@ export const startGoogleOAuth = async (event: Electron.IpcMainEvent) => {
       await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokens.refresh_token);
     }
 
+    posthog.capture({
+      distinctId: getDistinctId(),
+      event: 'user_logged_in',
+      properties: { app_version: app.getVersion() }
+    });
+
     event.sender.send('google-oauth-token', tokens);
   } catch (error) {
     console.error('OAuth Error:', error);
+    posthog.captureException(error, getDistinctId(), { context: 'google_oauth' });
     event.sender.send('google-oauth-error', error instanceof Error ? error.message : String(error));
   }
 };

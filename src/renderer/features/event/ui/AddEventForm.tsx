@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { trackEvent } from '@aptabase/electron/renderer';
+import { posthog } from '@/shared/lib/posthog';
 
 import { useAddEvent } from '@/entities/event';
 import { EventForm } from './components/EventForm';
@@ -30,7 +30,7 @@ export function AddEventForm({ date }: { date: Date }) {
       return false;
     }
     addEvent({ ...form, date });
-    trackEvent('AddEvent');
+    posthog.capture('add_event');
     toast.success(`일정이 추가되었습니다`);
     resetForm();
     return true;

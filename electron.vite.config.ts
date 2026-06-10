@@ -24,7 +24,9 @@ export default defineConfig(({ mode }) => {
 
       define: {
         'process.env.VITE_CLIENT_ID': `"${env.VITE_CLIENT_ID}"`,
-        'process.env.VITE_CLIENT_SECRET': `"${env.VITE_CLIENT_SECRET}"`
+        'process.env.VITE_CLIENT_SECRET': `"${env.VITE_CLIENT_SECRET}"`,
+        'process.env.VITE_POSTHOG_API_KEY': `"${env.VITE_POSTHOG_API_KEY}"`,
+        'process.env.VITE_POSTHOG_HOST': `"${env.VITE_POSTHOG_HOST}"`
       }
     },
     preload: {
@@ -45,7 +47,7 @@ export default defineConfig(({ mode }) => {
         csp({
           policy: {
             'default-src': ["'self'"],
-            'connect-src': ["'self'", 'https://www.googleapis.com', 'https://discord.com']
+            'connect-src': ["'self'", 'https://www.googleapis.com', 'https://discord.com', 'https://*.i.posthog.com', 'https://*.posthog.com']
           }
         })
       ]

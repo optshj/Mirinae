@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MoveIcon } from 'lucide-react';
 
-import { trackEvent } from '@aptabase/electron/renderer';
+import { posthog } from '@/shared/lib/posthog';
 
 import { Button } from '@/shared/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/shared/ui/dialog';
@@ -16,7 +16,7 @@ export function MoveActiveButton() {
     } else {
       window.api.startDragging();
       document.documentElement.classList.add('resizable');
-      trackEvent('MoveActiveButton');
+      posthog.capture('move_active_button');
     }
   };
 
