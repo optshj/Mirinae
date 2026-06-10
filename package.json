@@ -27,7 +27,6 @@
     "chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
   "dependencies": {
-    "@aptabase/electron": "^0.3.1",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
     "@sentry/electron": "^7.13.0",
@@ -37,7 +36,9 @@
     "electron-log": "^5.4.3",
     "electron-store": "^10.1.0",
     "electron-updater": "^6.6.2",
-    "keytar": "^7.9.0"
+    "keytar": "^7.9.0",
+    "posthog-js": "^1.383.2",
+    "posthog-node": "^5.36.7"
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^1.0.1",

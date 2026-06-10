@@ -8,9 +8,9 @@ import { initAutoUpdater } from './autoUpdate';
 import { registerIPCHandlers } from './ipcHandler';
 import { store } from './store';
 import { checkVersionAndShowPatchNotes } from './versionCheck';
-import { initialize } from '@aptabase/electron/main';
 import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindow';
 import * as Sentry from '@sentry/electron/main';
+import { posthog, getDistinctId, shutdownPostHog } from './posthog';
 
 const SERVICE_NAME = 'Mirinae';
 
@@ -22,9 +22,6 @@ new AutoLaunch({
   name: SERVICE_NAME,
   path: process.execPath
 }).enable();
-
-// Initialize Aptabase analytics
-initialize('A-US-3842104393');
 
 // Initialize Sentry for error tracking
 Sentry.init({
@@ -108,6 +105,15 @@ app.whenReady().then(() => {
   checkVersionAndShowPatchNotes();
   startActiveWindowWatcher(mainWindow);
 
+  posthog.capture({
+    distinctId: getDistinctId(),
+    event: 'app_launched',
+    properties: {
+      app_version: app.getVersion(),
+      platform: process.platform
+    }
+  });
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -118,6 +124,6 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   stopActiveWindowWatcher();
   if (process.platform !== 'darwin') {
-    app.quit();
+    shutdownPostHog().finally(() => app.quit());
   }
 });

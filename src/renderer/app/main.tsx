@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import 'sonner/dist/styles.css';
+import '@/shared/lib/posthog';
 import * as Sentry from '@sentry/electron/renderer';
 
 Sentry.init({
