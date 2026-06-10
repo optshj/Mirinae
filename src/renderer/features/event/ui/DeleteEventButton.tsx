@@ -1,5 +1,5 @@
 import { useDeleteEvent } from '@/entities/event';
-import { trackEvent } from '@aptabase/electron/renderer';
+import { posthog } from '@/shared/lib/posthog';
 import { toast } from 'sonner';
 import { X } from 'lucide-react';
 import { CalendarEvent } from '@/shared/types/EventType';
@@ -15,7 +15,7 @@ export function DeleteEventButton({ event }: { event: CalendarEvent }) {
         onClick={(e) => {
           e.stopPropagation();
           deleteEvent({ eventId: event.id });
-          trackEvent('DeleteEvent');
+          posthog.capture('delete_event');
           toast.error('일정이 삭제되었습니다.');
         }}
         tabIndex={-1}
@@ -35,7 +35,7 @@ export function DeleteEventButton({ event }: { event: CalendarEvent }) {
           <DropdownMenuItem
             onClick={() => {
               deleteEvent({ eventId: event.id });
-              trackEvent('DeleteEvent');
+              posthog.capture('delete_event');
               toast.error('일정이 삭제되었습니다.');
             }}
           >
@@ -45,7 +45,7 @@ export function DeleteEventButton({ event }: { event: CalendarEvent }) {
             variant="destructive"
             onClick={() => {
               deleteEvent({ eventId: event.id, recurringEventId: event.recurringEventId });
-              trackEvent('DeleteEvent');
+              posthog.capture('delete_event');
               toast.error('모든 반복 일정이 삭제되었습니다.');
             }}
           >
