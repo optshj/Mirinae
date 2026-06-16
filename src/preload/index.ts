@@ -23,6 +23,10 @@ export interface Api {
   onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void;
 
   onShowPatchNotes: (callback: () => void) => () => void;
+
+  onUpdateDownloaded: (callback: (info: { currentVersion: string; newVersion: string }) => void) => () => void;
+  installUpdate: () => void;
+  dismissUpdate: () => void;
 }
 
 const api = {
@@ -66,7 +70,15 @@ const api = {
     ipcRenderer.removeListener('update-clickable', listener);
     ipcRenderer.on('update-clickable', listener);
     return () => ipcRenderer.removeListener('update-clickable', listener);
-  }
+  },
+
+  onUpdateDownloaded: (callback) => {
+    const listener = (_, info) => callback(info);
+    ipcRenderer.on('update-downloaded', listener);
+    return () => ipcRenderer.removeListener('update-downloaded', listener);
+  },
+  installUpdate: () => ipcRenderer.send('install-update'),
+  dismissUpdate: () => ipcRenderer.send('dismiss-update')
 };
 
 // Use `contextBridge` to expose Electron APIs to the renderer only if

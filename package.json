@@ -1,7 +1,7 @@
 {
   "name": "mirinae",
   "productName": "Mirinae",
-  "version": "0.4.0",
+  "version": "0.3.0",
   "description": "미리내",
   "main": "./out/main/index.js",
   "author": "Mirinae",
@@ -41,6 +41,7 @@
     "posthog-node": "^5.36.7"
   },
   "devDependencies": {
+    "zustand": "^5.0.14",
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.3",
