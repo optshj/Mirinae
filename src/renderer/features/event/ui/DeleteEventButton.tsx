@@ -1,8 +1,8 @@
 import { useDeleteEvent } from '@/entities/event';
-import { posthog } from '@/shared/lib/posthog';
-import { toast } from 'sonner';
 import { X } from 'lucide-react';
+import { toast } from 'sonner';
 import { CalendarEvent } from '@/shared/types/EventType';
+import { posthog } from '@/shared/lib/posthog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
 
 export function DeleteEventButton({ event }: { event: CalendarEvent }) {
@@ -14,7 +14,7 @@ export function DeleteEventButton({ event }: { event: CalendarEvent }) {
       <button
         onClick={(e) => {
           e.stopPropagation();
-          deleteEvent({ eventId: event.id });
+          deleteEvent({ eventId: event.location });
           posthog.capture('delete_event');
           toast.error('일정이 삭제되었습니다.');
         }}
