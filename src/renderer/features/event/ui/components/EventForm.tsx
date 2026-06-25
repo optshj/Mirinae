@@ -8,7 +8,7 @@ import { COLORPALLETTE } from '@/shared/const/color';
 import { LinearSlider } from './LinearSlider';
 import { FormState, RecurrenceType } from '../../types/FormType';
 
-const RECURRENCE_OPTIONS: { label: string; value: RecurrenceType }[] = [
+const RECURRENCE_OPTIONS: Array<{ label: string; value: RecurrenceType }> = [
   { label: '없음', value: null },
   { label: '1일마다', value: 'DAILY' },
   { label: '1주마다', value: 'WEEKLY' },

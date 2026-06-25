@@ -4,7 +4,7 @@ import { CalendarEvent } from '@/shared/types/EventType';
 import { eventApi } from '@/entities/event';
 import { eventKeys } from '../api/queries';
 import { createEventBody } from '../lib/createEventBody';
-import { AddEventProp } from '../types';
+import { EventBodyProp } from '../types';
 
 const RECURRENCE_UNIT_MAP = {
   DAILY: 'day',
@@ -13,26 +13,25 @@ const RECURRENCE_UNIT_MAP = {
   YEARLY: 'year'
 } as const;
 
-function generateOptimisticEvents(newEvent: AddEventProp) {
+function generateOptimisticEvents(newEvent: EventBodyProp) {
   const tempIdBase = Date.now();
 
   if (!newEvent.recurrence) {
     return [{ ...createEventBody(newEvent), id: `temp-id-${tempIdBase}` }];
   }
 
-  const unit = RECURRENCE_UNIT_MAP[newEvent.recurrence as keyof typeof RECURRENCE_UNIT_MAP];
+  const unit = RECURRENCE_UNIT_MAP[newEvent.recurrence];
   if (!unit) {
     return [{ ...createEventBody(newEvent), id: `temp-id-${tempIdBase}` }];
   }
 
   const instances: Array<ReturnType<typeof createEventBody> & { id: string }> = [];
   const endDate = dayjs().add(1, 'year');
-  let currentDate = dayjs(newEvent.date);
+  let currentDate = dayjs(newEvent.startDate);
   let count = 0;
 
-  // 캘린더 그리드는 최대 42칸(6주 x 7일)이므로, 일간 반복이라도 50개면 화면을 채우기에 충분하다.
   while (currentDate.isBefore(endDate) && count < 50) {
-    const instanceBody = createEventBody({ ...newEvent, date: currentDate.toDate(), recurrence: null });
+    const instanceBody = createEventBody({ ...newEvent, recurrence: null });
     instances.push({ ...instanceBody, id: `temp-id-${tempIdBase}-${count}` });
     currentDate = currentDate.add(1, unit);
     count++;
@@ -45,7 +44,7 @@ export function useAddEvent() {
   const queryClient = useQueryClient();
 
   const addEventMutation = useMutation({
-    mutationFn: async ({ ...bodyProps }: AddEventProp) => {
+    mutationFn: async ({ ...bodyProps }: EventBodyProp) => {
       const eventData = createEventBody(bodyProps);
       return eventApi.create(eventData);
     },

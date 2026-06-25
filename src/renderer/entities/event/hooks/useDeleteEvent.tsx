@@ -7,7 +7,6 @@ interface DeleteEventParams {
   eventId: string;
   recurringEventId?: string;
 }
-
 export function useDeleteEvent() {
   const queryClient = useQueryClient();
 

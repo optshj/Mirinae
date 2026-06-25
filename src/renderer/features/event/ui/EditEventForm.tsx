@@ -16,13 +16,14 @@ interface EditEventFormProps {
 }
 export function EditEventForm({ event, deleteButton, completeButton }: EditEventFormProps) {
   const { editEvent } = useEditEvent();
-
   const date = event.category === 'time' ? new Date(event.start.dateTime) : new Date(event.start.date);
   const [form, setForm] = useState<FormState>({
     summary: event.summary,
     colorId: event.colorId,
     start: event.category === 'time' ? dayjs(event.start.dateTime).format('HH:mm') : '08:00',
+    startDate: event.category === 'time' ? dayjs(event.start.dateTime).format('YYYY-MM-DD') : dayjs(event.start.date).format('YYYY-MM-DD'),
     end: event.category === 'time' ? dayjs(event.end.dateTime).format('HH:mm') : '12:00',
+    endDate: event.category === 'time' ? dayjs(event.end.dateTime).format('YYYY-MM-DD') : dayjs(event.end.date).format('YYYY-MM-DD'),
     allDay: event.category === 'allDay',
     recurrence: null
   });

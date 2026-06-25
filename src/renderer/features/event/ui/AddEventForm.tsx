@@ -6,17 +6,22 @@ import { useAddEvent } from '@/entities/event';
 import { EventForm } from './components/EventForm';
 import { FormState } from '../types/FormType';
 import { Kbd } from '@/shared/ui/kbd';
+import dayjs from 'dayjs';
 
-const initialFormState: FormState = {
-  summary: '',
-  colorId: '1',
-  start: '08:00',
-  end: '12:00',
-  allDay: false,
-  recurrence: null
-};
 export function AddEventForm({ date }: { date: Date }) {
-  const [form, setForm] = useState<FormState>(initialFormState);
+  const initialFormState: FormState = {
+    summary: '',
+    colorId: '1',
+    start: '08:00',
+    end: '12:00',
+    startDate: dayjs(date).format('YYYY-MM-DD'),
+    endDate: dayjs(date).format('YYYY-MM-DD'),
+    allDay: false,
+    recurrence: null
+  };
+  const [form, setForm] = useState<FormState>({
+    ...initialFormState
+  });
 
   const resetForm = () => setForm(initialFormState);
   const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -29,7 +34,7 @@ export function AddEventForm({ date }: { date: Date }) {
       toast.warning('일정 제목을 입력해주세요');
       return false;
     }
-    addEvent({ ...form, date });
+    addEvent({ ...form });
     posthog.capture('add_event');
     toast.success(`일정이 추가되었습니다`);
     resetForm();
