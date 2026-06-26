@@ -5,7 +5,7 @@ import { HangulInput } from '@/shared/ui/input';
 import { Switch } from '@/shared/ui/switch';
 import { COLORPALLETTE } from '@/shared/const/color';
 
-import { RangePicker } from './RangePicker';
+import { DatePicker } from './DatePicker';
 import { LinearSlider } from './LinearSlider';
 import { FormState, RecurrenceType } from '../../types/FormType';
 
@@ -85,7 +85,17 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
 
           <div className="flex items-center">
             <span className="text-secondary w-10 shrink-0 text-sm font-medium">날짜</span>
-            <RangePicker start={form.startDate} end={form.endDate} onChange={(end) => updateForm('endDate', end)} />
+            <div className="flex flex-1 items-center gap-2">
+              <DatePicker
+                value={form.startDate}
+                onChange={(date) => {
+                  updateForm('startDate', date);
+                  if (date > form.endDate) updateForm('endDate', date); // 시작일이 종료일을 넘으면 종료일도 함께 이동
+                }}
+              />
+              <span className="text-secondary shrink-0 text-sm">~</span>
+              <DatePicker value={form.endDate} min={form.startDate} onChange={(date) => updateForm('endDate', date)} align="right" />
+            </div>
           </div>
 
           <div className="flex items-center">
@@ -126,7 +136,7 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
                 <button
                   key={key}
                   type="button"
-                  className={`flex h-6 w-6 items-center justify-center rounded-full transition-transform hover:scale-110 dark:saturate-70 event-color-${key} bg-(--event-color)`}
+                  className={`flex h-6 w-6 items-center justify-center rounded-full transition-transform hover:scale-115 dark:saturate-70 event-color-${key} bg-(--event-color)`}
                   onClick={() => updateForm('colorId', key)}
                 >
                   {form.colorId === key && <Check className="text-white" strokeWidth={3} size={15} />}

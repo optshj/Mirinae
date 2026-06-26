@@ -2,22 +2,26 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 
-interface RangePickerProps {
-  start: string;
-  end: string;
-  onChange: (end: string) => void;
+interface DatePickerProps {
+  value: string;
+  onChange: (date: string) => void;
+  min?: string; // 이 날짜 이전은 선택 불가
+  align?: 'left' | 'right'; // 팝업이 펼쳐질 방향
 }
 
-export function RangePicker({ start, end, onChange }: RangePickerProps) {
+export function DatePicker({ value, onChange, min, align = 'left' }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false); // 닫힘 애니메이션 동안 DOM 유지
-  const [viewMonth, setViewMonth] = useState(() => dayjs(start).startOf('month'));
-  const [hover, setHover] = useState<string | null>(null);
+  const [viewMonth, setViewMonth] = useState(() => dayjs(value).startOf('month'));
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => setViewMonth(dayjs(start).startOf('month')), [start, open]);
+  // 팝업을 열 때 선택된 날짜의 월로 이동
+  useEffect(() => {
+    if (open) setViewMonth(dayjs(value).startOf('month'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
-  // open이 꺼지면 퇴장 애니메이션(150ms) 후에 언마운트
+  // open이 꺼지면 퇴장 애니메이션(100ms) 후에 언마운트
   useEffect(() => {
     if (open) {
       setVisible(true);
@@ -36,23 +40,21 @@ export function RangePicker({ start, end, onChange }: RangePickerProps) {
     return () => window.removeEventListener('mousedown', handler);
   }, [open]);
 
-  // 표시할 범위: 호버 중이면 시작~호버 미리보기, 아니면 시작~종료
-  const rangeEnd = hover && hover >= start ? hover : end;
-
   const handleDayClick = (day: string) => {
-    if (day < start) return; // 시작일 이전은 선택 불가
-    onChange(day); // 선택해도 닫지 않음 — 바깥 클릭 시에만 닫힘
+    if (min && day < min) return;
+    onChange(day);
+    setOpen(false);
   };
 
-  const label = start === end ? dayjs(start).format('M월 D일 (dd)') : `${dayjs(start).format('M월 D일 (dd)')} ~ ${dayjs(end).format('M월 D일 (dd)')}`;
+  const label = dayjs(value).format('M월 D일 (dd)');
 
   return (
     <div className="relative" ref={ref}>
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`flex h-9 cursor-pointer items-center gap-1.5 rounded-lg border px-3 text-sm transition-colors ${
-          open ? 'text-primary border-(--event-color) bg-zinc-50 dark:bg-zinc-800' : 'text-primary border-primary hover:bg-zinc-100 dark:hover:bg-zinc-800'
+        className={`flex h-9 w-full cursor-pointer items-center gap-1.5 rounded-lg border px-3 text-sm transition-colors ${
+          open ? 'text-primary border-(--event-color) bg-zinc-50 dark:bg-zinc-800' : 'text-primary border hover:bg-zinc-100 dark:hover:bg-zinc-800'
         }`}
       >
         <Calendar className="h-4 w-4 shrink-0 text-zinc-400" />
@@ -61,20 +63,18 @@ export function RangePicker({ start, end, onChange }: RangePickerProps) {
 
       {visible && (
         <div
-          className={`bg-layer border-primary absolute top-full left-0 z-50 mt-1 origin-top rounded-xl border p-3 shadow-lg ease-out [animation-fill-mode:forwards] ${
+          className={`bg-layer border-primary fill-mode-[forwards] absolute top-full z-50 mt-1 origin-top rounded-xl border p-3 shadow-lg ease-out ${align === 'right' ? 'right-0' : 'left-0'} ${
             open ? 'animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-150' : 'animate-out fade-out-0 zoom-out-95 duration-100'
           }`}
-          onMouseLeave={() => setHover(null)}
         >
-          <div className="relative flex gap-4">
+          <div className="relative">
             <button type="button" className="text-secondary hover:text-primary absolute top-0 left-0 z-10 rounded p-1" onClick={() => setViewMonth((m) => m.subtract(1, 'month'))}>
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button type="button" className="text-secondary hover:text-primary absolute top-0 right-0 z-10 rounded p-1" onClick={() => setViewMonth((m) => m.add(1, 'month'))}>
               <ChevronRight className="h-4 w-4" />
             </button>
-            <MonthGrid month={viewMonth} start={start} rangeEnd={rangeEnd} onDayClick={handleDayClick} onDayHover={setHover} />
-            <MonthGrid month={viewMonth.add(1, 'month')} start={start} rangeEnd={rangeEnd} onDayClick={handleDayClick} onDayHover={setHover} />
+            <MonthGrid month={viewMonth} value={value} min={min} onDayClick={handleDayClick} />
           </div>
         </div>
       )}
@@ -84,14 +84,14 @@ export function RangePicker({ start, end, onChange }: RangePickerProps) {
 
 interface MonthGridProps {
   month: Dayjs;
-  start: string;
-  rangeEnd: string;
+  value: string;
+  min?: string;
   onDayClick: (day: string) => void;
-  onDayHover: (day: string) => void;
 }
-function MonthGrid({ month, start, rangeEnd, onDayClick, onDayHover }: MonthGridProps) {
+function MonthGrid({ month, value, min, onDayClick }: MonthGridProps) {
   const gridStart = month.subtract(month.day(), 'day');
   const days = Array.from({ length: 42 }, (_, i) => gridStart.add(i, 'day'));
+  const today = dayjs().format('YYYY-MM-DD');
 
   return (
     <div className="w-49">
@@ -103,32 +103,26 @@ function MonthGrid({ month, start, rangeEnd, onDayClick, onDayHover }: MonthGrid
         ))}
         <span className="text-blue-400"> 토</span>
       </div>
-      <div className="grid grid-cols-7">
+      <div className="grid grid-cols-7 gap-y-0.5">
         {days.map((day) => {
           const ds = day.format('YYYY-MM-DD');
           const inMonth = day.month() === month.month();
-          const isStart = ds === start;
-          const isEnd = ds === rangeEnd;
-          const isEdge = isStart || isEnd;
-          const inRange = ds > start && ds < rangeEnd;
-          const disabled = ds < start;
+          const isSelected = ds === value;
+          const isToday = ds === today;
+          const disabled = min !== undefined && ds < min;
 
           return (
-            <div
-              key={ds}
-              className={`flex h-7 w-7 items-center justify-center ${inRange || isEdge ? 'bg-(--event-color)/15' : ''} ${isStart ? 'rounded-l-full' : ''} ${isEnd ? 'rounded-r-full' : ''}`}
-            >
+            <div key={ds} className="flex h-7 w-7 items-center justify-center">
               <button
                 type="button"
                 disabled={disabled}
                 onClick={() => onDayClick(ds)}
-                onMouseEnter={() => onDayHover(ds)}
                 className={`flex h-6 w-6 items-center justify-center rounded-full text-[12px]/3 tabular-nums transition-colors ${
-                  isEdge
+                  isSelected
                     ? 'bg-(--event-color) font-medium text-white dark:saturate-70'
                     : disabled
                       ? 'cursor-not-allowed text-zinc-300 dark:text-zinc-600'
-                      : `${inMonth ? 'text-primary' : 'text-secondary'} hover:bg-zinc-100 dark:hover:bg-zinc-700`
+                      : `${inMonth ? 'text-primary' : 'text-secondary'} ${isToday ? 'ring-1 ring-(--event-color)/50 ring-inset' : ''} hover:bg-zinc-100 dark:hover:bg-zinc-700`
                 }`}
               >
                 {day.date()}
