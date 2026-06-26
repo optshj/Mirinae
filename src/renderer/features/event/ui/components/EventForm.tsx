@@ -5,11 +5,12 @@ import { HangulInput } from '@/shared/ui/input';
 import { Switch } from '@/shared/ui/switch';
 import { COLORPALLETTE } from '@/shared/const/color';
 
+import { RangePicker } from './RangePicker';
 import { LinearSlider } from './LinearSlider';
 import { FormState, RecurrenceType } from '../../types/FormType';
 
 const RECURRENCE_OPTIONS: Array<{ label: string; value: RecurrenceType }> = [
-  { label: '없음', value: null },
+  { label: '반복 안 함', value: null },
   { label: '1일마다', value: 'DAILY' },
   { label: '1주마다', value: 'WEEKLY' },
   { label: '1개월마다', value: 'MONTHLY' },
@@ -28,6 +29,9 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
   const [showForm, setShowForm] = useState(false);
   const formId = `${type}-event-form`;
   const submitButtonText = type === 'add' ? '추가' : '수정';
+
+  // 종료일이 시작일보다 늦으면 여러 날에 걸친 일정 → 슬라이더의 시간 제약을 풀어줌
+  const isMultiDay = form.endDate > form.startDate;
 
   useEffect(() => {
     if (showForm) document.documentElement.classList.add('show-event-form');
@@ -68,38 +72,35 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
   return (
     <>
       {showForm ? (
-        <form onSubmit={handleSubmit} className={`flex flex-col gap-4 event-color-${form.colorId} dark:saturate-70`} id={formId}>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="summary" className="text-primary text-sm">
-              일정 제목
-            </label>
-            <HangulInput
-              id="summary"
-              placeholder="일정을 입력해주세요"
-              className={`text-primary w-full border-b py-2 pr-20 pl-2 dark:saturate-70`}
-              type="text"
-              value={form.summary}
-              onChange={(newSummary) => updateForm('summary', newSummary)}
-              autoFocus
-            />
+        <form onSubmit={handleSubmit} className={`mx-auto flex w-full max-w-sm flex-col gap-5 event-color-${form.colorId} dark:saturate-70`} id={formId}>
+          <HangulInput
+            id="summary"
+            placeholder="제목을 입력하세요"
+            className={`text-primary w-full border-b py-2 pr-20 text-base font-medium dark:saturate-70`}
+            type="text"
+            value={form.summary}
+            onChange={(newSummary) => updateForm('summary', newSummary)}
+            autoFocus
+          />
+
+          <div className="flex items-center">
+            <span className="text-secondary w-10 shrink-0 text-sm font-medium">날짜</span>
+            <RangePicker start={form.startDate} end={form.endDate} onChange={(end) => updateForm('endDate', end)} />
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-primary text-sm">하루종일</span>
+          <div className="flex items-center">
+            <span className="text-secondary w-10 shrink-0 text-sm font-medium">종일</span>
             <Switch onClick={() => updateForm('allDay', !form.allDay)} isOn={form.allDay} />
           </div>
 
-          <div>
-            <label className="text-primary text-sm">시간 설정</label>
-            <div className={`relative flex flex-col items-center justify-center px-4 py-2 ${form.allDay ? 'pointer-events-none opacity-50' : ''}`}>
-              <LinearSlider updateForm={updateForm} defaultTime={[form.start, form.end]} />
-            </div>
+          <div className={`rounded-xl px-4 pt-3 pb-2 transition-all ${form.allDay ? 'pointer-events-none opacity-50' : ''}`}>
+            <LinearSlider updateForm={updateForm} defaultTime={[form.start, form.end]} allowCrossDay={isMultiDay} />
           </div>
 
-          {/** 반복 설정 */}
-          <div>
-            <label className="text-primary text-sm">반복 설정</label>
-            <div className="mt-2 flex flex-wrap gap-1.5 px-2">
+          {/** 반복 */}
+          <div className="flex items-start">
+            <span className="text-secondary w-10 shrink-0 text-sm font-medium">반복</span>
+            <div className="flex flex-wrap items-center gap-1.5">
               {RECURRENCE_OPTIONS.map(({ label, value }) => (
                 <button
                   key={label}
@@ -117,18 +118,19 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
             </div>
           </div>
 
-          {/** 컬러 팔레트 */}
-          <div>
-            <label className="text-primary text-sm">일정 색상</label>
-            <div className="mt-2 grid grid-cols-6 gap-2 px-2">
+          {/** 색상 */}
+          <div className="flex items-start">
+            <span className="text-secondary w-10 shrink-0 text-sm font-medium">색상</span>
+            <div className="grid grid-cols-6 gap-x-5 gap-y-2">
               {COLORPALLETTE.map((key) => (
-                <div
+                <button
                   key={key}
-                  className={`flex h-6 w-6 items-center justify-center rounded-full transition-all hover:scale-150 dark:saturate-70 event-color-${key} bg-(--event-color)`}
+                  type="button"
+                  className={`flex h-6 w-6 items-center justify-center rounded-full transition-transform hover:scale-110 dark:saturate-70 event-color-${key} bg-(--event-color)`}
                   onClick={() => updateForm('colorId', key)}
                 >
-                  {form.colorId === key && <Check className="text-white" strokeWidth={3} size={16} />}
-                </div>
+                  {form.colorId === key && <Check className="text-white" strokeWidth={3} size={15} />}
+                </button>
               ))}
             </div>
           </div>

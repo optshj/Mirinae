@@ -14,11 +14,12 @@ export function createEventBody({ start, end, summary, allDay, colorId = '1', re
   const recurrenceRule = recurrence ? [RRULE_MAP[recurrence]] : undefined;
 
   if (allDay) {
+    // Google API의 end.date는 exclusive(종료일+1)이므로, 사용자가 고른 종료일을 포함하도록 1일 더함
     return {
       summary,
       colorId,
       start: { date: startDay.format('YYYY-MM-DD') },
-      end: { date: endDay.format('YYYY-MM-DD') },
+      end: { date: endDay.add(1, 'day').format('YYYY-MM-DD') },
       ...(recurrenceRule && { recurrence: recurrenceRule })
     };
   }

@@ -9,9 +9,11 @@ const PREFERRED_GAP = 120; // 선호하는 기본 간격 (2시간)
 interface SliderProps {
   updateForm: (key: keyof FormState, value: FormState[keyof FormState]) => void;
   defaultTime?: [string, string];
+  // 여러 날에 걸친 일정이면 종료시간이 시작시간보다 앞설 수 있어 제약을 풀어줌
+  allowCrossDay?: boolean;
 }
 
-export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'] }: SliderProps) {
+export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'], allowCrossDay = false }: SliderProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [activeThumb, setActiveThumb] = useState<'start' | 'end' | null>(null);
   const [start, setStart] = useState(timeToMinutes(defaultTime[0]));
@@ -20,31 +22,32 @@ export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'] }: S
   const handleUpdate = useCallback(
     (newStart: number, newEnd: number) => {
       const safeStart = Math.max(0, Math.min(newStart, MAX_TIME));
-      let safeEnd = newEnd;
+      let safeEnd = Math.max(0, Math.min(newEnd, MAX_TIME));
 
-      if (newStart !== start) {
-        if (safeStart + PREFERRED_GAP <= MAX_TIME) {
-          safeEnd = Math.max(newEnd, safeStart + PREFERRED_GAP);
-        } else {
-          safeEnd = MAX_TIME;
+      if (!allowCrossDay) {
+        if (newStart !== start) {
+          if (safeStart + PREFERRED_GAP <= MAX_TIME) {
+            safeEnd = Math.max(safeEnd, safeStart + PREFERRED_GAP);
+          } else {
+            safeEnd = MAX_TIME;
+          }
         }
+        safeEnd = Math.max(safeEnd, safeStart);
       }
 
-      const finalEnd = Math.max(safeEnd, safeStart);
-
       setStart(safeStart);
-      setEnd(Math.min(finalEnd, MAX_TIME));
+      setEnd(safeEnd);
       updateForm('start', minutesToTime(safeStart));
-      updateForm('end', minutesToTime(Math.min(finalEnd, MAX_TIME)));
+      updateForm('end', minutesToTime(safeEnd));
     },
-    [start, updateForm]
+    [start, updateForm, allowCrossDay]
   );
 
   const adjustTime = (type: 'start' | 'end', amount: number) => {
     if (type === 'start') {
       handleUpdate(start + amount, end);
     } else if (type === 'end') {
-      const nextEnd = Math.max(start, end + amount);
+      const nextEnd = allowCrossDay ? end + amount : Math.max(start, end + amount);
       handleUpdate(start, nextEnd);
     }
   };
@@ -89,8 +92,8 @@ export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'] }: S
         <div
           className="absolute z-10 h-6 bg-(--event-color) dark:saturate-70"
           style={{
-            left: `${(start / MINUTES_IN_DAY) * 100}%`,
-            width: `${((end - start) / MINUTES_IN_DAY) * 100}%`,
+            left: `${(Math.min(start, end) / MINUTES_IN_DAY) * 100}%`,
+            width: `${(Math.abs(end - start) / MINUTES_IN_DAY) * 100}%`,
             backgroundImage: 'radial-gradient(circle, white 1.2px, transparent 1.2px)',
             backgroundSize: '8px 100%',
             backgroundPosition: 'center',
