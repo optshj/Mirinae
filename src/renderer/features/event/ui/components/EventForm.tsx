@@ -3,9 +3,11 @@ import { Check } from 'lucide-react';
 
 import { HangulInput } from '@/shared/ui/input';
 import { Switch } from '@/shared/ui/switch';
+import { Kbd } from '@/shared/ui/kbd';
+import { Tooltip } from '@/shared/ui/tooltip';
 import { COLORPALLETTE } from '@/shared/const/color';
 
-import { DatePicker } from './DatePicker';
+import { RangePicker } from './RangePicker';
 import { LinearSlider } from './LinearSlider';
 import { FormState, RecurrenceType } from '../../types/FormType';
 
@@ -85,17 +87,7 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
 
           <div className="flex items-center">
             <span className="text-secondary w-10 shrink-0 text-sm font-medium">날짜</span>
-            <div className="flex flex-1 items-center gap-2">
-              <DatePicker
-                value={form.startDate}
-                onChange={(date) => {
-                  updateForm('startDate', date);
-                  if (date > form.endDate) updateForm('endDate', date); // 시작일이 종료일을 넘으면 종료일도 함께 이동
-                }}
-              />
-              <span className="text-secondary shrink-0 text-sm">~</span>
-              <DatePicker value={form.endDate} min={form.startDate} onChange={(date) => updateForm('endDate', date)} align="right" />
-            </div>
+            <RangePicker start={form.startDate} end={form.endDate} onChange={(end) => updateForm('endDate', end)} />
           </div>
 
           <div className="flex items-center">
@@ -150,9 +142,17 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
             <button type="button" className="rounded-lg bg-zinc-200 px-6 py-1.5 font-semibold text-zinc-600" onClick={() => setShowForm(false)}>
               취소
             </button>
-            <button type="submit" className={`rounded-lg bg-zinc-700 px-6 py-1.5 font-semibold text-white dark:saturate-70`}>
-              {submitButtonText}
-            </button>
+            <Tooltip
+              content={
+                <span className="flex items-center gap-1">
+                  <Kbd className="bg-white/20 text-white/90">Ctrl + ⏎</Kbd>로 {submitButtonText}
+                </span>
+              }
+            >
+              <button type="submit" className={`rounded-lg bg-zinc-700 px-6 py-1.5 font-semibold text-white dark:saturate-70`}>
+                {submitButtonText}
+              </button>
+            </Tooltip>
           </div>
         </form>
       ) : (
