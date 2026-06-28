@@ -81,7 +81,7 @@ export function Tooltip({ content, children, side = 'top', delay = 0, className 
   }, [delay, hide, setOpenState, clearTimer]);
 
   return (
-    <span ref={ref} className="relative inline-flex" onPointerDown={hide}>
+    <span ref={ref} className="relative inline-flex h-fit w-fit" onPointerDown={hide}>
       {children}
       {open && (
         <span
