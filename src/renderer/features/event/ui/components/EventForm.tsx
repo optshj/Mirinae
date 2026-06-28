@@ -149,7 +149,7 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
             <Tooltip
               content={
                 <span className="flex items-center gap-1">
-                  <Kbd className="bg-white/20 text-white/90">Ctrl + ⏎</Kbd>로 {submitButtonText}
+                  단축키 <Kbd className="bg-white/20 text-white/90">Ctrl + Enter</Kbd>
                 </span>
               }
             >

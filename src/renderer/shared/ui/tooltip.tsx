@@ -10,6 +10,7 @@ interface TooltipProps {
   side?: Side;
   delay?: number; // 보이기까지 지연(ms), 기본 즉시
   className?: string;
+  wrapperClassName?: string; // 트리거를 감싸는 래퍼 span에 적용 (기본 w-fit)
 }
 
 const sideClass: Record<Side, string> = {
@@ -27,7 +28,7 @@ const arrowClass: Record<Side, string> = {
   right: 'right-full top-1/2 translate-x-1/2 -translate-y-1/2'
 };
 
-export function Tooltip({ content, children, side = 'top', delay = 0, className }: TooltipProps) {
+export function Tooltip({ content, children, side = 'top', delay = 0, className, wrapperClassName }: TooltipProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -81,7 +82,7 @@ export function Tooltip({ content, children, side = 'top', delay = 0, className 
   }, [delay, hide, setOpenState, clearTimer]);
 
   return (
-    <span ref={ref} className="relative inline-flex h-fit w-fit" onPointerDown={hide}>
+    <span ref={ref} className={cn('relative inline-flex h-fit w-fit', wrapperClassName)} onPointerDown={hide}>
       {children}
       {open && (
         <span

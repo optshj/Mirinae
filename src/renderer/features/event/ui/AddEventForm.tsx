@@ -6,6 +6,7 @@ import { useAddEvent } from '@/entities/event';
 import { EventForm } from './components/EventForm';
 import { FormState } from '../types/FormType';
 import { Kbd } from '@/shared/ui/kbd';
+import { Tooltip } from '@/shared/ui/tooltip';
 import dayjs from 'dayjs';
 
 export function AddEventForm({ date }: { date: Date }) {
@@ -48,15 +49,23 @@ export function AddEventForm({ date }: { date: Date }) {
       onSubmit={handleSubmit}
       type="add"
       trigger={
-        <button
-          className="text-secondary w-full rounded-xl border-2 border-dashed py-3 text-center [html.show-event-form_&]:hidden"
-          onClick={() => {
-            resetForm();
-          }}
+        <Tooltip
+          content={
+            <span className="flex items-center gap-1">
+              단축키 <Kbd className="bg-white/20 text-white/90">Ctrl + Enter</Kbd>
+            </span>
+          }
+          wrapperClassName="w-full"
         >
-          일정 추가
-          <Kbd className="ml-2">Ctrl + ⏎</Kbd>
-        </button>
+          <button
+            className="text-secondary w-full rounded-xl border-2 border-dashed py-3 text-center [html.show-event-form_&]:hidden"
+            onClick={() => {
+              resetForm();
+            }}
+          >
+            일정 추가
+          </button>
+        </Tooltip>
       }
     />
   );
