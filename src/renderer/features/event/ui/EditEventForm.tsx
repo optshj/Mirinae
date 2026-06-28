@@ -16,13 +16,14 @@ interface EditEventFormProps {
 }
 export function EditEventForm({ event, deleteButton, completeButton }: EditEventFormProps) {
   const { editEvent } = useEditEvent();
-
-  const date = event.category === 'time' ? new Date(event.start.dateTime) : new Date(event.start.date);
+  const [startDate, endDate] = getEventRange(event);
   const [form, setForm] = useState<FormState>({
     summary: event.summary,
     colorId: event.colorId,
     start: event.category === 'time' ? dayjs(event.start.dateTime).format('HH:mm') : '08:00',
+    startDate,
     end: event.category === 'time' ? dayjs(event.end.dateTime).format('HH:mm') : '12:00',
+    endDate,
     allDay: event.category === 'allDay',
     recurrence: null
   });
@@ -36,7 +37,6 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
     }
     editEvent({
       eventId: event.id,
-      date,
       ...form
     });
     posthog.capture('edit_event');

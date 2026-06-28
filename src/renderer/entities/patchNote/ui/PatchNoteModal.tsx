@@ -16,7 +16,8 @@ export function PatchNoteModal() {
           <DialogTitle className="flex flex-row items-baseline gap-3">
             <span className="text-foreground text-2xl font-bold tracking-tight">업데이트 내용</span>
           </DialogTitle>
-          <DialogDescription>1. 앱 성능이 개선 작업을 완료했습니다.</DialogDescription>
+          <DialogDescription>1. 캘린더의 전반적인 UI가 변경되었습니다.</DialogDescription>
+          <DialogDescription>2. 일정 추가/수정 시 종료일을 선택할 수 있습니다.</DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>

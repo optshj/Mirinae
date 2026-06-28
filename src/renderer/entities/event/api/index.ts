@@ -6,7 +6,10 @@ const CALENDAR_API_URL = 'https://www.googleapis.com/calendar/v3/calendars';
 
 export const eventApi = {
   getEvents: () => {
-    return http.get<{ items: Events[] }>(`${CALENDAR_API_URL}/primary/events?maxResults=2500&singleEvents=true`, {});
+    return http.get<{ items: Events[] }>(`${CALENDAR_API_URL}/primary/events?maxResults=2500&singleEvents=true`, {}).then((res) => {
+      console.log(res);
+      return res;
+    });
   },
   getHolidays: () => {
     return http.get<{ items: Events[] }>(`${CALENDAR_API_URL}/ko.south_korea%23holiday%40group.v.calendar.google.com/events?maxResults=2500`, {});

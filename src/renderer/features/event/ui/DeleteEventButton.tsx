@@ -14,7 +14,7 @@ export function DeleteEventButton({ event }: { event: CalendarEvent }) {
       <button
         onClick={(e) => {
           e.stopPropagation();
-          deleteEvent({ eventId: event.location });
+          deleteEvent({ eventId: event.id });
           posthog.capture('delete_event');
           toast.error('일정이 삭제되었습니다.');
         }}

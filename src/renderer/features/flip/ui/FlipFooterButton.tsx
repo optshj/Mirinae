@@ -15,7 +15,7 @@ export function FlipFooterButton() {
 
   return (
     <div className="flex flex-row justify-between">
-      <label htmlFor="flip-footer-toggle">달력만 보기</label>
+      <label htmlFor="flip-footer-toggle">하단 접기</label>
       <Switch id="flip-footer-toggle" onClick={onClick} isOn={isFlip} />
     </div>
   );

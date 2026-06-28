@@ -1,13 +1,14 @@
-export interface AddEventProp {
-  date: Date;
+export interface EventBodyProp {
   start: string;
   end: string;
+  startDate: string;
+  endDate: string;
   summary: string;
   colorId: string;
   allDay: boolean;
   recurrence?: string | null;
 }
-export interface EditEventProp extends AddEventProp {
+export interface EditEventProp extends EventBodyProp {
   eventId: string;
 }
 
