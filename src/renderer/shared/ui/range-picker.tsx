@@ -7,7 +7,6 @@ interface RangePickerProps {
   end: string;
   onChange: (end: string) => void;
 }
-
 export function RangePicker({ start, end, onChange }: RangePickerProps) {
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false); // 닫힘 애니메이션 동안 DOM 유지
@@ -53,7 +52,7 @@ export function RangePicker({ start, end, onChange }: RangePickerProps) {
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         className={`flex h-9 cursor-pointer items-center gap-1.5 rounded-lg border px-3 text-sm transition-colors ${
-          open ? 'text-primary border-(--event-color) bg-zinc-50 dark:bg-zinc-800' : 'text-primary border-primary hover:bg-zinc-100 dark:hover:bg-zinc-800'
+          open ? 'text-primary border-(--event-color) bg-zinc-50 dark:bg-zinc-800' : 'text-primary hover:bg-zinc-100 dark:hover:bg-zinc-800'
         }`}
       >
         <Calendar className="h-4 w-4 shrink-0 text-zinc-400" />

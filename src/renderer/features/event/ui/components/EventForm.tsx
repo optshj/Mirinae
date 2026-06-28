@@ -5,9 +5,9 @@ import { HangulInput } from '@/shared/ui/input';
 import { Switch } from '@/shared/ui/switch';
 import { Kbd } from '@/shared/ui/kbd';
 import { Tooltip } from '@/shared/ui/tooltip';
+import { RangePicker } from '@/shared/ui/range-picker';
 import { COLORPALLETTE } from '@/shared/const/color';
 
-import { RangePicker } from './RangePicker';
 import { LinearSlider } from './LinearSlider';
 import { FormState, RecurrenceType } from '../../types/FormType';
 
@@ -123,7 +123,7 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
           {/** 색상 */}
           <div className="flex items-start">
             <span className="text-secondary w-10 shrink-0 text-sm font-medium">색상</span>
-            <div className="grid grid-cols-6 gap-x-5 gap-y-2">
+            <div className="grid flex-1 grid-cols-6 justify-items-center gap-y-2">
               {COLORPALLETTE.map((key) => (
                 <button
                   key={key}
