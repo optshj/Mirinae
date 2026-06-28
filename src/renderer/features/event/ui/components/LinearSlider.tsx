@@ -101,12 +101,18 @@ export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'], all
           }}
         />
 
-        {['00', '06', '12', '18', '24'].map((h) => (
-          <div key={h} className="absolute mt-2 flex flex-col" style={{ left: `${(parseInt(h) / 24) * 100}%` }}>
-            <div className="mb-3 h-2 w-px bg-zinc-400" />
-            <span className="-ml-1.5 text-xs font-medium text-zinc-500">{h}</span>
-          </div>
-        ))}
+        {Array.from({ length: 9 }, (_, i) => i * 3).map((h) => {
+          const isMajor = h % 6 === 0;
+          const hh = h.toString().padStart(2, '0');
+          return (
+            <div key={h} className="absolute mt-2 flex flex-col" style={{ left: `${(h / 24) * 100}%` }}>
+              <div className="mb-2 flex h-2 items-start">
+                <div className={`w-px ${isMajor ? 'h-2 bg-zinc-400' : 'h-1.5 bg-zinc-300 dark:bg-zinc-600'}`} />
+              </div>
+              <span className={`-ml-1.5 tabular-nums ${isMajor ? 'text-xs font-medium text-zinc-500' : 'text-[10px] text-zinc-400 dark:text-zinc-500'}`}>{hh}</span>
+            </div>
+          );
+        })}
 
         <SliderThumb
           type="start"

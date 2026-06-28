@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, Settings } from 'lucide-react';
 import { DateProps } from '@/shared/hooks/useDate';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
+import { Tooltip } from '@/shared/ui/tooltip';
 
 import { FlipCalendarButton, FlipFooterButton } from '@/features/flip';
 import { RefreshButton } from '@/features/refresh';
@@ -30,9 +31,11 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
         <FlipCalendarButton />
         <RefreshButton />
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Settings strokeWidth={1} size={24} />
-          </DropdownMenuTrigger>
+          <Tooltip content="설정" side="bottom">
+            <DropdownMenuTrigger asChild>
+              <Settings strokeWidth={1} size={24} />
+            </DropdownMenuTrigger>
+          </Tooltip>
           <DropdownMenuContent align="end" className="flex w-auto flex-col gap-1.5 px-3 py-2">
             <LoginButton />
             <MoveActiveButton />

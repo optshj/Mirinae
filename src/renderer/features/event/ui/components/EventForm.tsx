@@ -95,13 +95,13 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
             <Switch onClick={() => updateForm('allDay', !form.allDay)} isOn={form.allDay} />
           </div>
 
-          <div className={`rounded-xl px-4 pt-3 pb-2 transition-all ${form.allDay ? 'pointer-events-none opacity-50' : ''}`}>
+          <div className={`transition-all ${form.allDay ? 'pointer-events-none opacity-50' : ''}`}>
             <LinearSlider updateForm={updateForm} defaultTime={[form.start, form.end]} allowCrossDay={isMultiDay} />
           </div>
 
           {/** 반복 */}
           <div className="flex items-start">
-            <span className="text-secondary w-10 shrink-0 text-sm font-medium">반복</span>
+            <span className="text-secondary w-10 shrink-0 pt-1 text-sm font-medium">반복</span>
             <div className="flex flex-wrap items-center gap-1.5">
               {RECURRENCE_OPTIONS.map(({ label, value }) => (
                 <button
@@ -122,7 +122,7 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
 
           {/** 색상 */}
           <div className="flex items-start">
-            <span className="text-secondary w-10 shrink-0 text-sm font-medium">색상</span>
+            <span className="text-secondary w-10 shrink-0 pt-1 text-sm font-medium">색상</span>
             <div className="grid flex-1 grid-cols-6 justify-items-center gap-y-2">
               {COLORPALLETTE.map((key) => (
                 <button
@@ -139,7 +139,11 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
 
           {/** 버튼 */}
           <div className="flex items-center justify-end gap-2">
-            <button type="button" className="rounded-lg bg-zinc-200 px-6 py-1.5 font-semibold text-zinc-600" onClick={() => setShowForm(false)}>
+            <button
+              type="button"
+              className="rounded-lg border border-zinc-200 px-6 py-1.5 font-semibold text-zinc-500 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              onClick={() => setShowForm(false)}
+            >
               취소
             </button>
             <Tooltip
@@ -149,7 +153,7 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
                 </span>
               }
             >
-              <button type="submit" className={`rounded-lg bg-zinc-700 px-6 py-1.5 font-semibold text-white dark:saturate-70`}>
+              <button type="submit" className={`rounded-lg bg-(--event-color) px-6 py-1.5 font-semibold text-white transition-transform hover:scale-105 dark:saturate-70`}>
                 {submitButtonText}
               </button>
             </Tooltip>
