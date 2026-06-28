@@ -6,17 +6,23 @@ import { useAddEvent } from '@/entities/event';
 import { EventForm } from './components/EventForm';
 import { FormState } from '../types/FormType';
 import { Kbd } from '@/shared/ui/kbd';
+import { Tooltip } from '@/shared/ui/tooltip';
+import dayjs from 'dayjs';
 
-const initialFormState: FormState = {
-  summary: '',
-  colorId: '1',
-  start: '08:00',
-  end: '12:00',
-  allDay: false,
-  recurrence: null
-};
 export function AddEventForm({ date }: { date: Date }) {
-  const [form, setForm] = useState<FormState>(initialFormState);
+  const initialFormState: FormState = {
+    summary: '',
+    colorId: '1',
+    start: '08:00',
+    end: '12:00',
+    startDate: dayjs(date).format('YYYY-MM-DD'),
+    endDate: dayjs(date).format('YYYY-MM-DD'),
+    allDay: false,
+    recurrence: null
+  };
+  const [form, setForm] = useState<FormState>({
+    ...initialFormState
+  });
 
   const resetForm = () => setForm(initialFormState);
   const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -29,7 +35,7 @@ export function AddEventForm({ date }: { date: Date }) {
       toast.warning('일정 제목을 입력해주세요');
       return false;
     }
-    addEvent({ ...form, date });
+    addEvent({ ...form });
     posthog.capture('add_event');
     toast.success(`일정이 추가되었습니다`);
     resetForm();
@@ -43,15 +49,23 @@ export function AddEventForm({ date }: { date: Date }) {
       onSubmit={handleSubmit}
       type="add"
       trigger={
-        <button
-          className="text-secondary w-full rounded-xl border-2 border-dashed py-3 text-center [html.show-event-form_&]:hidden"
-          onClick={() => {
-            resetForm();
-          }}
+        <Tooltip
+          content={
+            <span className="flex items-center gap-1">
+              단축키 <Kbd className="bg-white/20 text-white/90">Ctrl + Enter</Kbd>
+            </span>
+          }
+          wrapperClassName="w-full"
         >
-          일정 추가
-          <Kbd className="ml-2">Ctrl + ⏎</Kbd>
-        </button>
+          <button
+            className="text-secondary w-full rounded-xl border-2 border-dashed py-3 text-center [html.show-event-form_&]:hidden"
+            onClick={() => {
+              resetForm();
+            }}
+          >
+            일정 추가
+          </button>
+        </Tooltip>
       }
     />
   );

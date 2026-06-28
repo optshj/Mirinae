@@ -28,7 +28,7 @@ export function EventList({ seg, weekStart, onDoubleClick }: EventListProps) {
     >
       <div className="h-2.5 w-full rounded-full bg-(--event-color) md:hidden" />
 
-      {seg.isStart && <div className="mr-1 hidden w-2 shrink-0 self-stretch bg-(--event-color) md:inline-block" />}
+      {seg.isStart && <div className="mr-0.75 hidden w-1.5 shrink-0 self-stretch bg-(--event-color) md:inline-block" />}
       <span className="text-primary hidden truncate py-0.5 pr-1 text-xs md:block">
         {seg.isStart && (
           <>
