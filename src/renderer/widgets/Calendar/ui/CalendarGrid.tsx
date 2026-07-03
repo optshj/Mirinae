@@ -2,7 +2,8 @@ import dayjs from 'dayjs';
 import { useState, useMemo } from 'react';
 
 import { ScheduleModal } from './ScheduleModal';
-import { EventList, useCalendarItems, buildWeekSegments, useMaxLanes } from '@/entities/event';
+import { EventList, useCalendarItems, buildWeekSegments, useMaxLanes, EventSegment } from '@/entities/event';
+import { useEventDrag, DragGhost } from '@/features/event-drag';
 
 import { Dialog } from '@/shared/ui/dialog';
 import { DateProps } from '@/shared/hooks/useDate';
@@ -13,6 +14,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
   const [open, setOpen] = useState(false);
   const { items } = useCalendarItems();
   const { maxLanes } = useMaxLanes();
+  const { drag, previewRange, ghostRef, posRef, startDrag } = useEventDrag();
 
   const weekArray = useMemo(() => {
     return Array.from({ length: 6 }, (_, i) => days.slice(i * 7, i * 7 + 7));
@@ -46,12 +48,17 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
               setSelectedDate(date);
               setOpen(true);
             }}
+            onEventPointerDown={startDrag}
+            draggingEventId={drag?.seg.event.id ?? null}
+            previewRange={previewRange}
           />
         ))}
 
         <Dialog open={open} onOpenChange={setOpen}>
           <ScheduleModal date={selectedDate} />
         </Dialog>
+
+        {drag && <DragGhost seg={drag.seg} ghost={drag.ghost} ghostRef={ghostRef} posRef={posRef} />}
       </div>
     </div>
   );
@@ -63,8 +70,11 @@ interface WeekRowProps {
   items: CalendarEvent[];
   maxLanes: number;
   onPickDate: (date: Date) => void;
+  onEventPointerDown: (e: React.PointerEvent, seg: EventSegment) => void;
+  draggingEventId: string | null;
+  previewRange: { start: string; end: string } | null;
 }
-function WeekRow({ week, month, items, maxLanes, onPickDate }: WeekRowProps) {
+function WeekRow({ week, month, items, maxLanes, onPickDate, onEventPointerDown, draggingEventId, previewRange }: WeekRowProps) {
   const weekStart = dayjs(week[0]).format('YYYY-MM-DD');
   const weekEnd = dayjs(week[6]).format('YYYY-MM-DD');
 
@@ -77,9 +87,15 @@ function WeekRow({ week, month, items, maxLanes, onPickDate }: WeekRowProps) {
         const isToday = dayjs(date).isSame(dayjs(), 'day');
         const dateKey = dayjs(date).format('YYYY-MM-DD');
         const more = overflowByDate[dateKey] ?? 0;
+        const isDropPreview = previewRange !== null && dateKey >= previewRange.start && dateKey <= previewRange.end;
 
         return (
-          <div key={dateKey} className="border-primary flex h-full w-full flex-col overflow-hidden border" onDoubleClick={() => onPickDate(date)}>
+          <div
+            key={dateKey}
+            data-date={dateKey}
+            className={`border-primary flex h-full w-full flex-col overflow-hidden border ${isDropPreview && 'bg-main-color/10'}`}
+            onDoubleClick={() => onPickDate(date)}
+          >
             <div className={`grid grid-cols-[1fr_auto_1fr] items-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
               <div />
               <div className={`flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70 ${isToday && 'bg-main-color text-bg-gray dark:text-[#333333]'} tracking-tighter`}>
@@ -100,7 +116,15 @@ function WeekRow({ week, month, items, maxLanes, onPickDate }: WeekRowProps) {
         }}
       >
         {visible.map((seg) => (
-          <EventList key={seg.event.id + seg.start} seg={seg} weekStart={weekStart} onDoubleClick={onPickDate} />
+          <EventList
+            key={seg.event.id + seg.start}
+            seg={seg}
+            weekStart={weekStart}
+            onDoubleClick={onPickDate}
+            onPointerDown={onEventPointerDown}
+            dimmed={seg.event.id === draggingEventId}
+            interactive={draggingEventId === null}
+          />
         ))}
       </div>
     </div>
