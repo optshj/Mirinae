@@ -32,7 +32,7 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
   const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
     if (!form.summary.trim()) {
-      toast.warning('일정 제목을 입력해주세요');
+      toast.warning('제목을 입력해주세요');
       return false;
     }
     editEvent({
@@ -40,7 +40,7 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
       ...form
     });
     posthog.capture('edit_event');
-    toast.success(`일정이 수정되었습니다`);
+    toast.success(`일정을 수정했어요`);
     return true;
   };
 

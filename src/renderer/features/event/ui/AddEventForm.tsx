@@ -32,12 +32,12 @@ export function AddEventForm({ date }: { date: Date }) {
   const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
     if (!form.summary.trim()) {
-      toast.warning('일정 제목을 입력해주세요');
+      toast.warning('제목을 입력해주세요');
       return false;
     }
     addEvent({ ...form });
     posthog.capture('add_event');
-    toast.success(`일정이 추가되었습니다`);
+    toast.success(`일정을 추가했어요`);
     resetForm();
     return true;
   };

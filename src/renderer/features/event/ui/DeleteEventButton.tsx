@@ -16,7 +16,7 @@ export function DeleteEventButton({ event }: { event: CalendarEvent }) {
           e.stopPropagation();
           deleteEvent({ eventId: event.id });
           posthog.capture('delete_event');
-          toast.error('일정이 삭제되었습니다.');
+          toast.error('일정을 삭제했어요');
         }}
         tabIndex={-1}
       >
@@ -36,7 +36,7 @@ export function DeleteEventButton({ event }: { event: CalendarEvent }) {
             onClick={() => {
               deleteEvent({ eventId: event.id });
               posthog.capture('delete_event');
-              toast.error('일정이 삭제되었습니다.');
+              toast.error('일정을 삭제했어요');
             }}
           >
             이 일정만 삭제
@@ -46,7 +46,7 @@ export function DeleteEventButton({ event }: { event: CalendarEvent }) {
             onClick={() => {
               deleteEvent({ eventId: event.id, recurringEventId: event.recurringEventId });
               posthog.capture('delete_event');
-              toast.error('모든 반복 일정이 삭제되었습니다.');
+              toast.error('반복 일정을 모두 삭제했어요');
             }}
           >
             모든 반복 일정 삭제
