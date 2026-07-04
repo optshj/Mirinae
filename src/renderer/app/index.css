@@ -16,6 +16,19 @@ html.disable-click * {
   pointer-events: none;
 }
 
+@keyframes toast-countdown {
+  to {
+    stroke-dashoffset: 81.68;
+  }
+}
+.animate-toast-countdown {
+  animation: toast-countdown var(--toast-countdown-duration, 5000ms) linear forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-toast-countdown {
+    animation: none;
+  }
+}
 * {
   user-select: none;
   -webkit-user-select: none;
@@ -62,30 +75,34 @@ body {
     --color-layer-background: #39393b;
   }
 }
+/* @utility로 등록하면 Tailwind가 정식 유틸리티로 인식해 bg-primary!, dark:bg-primary 같은 변형도 생성해준다.
+   (shadcn 테마의 --color-primary/--color-secondary는 아래 @theme inline에서 제거해 이름 충돌 해소) */
+@utility bg-primary {
+  background-color: var(--color-background-primary);
+}
+@utility text-primary {
+  color: var(--color-text-primary);
+}
+@utility text-secondary {
+  color: var(--color-text-secondary);
+}
+@utility shadow-accent {
+  box-shadow: var(--shadow-accent);
+}
+@utility border-primary {
+  border-color: var(--color-border-primary);
+}
+@utility text-depend {
+  color: var(--color-text-depend);
+}
+@utility bg-layer {
+  background-color: var(--color-layer-background);
+}
 @layer utilities {
-  .bg-primary {
-    background-color: var(--color-background-primary);
-  }
-  .text-primary {
-    color: var(--color-text-primary);
-  }
-  .text-secondary {
-    color: var(--color-text-secondary);
-  }
+  /* accent는 shadcn 테마의 --color-accent(dropdown이 사용)와 이름이 겹쳐서
+     @utility로 바꾸면 테마 쪽이 이김 → 일반 클래스로 유지 (단, ! 변형은 못 씀) */
   .text-accent {
     color: var(--color-accent);
-  }
-  .shadow-accent {
-    box-shadow: var(--shadow-accent);
-  }
-  .border-primary {
-    border-color: var(--color-border-primary);
-  }
-  .text-depend {
-    color: var(--color-text-depend);
-  }
-  .bg-layer {
-    background-color: var(--color-layer-background);
   }
 }
 @layer base {
@@ -135,10 +152,8 @@ body {
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
+  /* --color-primary/--color-secondary(-foreground)는 커스텀 유틸리티(bg-primary 등)와 이름이 겹치고
+     컴포넌트에서 안 쓰여서 제거함 */
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);

@@ -21,7 +21,7 @@ export const Default: Story = {
     <>
       <Toaster />
       <div className="flex gap-2">
-        <Button onClick={() => toast.success('저장되었습니다')}>성공 토스트</Button>
+        <Button onClick={() => toast.success('저장이 성공적으로 완료되었습니다')}>성공 토스트</Button>
         <Button variant="destructive" onClick={() => toast.error('삭제되었습니다')}>
           에러 토스트
         </Button>
