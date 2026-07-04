@@ -7,6 +7,7 @@ import { Kbd } from '@/shared/ui/kbd';
 import { Tooltip } from '@/shared/ui/tooltip';
 import { posthog } from '@/shared/lib/posthog';
 import dayjs from 'dayjs';
+import { DialogFooter } from '@/shared/ui/dialog';
 
 export function AddEventForm({ date }: { date: Date }) {
   const initialFormState: FormState = {
@@ -48,23 +49,25 @@ export function AddEventForm({ date }: { date: Date }) {
       onSubmit={handleSubmit}
       type="add"
       trigger={
-        <Tooltip
-          content={
-            <span className="flex items-center gap-1">
-              단축키 <Kbd className="bg-white/20 text-white/90">Ctrl + Enter</Kbd>
-            </span>
-          }
-          wrapperClassName="w-full"
-        >
-          <button
-            className="text-secondary w-full rounded-xl border-2 border-dashed py-3 text-center [html.show-event-form_&]:hidden"
-            onClick={() => {
-              resetForm();
-            }}
+        <DialogFooter>
+          <Tooltip
+            content={
+              <span className="flex items-center gap-1">
+                단축키 <Kbd className="bg-white/20 text-white/90">Ctrl + Enter</Kbd>
+              </span>
+            }
+            wrapperClassName="w-full"
           >
-            일정 추가
-          </button>
-        </Tooltip>
+            <button
+              className="text-secondary w-full rounded-xl border-2 border-dashed py-3 text-center [html.show-event-form_&]:hidden"
+              onClick={() => {
+                resetForm();
+              }}
+            >
+              일정 추가
+            </button>
+          </Tooltip>
+        </DialogFooter>
       }
     />
   );
