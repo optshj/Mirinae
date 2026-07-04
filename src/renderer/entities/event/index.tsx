@@ -5,6 +5,7 @@ export { useAddEvent } from './hooks/useAddEvent';
 export { useCompleteEvent } from './hooks/useCompleteEvent';
 export { useDeleteEvent } from './hooks/useDeleteEvent';
 export { useEditEvent } from './hooks/useEditEvent';
+export { useRestoreEvent } from './hooks/useRestoreEvent';
 export { useEvents, useHolidayEvents } from './hooks/useEvent';
 export { useCalendarItems } from './hooks/useCalendarItems';
 export { MaxLanesProvider, useMaxLanes } from './context/MaxLanesContext';

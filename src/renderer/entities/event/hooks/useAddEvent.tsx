@@ -64,5 +64,5 @@ export function useAddEvent() {
     onSettled: () => queryClient.invalidateQueries({ queryKey: eventKeys.events })
   });
 
-  return { addEvent: addEventMutation.mutate };
+  return { addEvent: addEventMutation.mutate, addEventAsync: addEventMutation.mutateAsync };
 }

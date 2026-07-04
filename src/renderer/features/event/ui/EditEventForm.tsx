@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { posthog } from '@/shared/lib/posthog';
+import { showUndoToast } from '@/shared/ui/sonner';
 
 import { EventForm } from './components/EventForm';
 import { FormState } from '../types/FormType';
@@ -17,7 +18,8 @@ interface EditEventFormProps {
 export function EditEventForm({ event, deleteButton, completeButton }: EditEventFormProps) {
   const { editEvent } = useEditEvent();
   const [startDate, endDate] = getEventRange(event);
-  const [form, setForm] = useState<FormState>({
+  // 수정 전 상태 — 폼 초기값이자 되돌리기 시 복원할 값 (event prop은 수정 반영 전 시점의 원본)
+  const prevForm: FormState = {
     summary: event.summary,
     colorId: event.colorId,
     start: event.category === 'time' ? dayjs(event.start.dateTime).format('HH:mm') : '08:00',
@@ -26,13 +28,14 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
     endDate,
     allDay: event.category === 'allDay',
     recurrence: null
-  });
+  };
+  const [form, setForm] = useState<FormState>(prevForm);
   const updateForm = (key: keyof FormState, value: FormState[keyof FormState]) => setForm((prev) => ({ ...prev, [key]: value }));
 
   const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
     if (!form.summary.trim()) {
-      toast.warning('일정 제목을 입력해주세요');
+      toast.warning('제목을 입력해주세요');
       return false;
     }
     editEvent({
@@ -40,7 +43,10 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
       ...form
     });
     posthog.capture('edit_event');
-    toast.success(`일정이 수정되었습니다`);
+    showUndoToast('success', '일정을 수정했어요', () => {
+      editEvent({ eventId: event.id, ...prevForm });
+      posthog.capture('edit_event_undo');
+    });
     return true;
   };
 
