@@ -51,8 +51,6 @@ export function Tooltip({ content, children, side = 'top', delay = 0, className,
     if (openRef.current) setOpenState(false);
   }, [clearTimer, setOpenState]);
 
-  // 벽지(electron-as-wallpaper, forwarded mouse input) 환경에서는 mouseenter/leave·:hover가
-  // 불안정하므로, LinearSlider처럼 전역 pointermove + getBoundingClientRect로 호버를 직접 판정한다.
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
       const el = ref.current;

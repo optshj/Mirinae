@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { useMemo, useRef, useState } from 'react';
 import { posthog } from '@/shared/lib/posthog';
+import { showUndoToast } from '@/shared/ui/sonner';
 
 import { useEditEvent, getEventRange, EventSegment } from '@/entities/event';
 import { CalendarEvent } from '@/shared/types/EventType';
@@ -36,17 +37,24 @@ export function useEventDrag() {
     if (event.category === 'holiday') return;
     const delta = dayjs(dropDate).diff(grabDate, 'day');
     const [startDate, endDate] = getEventRange(event);
-    editEvent({
+    const payload = {
       eventId: event.id,
       summary: event.summary,
       colorId: event.colorId,
       allDay: event.category === 'allDay',
       start: event.category === 'time' ? dayjs(event.start.dateTime).format('HH:mm') : '08:00',
       end: event.category === 'time' ? dayjs(event.end.dateTime).format('HH:mm') : '12:00',
-      startDate: dayjs(startDate).add(delta, 'day').format('YYYY-MM-DD'),
-      endDate: dayjs(endDate).add(delta, 'day').format('YYYY-MM-DD'),
       // singleEvents=true로 받은 인스턴스에 대한 PUT → 해당 회차만 이동 (EditEventForm과 동일)
       recurrence: null
+    };
+    editEvent({
+      ...payload,
+      startDate: dayjs(startDate).add(delta, 'day').format('YYYY-MM-DD'),
+      endDate: dayjs(endDate).add(delta, 'day').format('YYYY-MM-DD')
+    });
+    showUndoToast('success', '일정을 이동했어요', () => {
+      editEvent({ ...payload, startDate, endDate });
+      posthog.capture('drag_move_undo', { day_delta: delta });
     });
     posthog.capture('drag_move_event', {
       day_delta: delta,

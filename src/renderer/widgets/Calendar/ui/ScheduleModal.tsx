@@ -44,10 +44,7 @@ export function ScheduleModal({ date }: { date: Date }) {
           </div>
           <h3 className="text-primary text-lg font-medium">로그인 후 일정을 추가할 수 있어요</h3>
           <p className="text-secondary mt-1 mb-4 text-sm">우측 상단 설정에서도 로그인할 수 있어요.</p>
-          <button
-            onClick={login}
-            className="bg-main-color flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:scale-105 hover:brightness-105"
-          >
+          <button onClick={login} className="bg-main-color flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:scale-105 hover:brightness-105">
             <LogIn size={16} />
             구글 로그인
           </button>

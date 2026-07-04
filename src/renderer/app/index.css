@@ -16,6 +16,19 @@ html.disable-click * {
   pointer-events: none;
 }
 
+@keyframes toast-countdown {
+  to {
+    stroke-dashoffset: 81.68;
+  }
+}
+.animate-toast-countdown {
+  animation: toast-countdown var(--toast-countdown-duration, 5000ms) linear forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-toast-countdown {
+    animation: none;
+  }
+}
 * {
   user-select: none;
   -webkit-user-select: none;

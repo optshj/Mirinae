@@ -27,5 +27,5 @@ export function useDeleteEvent() {
     onError: (_error, _variable, context) => queryClient.setQueryData(eventKeys.events, context?.previousData),
     onSettled: () => queryClient.invalidateQueries({ queryKey: eventKeys.events })
   });
-  return { deleteEvent: deleteEventMutation.mutate };
+  return { deleteEvent: deleteEventMutation.mutate, deleteEventAsync: deleteEventMutation.mutateAsync };
 }

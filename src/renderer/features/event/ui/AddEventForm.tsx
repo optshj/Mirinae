@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { posthog } from '@/shared/lib/posthog';
-
 import { useAddEvent } from '@/entities/event';
 import { EventForm } from './components/EventForm';
 import { FormState } from '../types/FormType';
 import { Kbd } from '@/shared/ui/kbd';
 import { Tooltip } from '@/shared/ui/tooltip';
+import { posthog } from '@/shared/lib/posthog';
 import dayjs from 'dayjs';
 
 export function AddEventForm({ date }: { date: Date }) {
