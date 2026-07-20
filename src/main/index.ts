@@ -23,11 +23,9 @@ new AutoLaunch({
   path: process.execPath
 }).enable();
 
-// Initialize Sentry for error tracking
+// Sentry는 네이티브 크래시(minidump) 수집용으로만 유지 — JS 에러/리플레이는 PostHog가 담당
 Sentry.init({
   dsn: 'https://e14a01e7695b60bc88127406d382c174@o4511528205615104.ingest.us.sentry.io/4511528463630336',
-  tracesSampleRate: 1.0,
-  integrations: [Sentry.startupTracingIntegration()],
   enableLogs: true
 });
 

@@ -4,11 +4,10 @@ import { X } from 'lucide-react';
 type PatchTag = '새 기능' | '개선' | '수정';
 
 const PATCH_NOTES: { version: string; items: Array<{ tag: PatchTag; text: string }> } = {
-  version: 'v0.4.2',
+  version: 'v0.4.3',
   items: [
-    { tag: '새 기능', text: '일정을 드래그해서 다른 날짜로 옮길 수 있어요' },
-    { tag: '새 기능', text: '일정 추가·수정·삭제 후 토스트에서 바로 되돌릴 수 있어요' },
-    { tag: '개선', text: '캘린더 전반의 UI를 다듬었어요' }
+    { tag: '개선', text: '더 많은 일정을 가져올 수 있게 바뀌었어요' },
+    { tag: '개선', text: '화면조절 UI가 변경되었어요' }
   ]
 };
 
@@ -19,7 +18,7 @@ const TAG_COLOR: Record<PatchTag, string> = {
 };
 
 export function PatchNoteModal() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     const cleanup = window.api.onShowPatchNotes(() => setIsOpen(true));

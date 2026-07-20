@@ -5,11 +5,11 @@ export default defineConfig({
     test: {
         globals: true,
         environment: 'jsdom',
-        setupFiles: './src/renderer/src/setupTests.ts'
+        setupFiles: './src/renderer/setupTests.ts'
     },
     resolve: {
         alias: {
-            '@': resolve('src/renderer/src')
+            '@': resolve('src/renderer')
         }
     }
 });

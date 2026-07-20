@@ -120,6 +120,7 @@ function MonthGrid({ month, start, rangeEnd, onDayClick, onDayHover }: MonthGrid
             >
               <button
                 type="button"
+                data-day={ds}
                 disabled={disabled}
                 onClick={() => onDayClick(ds)}
                 onMouseEnter={() => onDayHover(ds)}
