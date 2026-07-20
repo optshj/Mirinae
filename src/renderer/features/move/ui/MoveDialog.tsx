@@ -1,33 +1,36 @@
-import { MoveIcon } from 'lucide-react';
-
 import { Button } from '@/shared/ui/button';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from '@/shared/ui/dialog';
 
 import { useMove } from '../model/move-context';
 
 // 드롭다운 바깥에서 렌더되어, 드롭다운이 닫혀도 안내창과 '적용' 버튼이 유지된다.
+// 캘린더를 가리지 않도록 상단에 토스트(sonner)와 같은 형태로 띄운다: 아이콘 | 타이틀·설명 | 적용.
+// 조절 가능한 창 경계는 액센트 점선 아웃라인이 표시한다 (pages/Calender의 html.resizable 아웃라인).
 export function MoveDialog() {
   const { isDrag, stop } = useMove();
 
   return (
     <Dialog open={isDrag} onOpenChange={(open) => !open && stop()}>
-      <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <MoveIcon size={16} aria-hidden="true" />
-            화면조절 중
-          </DialogTitle>
-          <DialogDescription>캘린더를 드래그하여 위치를 조절하세요.</DialogDescription>
-          <DialogDescription>창의 테두리를 드래그하여 크기를 조절할 수 있습니다.</DialogDescription>
-          <DialogDescription>조절을 마치려면 아래 &apos;적용&apos; 버튼을 클릭하세요.</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button className="pointer-events-auto!" type="button">
-              적용
-            </Button>
-          </DialogClose>
-        </DialogFooter>
+      <DialogContent
+        showCloseButton={false}
+        onInteractOutside={(e) => e.preventDefault()}
+        overlayClassName="bg-black/10 rounded-lg"
+        style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+        className="data-[state=open]:slide-in-from-top-4 data-[state=closed]:slide-out-to-top-4 border-primary top-21 bottom-auto flex w-auto max-w-none translate-y-0 items-center gap-3 rounded-full border py-2 pr-4 pl-6 shadow-[0_14px_44px_rgba(0,0,0,0.35)] sm:max-w-none"
+      >
+        <div className="flex flex-col">
+          <DialogTitle className="text-[15px] font-semibold whitespace-nowrap">캘린더를 드래그해 옮겨보세요</DialogTitle>
+          <DialogDescription className="text-secondary text-[12px] whitespace-nowrap">점선을 끌면 크기도 조절할 수 있어요</DialogDescription>
+        </div>
+        <DialogClose asChild>
+          <Button
+            type="button"
+            style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+            className="dark:text-font-black bg-main-color hover:bg-main-color pointer-events-auto! h-auto rounded-full px-3.5 py-1.5 text-xs font-semibold text-white transition-all hover:scale-105 hover:brightness-105"
+          >
+            완료
+          </Button>
+        </DialogClose>
       </DialogContent>
     </Dialog>
   );
