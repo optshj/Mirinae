@@ -26,14 +26,19 @@ function generateOptimisticEvents(newEvent: EventBodyProp) {
   }
 
   const instances: Array<ReturnType<typeof createEventBody> & { id: string }> = [];
-  const endDate = dayjs().add(1, 'year');
-  let currentDate = dayjs(newEvent.startDate);
+  const limitDate = dayjs().add(1, 'year');
+  const baseStart = dayjs(newEvent.startDate);
+  const baseEnd = dayjs(newEvent.endDate);
   let count = 0;
 
-  while (currentDate.isBefore(endDate) && count < 50) {
-    const instanceBody = createEventBody({ ...newEvent, recurrence: null });
+  while (baseStart.add(count, unit).isBefore(limitDate) && count < 50) {
+    const instanceBody = createEventBody({
+      ...newEvent,
+      recurrence: null,
+      startDate: baseStart.add(count, unit).format('YYYY-MM-DD'),
+      endDate: baseEnd.add(count, unit).format('YYYY-MM-DD')
+    });
     instances.push({ ...instanceBody, id: `temp-id-${tempIdBase}-${count}` });
-    currentDate = currentDate.add(1, unit);
     count++;
   }
 
