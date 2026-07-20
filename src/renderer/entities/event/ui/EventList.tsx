@@ -28,6 +28,7 @@ export function EventList({ seg, weekStart, onDoubleClick, onPointerDown, dimmed
         marginLeft: seg.isStart ? 6 : 0,
         marginRight: seg.isEnd ? 6 : 0
       }}
+      data-event={event.summary}
       onDoubleClick={() => onDoubleClick(new Date(seg.start))}
       onPointerDown={(e) => onPointerDown?.(e, seg)}
     >
