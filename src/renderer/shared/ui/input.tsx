@@ -86,7 +86,7 @@ export function HangulInput({ value, onChange, ...props }: HangulInputProps) {
       return;
     }
 
-    if (e.key.length === 1) {
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
 
       let newValue = '';

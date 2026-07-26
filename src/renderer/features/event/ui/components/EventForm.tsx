@@ -58,11 +58,16 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
           setShowForm(true);
           return;
         }
+        return;
+      }
+      if (e.ctrlKey && (e.key === 'd' || e.key === 'D') && showForm) {
+        e.preventDefault();
+        updateForm('allDay', !form.allDay);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showForm, form, onSubmit, type]);
+  }, [showForm, form, onSubmit, type, updateForm]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const isSuccess = onSubmit(e);
@@ -92,7 +97,15 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
 
           <div className="flex items-center">
             <span className="text-secondary w-10 shrink-0 text-sm font-medium">종일</span>
-            <Switch onClick={() => updateForm('allDay', !form.allDay)} isOn={form.allDay} />
+            <Tooltip
+              content={
+                <span className="flex items-center gap-1">
+                  단축키 <Kbd className="bg-white/20 text-white/90">Ctrl + D</Kbd>
+                </span>
+              }
+            >
+              <Switch onClick={() => updateForm('allDay', !form.allDay)} isOn={form.allDay} />
+            </Tooltip>
           </div>
 
           <div className={`transition-all ${form.allDay ? 'pointer-events-none opacity-50' : ''}`}>
