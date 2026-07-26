@@ -12,11 +12,9 @@ export function useCalendarItems() {
 
   const items = useMemo<CalendarEvent[]>(() => {
     const eventItems: CalendarEvent[] = (eventData?.items ?? []).map((event) => {
-      const isCompleted = event.extendedProperties?.private?.isCompleted === 'true';
       const common = {
         ...event,
-        colorId: event.colorId ?? '1',
-        extendedProperties: { private: { isCompleted } }
+        colorId: event.colorId ?? '1'
       };
 
       if (event.start?.dateTime && event.end?.dateTime) {
@@ -41,8 +39,7 @@ export function useCalendarItems() {
           category: 'holiday',
           colorId: '10',
           start: { date: event.start?.date ?? '' },
-          end: { date: event.end?.date ?? '' },
-          extendedProperties: { private: { isCompleted: false } }
+          end: { date: event.end?.date ?? '' }
         }))
       : [];
 

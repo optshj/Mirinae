@@ -26,11 +26,3 @@ export interface GoogleEventBody {
     timeZone?: string;
   };
 }
-
-export interface CompleteEventBody {
-  extendedProperties: {
-    private: {
-      isCompleted: string;
-    };
-  };
-}
