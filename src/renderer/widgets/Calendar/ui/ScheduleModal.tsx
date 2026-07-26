@@ -1,6 +1,6 @@
 import { CalendarOff, LogIn } from 'lucide-react';
 import dayjs from 'dayjs';
-import { AddEventForm, CompleteEventButton, DeleteEventButton, EditEventForm } from '@/features/event';
+import { AddEventForm, DeleteEventButton, EditEventForm } from '@/features/event';
 import { useCalendarItems, getEventRange } from '@/entities/event';
 import { DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 import { useLogin } from '@/shared/hooks/useLogin';
@@ -28,14 +28,7 @@ export function ScheduleModal({ date }: { date: Date }) {
         </DialogTitle>
       </DialogHeader>
       {events.map((event) => {
-        return (
-          <EditEventForm
-            key={event.id}
-            event={event}
-            deleteButton={<DeleteEventButton event={event} />}
-            completeButton={<CompleteEventButton eventId={event.id} isCompleted={event.extendedProperties.private.isCompleted} />}
-          />
-        );
+        return <EditEventForm key={event.id} event={event} deleteButton={<DeleteEventButton event={event} />} />;
       })}
       {!isAuthenticated ? (
         <div className="flex flex-col items-center justify-center text-center [html.show-event-form_&]:hidden">

@@ -1,6 +1,6 @@
 import { http } from '@/shared/lib/http';
 import { CalendarEvent, Events } from '@/shared/types/EventType';
-import { CompleteEventBody, GoogleEventBody } from '../types';
+import { GoogleEventBody } from '../types';
 
 const CALENDAR_API_URL = 'https://www.googleapis.com/calendar/v3/calendars';
 
@@ -48,8 +48,5 @@ export const eventApi = {
   },
   update: ({ eventId, eventData }: { eventId: string; eventData: GoogleEventBody }) => {
     return http.put<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, eventData);
-  },
-  complete: ({ eventId, patchBody }: { eventId: string; patchBody: CompleteEventBody }) => {
-    return http.patch<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, patchBody);
   }
 };
