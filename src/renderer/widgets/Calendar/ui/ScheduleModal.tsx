@@ -6,7 +6,7 @@ import { DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 import { useLogin } from '@/shared/hooks/useLogin';
 import { getDDay } from '../lib/getDDay';
 
-export function ScheduleModal({ date }: { date: Date }) {
+export function ScheduleModal({ date, initialHour }: { date: Date; initialHour?: number }) {
   const dDay = getDDay(date);
   const isToday = dDay === 'Today';
   const { items } = useCalendarItems();
@@ -52,7 +52,11 @@ export function ScheduleModal({ date }: { date: Date }) {
               <h3 className="text-primary text-lg font-medium">오늘은 일정이 없어요</h3> <p className="text-secondary mt-1 mb-4 text-sm">아래 버튼으로 새로운 일정을 추가해보세요.</p>
             </div>
           )}
-          <AddEventForm date={date} />
+          <AddEventForm
+            date={date}
+            initialStart={initialHour !== undefined ? `${initialHour.toString().padStart(2, '0')}:00` : undefined}
+            initialEnd={initialHour !== undefined ? `${(initialHour + 1).toString().padStart(2, '0')}:00` : undefined}
+          />
         </>
       )}
     </DialogContent>

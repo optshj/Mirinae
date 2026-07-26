@@ -9,12 +9,12 @@ import { posthog } from '@/shared/lib/posthog';
 import dayjs from 'dayjs';
 import { DialogFooter } from '@/shared/ui/dialog';
 
-export function AddEventForm({ date }: { date: Date }) {
+export function AddEventForm({ date, initialStart = '08:00', initialEnd = '12:00' }: { date: Date; initialStart?: string; initialEnd?: string }) {
   const initialFormState: FormState = {
     summary: '',
     colorId: '1',
-    start: '08:00',
-    end: '12:00',
+    start: initialStart,
+    end: initialEnd,
     startDate: dayjs(date).format('YYYY-MM-DD'),
     endDate: dayjs(date).format('YYYY-MM-DD'),
     allDay: false,

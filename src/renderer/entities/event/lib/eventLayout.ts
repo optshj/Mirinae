@@ -10,6 +10,19 @@ export type EventSegment = {
   lane: number;
 };
 
+export type TimeSegment = {
+  event: CalendarEvent;
+  date: string; // YYYY-MM-DD
+  startMin: number; // 자정 기준 분, [0, 1440]으로 clamp
+  endMin: number;
+  isStart: boolean; // 이벤트가 실제로 이 날짜에 시작하는지 (전날에서 넘어온 게 아닌지)
+  isEnd: boolean;
+  col: number; // 겹침 클러스터 내 컬럼 인덱스
+  colCount: number; // 겹침 클러스터의 전체 컬럼 수
+};
+
+const MIN_BLOCK_MINUTES = 30;
+
 export function getEventRange(event: CalendarEvent): [string, string] {
   if (event.category === 'time') {
     const startDate = event.start.dateTime.split('T')[0];
@@ -82,4 +95,74 @@ export function buildWeekSegments(events: CalendarEvent[], weekStart: string, we
   });
 
   return { visible, overflowByDate };
+}
+
+// 하루(00:00~24:00) 안에서 시간 단위 이벤트들의 겹침을 컬럼으로 배치 (주별 뷰의 시간 그리드용)
+export function buildDayTimeSegments(events: CalendarEvent[], date: string): TimeSegment[] {
+  const dayStart = dayjs(date).startOf('day');
+  const dayEnd = dayStart.add(1, 'day');
+
+  const clipped = events.flatMap((event) => {
+    if (event.category !== 'time') return [];
+
+    const eventStart = dayjs(event.start.dateTime);
+    const eventEnd = dayjs(event.end.dateTime);
+    if (!eventStart.isBefore(dayEnd) || !eventEnd.isAfter(dayStart)) return [];
+
+    const startMin = Math.max(0, eventStart.diff(dayStart, 'minute'));
+    let endMin = Math.min(1440, eventEnd.diff(dayStart, 'minute'));
+    endMin = Math.max(endMin, startMin + MIN_BLOCK_MINUTES, MIN_BLOCK_MINUTES);
+    endMin = Math.min(endMin, 1440);
+
+    return [
+      {
+        event,
+        date,
+        startMin,
+        endMin,
+        isStart: eventStart.isSame(dayStart, 'day'),
+        isEnd: eventEnd.isSame(dayStart, 'day') || eventEnd.isSame(dayEnd)
+      }
+    ];
+  });
+
+  // 정렬 규칙: 시작 시각 빠른 순 -> 길이 긴 순 (buildWeekSegments와 동일한 관례)
+  clipped.sort((a, b) => {
+    if (a.startMin !== b.startMin) return a.startMin - b.startMin;
+    return b.endMin - b.startMin - (a.endMin - a.startMin);
+  });
+
+  // 컬럼 배치: sweep으로 겹침 클러스터(연결된 겹침 그룹)를 구성하고, 클러스터별로 최소 빈 컬럼을 배정
+  type Entry = { seg: (typeof clipped)[number]; col: number };
+  const segments: TimeSegment[] = [];
+  let active: Entry[] = [];
+  let cluster: Entry[] = [];
+  let clusterMaxCol = 0;
+
+  const flushCluster = () => {
+    if (cluster.length === 0) return;
+    const colCount = clusterMaxCol + 1;
+    cluster.forEach(({ seg, col }) => segments.push({ ...seg, col, colCount }));
+  };
+
+  clipped.forEach((seg) => {
+    active = active.filter((a) => a.seg.endMin > seg.startMin);
+    if (active.length === 0) {
+      flushCluster();
+      cluster = [];
+      clusterMaxCol = 0;
+    }
+
+    const usedCols = new Set(active.map((a) => a.col));
+    let col = 0;
+    while (usedCols.has(col)) col += 1;
+
+    const entry: Entry = { seg, col };
+    active.push(entry);
+    cluster.push(entry);
+    clusterMaxCol = Math.max(clusterMaxCol, col);
+  });
+  flushCluster();
+
+  return segments;
 }

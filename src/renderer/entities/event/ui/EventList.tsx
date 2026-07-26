@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { EventSegment } from '../lib/eventLayout';
+import { formatEventTime } from '../lib/formatEventTime';
 
 interface EventListProps {
   seg: EventSegment;
@@ -14,7 +15,7 @@ export function EventList({ seg, weekStart, onDoubleClick, onPointerDown, dimmed
   const span = dayjs(seg.end).diff(seg.start, 'day') + 1;
 
   const event = seg.event;
-  const timeLabel = event.category === 'time' ? formatDateTime(event.start) : null;
+  const timeLabel = event.category === 'time' ? formatEventTime(event.start) : null;
   const isDraggable = Boolean(onPointerDown) && event.category !== 'holiday';
 
   return (
@@ -44,9 +45,4 @@ export function EventList({ seg, weekStart, onDoubleClick, onPointerDown, dimmed
       </span>
     </div>
   );
-}
-function formatDateTime(dateField: { date?: string; dateTime?: string; timeZone?: string }) {
-  if (!dateField.dateTime) return null;
-  const d = dayjs(dateField.dateTime).locale('en');
-  return d.format(d.minute() === 0 ? 'h A' : 'h:mm A');
 }

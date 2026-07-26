@@ -15,6 +15,9 @@ export interface Api {
   getMaxLanes: () => Promise<number>;
   setMaxLanes: (value: number) => void;
 
+  getViewMode: () => Promise<'month' | 'week'>;
+  setViewMode: (value: 'month' | 'week') => void;
+
   quitApp: () => void;
 
   setOpacity: (opacity: number) => void;
@@ -58,6 +61,9 @@ const api = {
 
   getMaxLanes: () => ipcRenderer.invoke('get-max-lanes'),
   setMaxLanes: (value: number) => ipcRenderer.send('set-max-lanes', value),
+
+  getViewMode: () => ipcRenderer.invoke('get-view-mode'),
+  setViewMode: (value: 'month' | 'week') => ipcRenderer.send('set-view-mode', value),
 
   onShowPatchNotes: (callback) => {
     const listener = (_, ...args) => callback(...args);

@@ -11,3 +11,4 @@ export { MaxLanesProvider, useMaxLanes } from './context/MaxLanesContext';
 export { HolidayProvider, useHoliday } from './context/HolidayContext';
 export { ColorFilterProvider, useColorFilter } from './context/ColorFilterContext';
 export * from './lib/eventLayout';
+export { formatEventTime } from './lib/formatEventTime';

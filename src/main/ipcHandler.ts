@@ -72,6 +72,12 @@ export const registerIPCHandlers = () => {
     posthog.capture({ distinctId: getDistinctId(), event: 'max_lanes_changed', properties: { max_lanes: value } });
   });
 
+  ipcMain.handle('get-view-mode', () => store.get('view-mode'));
+  ipcMain.on('set-view-mode', (_, value) => {
+    store.set('view-mode', value);
+    posthog.capture({ distinctId: getDistinctId(), event: 'view_mode_changed', properties: { view_mode: value } });
+  });
+
   ipcMain.on('renderer-ready', async (event) => {
     const window = await activeWindow();
     const isExplorer = window?.title === 'Program Manager';
