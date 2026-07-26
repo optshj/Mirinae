@@ -152,11 +152,6 @@ export type Events = {
     customTypeName: string;
   };
   eventType: string;
-  extendedProperties: {
-    private: {
-      isCompleted: 'true' | 'false';
-    };
-  };
   start: {
     date?: string;
     dateTime?: string;
@@ -168,13 +163,7 @@ export type Events = {
     timeZone?: string;
   };
 };
-type BaseEvent = Omit<Events, 'start' | 'end' | 'extendedProperties'> & {
-  extendedProperties: {
-    private: {
-      isCompleted: boolean;
-    };
-  };
-};
+type BaseEvent = Omit<Events, 'start' | 'end'>;
 
 export interface TimeEvent extends BaseEvent {
   category: 'time';

@@ -13,9 +13,8 @@ import { useEditEvent, getEventRange } from '@/entities/event';
 interface EditEventFormProps {
   event: CalendarEvent;
   deleteButton: React.ReactNode;
-  completeButton: React.ReactNode;
 }
-export function EditEventForm({ event, deleteButton, completeButton }: EditEventFormProps) {
+export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
   const { editEvent } = useEditEvent();
   const [startDate, endDate] = getEventRange(event);
   // 수정 전 상태 — 폼 초기값이자 되돌리기 시 복원할 값 (event prop은 수정 반영 전 시점의 원본)
@@ -50,10 +49,10 @@ export function EditEventForm({ event, deleteButton, completeButton }: EditEvent
     return true;
   };
 
-  return <EventForm form={form} updateForm={updateForm} onSubmit={handleSubmit} type="edit" trigger={<Event event={event} deleteButton={deleteButton} completeButton={completeButton} />} />;
+  return <EventForm form={form} updateForm={updateForm} onSubmit={handleSubmit} type="edit" trigger={<Event event={event} deleteButton={deleteButton} />} />;
 }
 
-function Event({ event, deleteButton, completeButton }: { event: CalendarEvent; deleteButton: React.ReactNode; completeButton: React.ReactNode }) {
+function Event({ event, deleteButton }: { event: CalendarEvent; deleteButton: React.ReactNode }) {
   const isHoliday = event.category === 'holiday';
   const [start, end] = getEventRange(event);
   const isMultiDay = start !== end;
@@ -66,7 +65,7 @@ function Event({ event, deleteButton, completeButton }: { event: CalendarEvent; 
 
   return (
     <div
-      className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 [html.show-event-form_&]:hidden event-color-${event.colorId} bg-(--event-color)/20 ${event.extendedProperties.private.isCompleted && 'opacity-50'}`}
+      className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 [html.show-event-form_&]:hidden event-color-${event.colorId} bg-(--event-color)/20`}
       onClick={(e) => {
         if (isHoliday) e.stopPropagation();
       }}
@@ -76,12 +75,7 @@ function Event({ event, deleteButton, completeButton }: { event: CalendarEvent; 
         <span className="font-semibold">{event.summary}</span>
         <div className="text-xs">{renderTimeRange()}</div>
       </div>
-      {!isHoliday && (
-        <div className="flex items-center gap-1">
-          {completeButton}
-          {deleteButton}
-        </div>
-      )}
+      {!isHoliday && <div className="flex items-center gap-1">{deleteButton}</div>}
     </div>
   );
 }
