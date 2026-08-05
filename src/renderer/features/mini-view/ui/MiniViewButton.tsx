@@ -17,7 +17,7 @@ export function MiniViewButton() {
   };
 
   return (
-    <Tooltip content={isMini ? '캘린더 확대' : '캘린더 미니뷰'} side="bottom">
+    <Tooltip content={isMini ? '캘린더 확대' : '캘린더 축소'} side="bottom">
       <button type="button" tabIndex={-1} onClick={handleClick} className="inline-flex cursor-pointer appearance-none border-0 bg-transparent p-0 [&_svg]:pointer-events-none">
         {isMini ? <Maximize2 strokeWidth={1.0} size={24} className="[html.mini-view_&]:size-5" /> : <Minimize2 strokeWidth={1.0} size={24} className="[html.mini-view_&]:size-5" />}
       </button>
