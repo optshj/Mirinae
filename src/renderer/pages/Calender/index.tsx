@@ -17,7 +17,7 @@ export function Calendar() {
     <MoveProvider container={container}>
       <div
         ref={setContainer}
-        className="relative ml-auto rounded-lg outline-4 -outline-offset-4 outline-transparent transition-[width] duration-300 ease-in-out outline-dotted [html.mini-view_&]:w-96 [html.resizable_&]:outline-zinc-500"
+        className="relative ml-auto rounded-lg outline-4 -outline-offset-4 outline-transparent transition-[width] duration-300 ease-in-out outline-dotted [html.mini-view_&]:w-[28rem] [html.resizable_&]:outline-zinc-500"
       >
         <Header displayMonth={displayMonth} year={year} handleNextMonth={handleNextMonth} handlePrevMonth={handlePrevMonth} />
         <div className="flex flex-1 flex-col transition-all duration-300 ease-in-out [html.flip-calendar_&]:pointer-events-none [html.flip-calendar_&]:-mt-4 [html.flip-calendar_&]:scale-95 [html.flip-calendar_&]:opacity-0 [html.mini-view_&]:hidden">

@@ -25,7 +25,7 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
 
   return (
     <div className="bg-primary flex flex-col overflow-hidden rounded-b-lg">
-      <div className="border-primary grid grid-cols-7 border-b py-2 text-center text-xs leading-none font-medium">
+      <div className="border-primary grid grid-cols-7 border-b py-2.5 text-center text-sm leading-none font-medium">
         <div className="text-red-400" aria-label="일요일">
           일
         </div>
@@ -47,17 +47,13 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
           const dayEvents = eventsByDate[dateKey] ?? [];
 
           return (
-            <div key={dateKey} data-date={dateKey} className={`flex h-11 flex-col items-center justify-center gap-1 ${!isCurrentMonth && 'opacity-40'}`}>
-              <div
-                className={`flex h-6 w-6 items-center justify-center rounded-full text-xs leading-none ${isToday ? 'bg-red-500 font-bold text-white shadow-[0_0_0_3px_rgba(239,68,68,0.25)]' : 'text-primary'}`}
-              >
-                {date.getDate()}
-              </div>
-              <div className="flex h-1.5 items-center gap-1">
+            <div key={dateKey} data-date={dateKey} className={`flex h-14 flex-col items-center justify-center gap-1.5 ${!isCurrentMonth && 'opacity-40'}`}>
+              <div className={`flex h-7 w-7 items-center justify-center rounded-md text-sm tracking-tighter ${isToday ? 'bg-red-400 text-white' : 'text-primary'}`}>{date.getDate()}</div>
+              <div className="flex h-2 items-center gap-1">
                 {dayEvents.slice(0, maxLanes).map((colorId, i) => (
-                  <span key={i} className={`h-1.5 w-1.5 shrink-0 rounded-full event-color-${colorId} bg-(--event-color)`} />
+                  <span key={i} className={`h-2 w-2 shrink-0 rounded-full event-color-${colorId} bg-(--event-color)`} />
                 ))}
-                {dayEvents.length > maxLanes && <span className="text-secondary flex h-1.5 w-1.5 shrink-0 items-center justify-center text-[9px] leading-none">+</span>}
+                {dayEvents.length > maxLanes && <span className="text-secondary flex h-2 w-2 shrink-0 items-center justify-center text-[10px] leading-none">+</span>}
               </div>
             </div>
           );
