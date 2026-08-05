@@ -28,7 +28,7 @@ export function PatchNoteModal() {
   if (!isOpen) return null;
 
   return (
-    <div className="bg-primary border-primary animate-in fade-in slide-in-from-bottom-2 fixed right-4 bottom-4 z-50 w-72 rounded-xl border p-4 shadow-[0_10px_40px_rgba(0,0,0,0.15)] duration-300">
+    <div className="bg-primary border-primary animate-in fade-in slide-in-from-bottom-2 absolute right-4 bottom-4 z-50 w-72 rounded-xl border p-4 shadow-[0_10px_40px_rgba(0,0,0,0.15)] duration-300">
       <button onClick={() => setIsOpen(false)} className="absolute top-4 right-4 text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-200" aria-label="닫기">
         <X size={15} />
       </button>

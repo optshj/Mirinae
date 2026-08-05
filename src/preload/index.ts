@@ -9,7 +9,7 @@ export interface Api {
   refreshToken: () => Promise<any>;
   logoutGoogleOAuth: () => Promise<boolean>;
 
-  startDragging: () => void;
+  startDragging: (options?: { resizable?: boolean }) => void;
   stopDragging: () => void;
 
   getMaxLanes: () => Promise<number>;
@@ -48,7 +48,7 @@ const api = {
 
   logoutGoogleOAuth: () => ipcRenderer.invoke('logout-google-oauth'),
 
-  startDragging: () => ipcRenderer.send('start-dragging'),
+  startDragging: (options) => ipcRenderer.send('start-dragging', options),
   stopDragging: () => ipcRenderer.send('stop-dragging'),
 
   quitApp: () => ipcRenderer.send('quit-app'),

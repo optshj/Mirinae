@@ -19,7 +19,7 @@ export const registerIPCHandlers = () => {
     app.quit();
   });
 
-  ipcMain.on('start-dragging', () => {
+  ipcMain.on('start-dragging', (_, options?: { resizable?: boolean }) => {
     detach(mainWindow);
     const { x, y, width, height } = mainWindow.getBounds();
     const { minX, minY } = getVirtualScreenOffset();
@@ -30,7 +30,7 @@ export const registerIPCHandlers = () => {
       width,
       height
     });
-    mainWindow.setResizable(true);
+    mainWindow.setResizable(options?.resizable ?? true);
   });
 
   ipcMain.on('stop-dragging', () => {

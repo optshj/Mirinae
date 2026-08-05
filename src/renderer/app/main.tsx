@@ -8,6 +8,10 @@ if (localStorage.getItem('flipFooter') === 'true') {
   document.documentElement.classList.add('flip-footer');
 }
 
+if (localStorage.getItem('miniView') === 'true') {
+  document.documentElement.classList.add('mini-view');
+}
+
 window.api.onUpdateClickable((isExplorer: boolean) => {
   document.documentElement.classList.toggle('disable-click', !isExplorer);
 });
