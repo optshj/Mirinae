@@ -48,7 +48,11 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
 
           return (
             <div key={dateKey} data-date={dateKey} className={`flex h-11 flex-col items-center justify-center gap-1 ${!isCurrentMonth && 'opacity-40'}`}>
-              <div className={`flex h-6 w-6 items-center justify-center rounded-md text-xs leading-none ${isToday ? 'bg-red-400 text-white' : 'text-primary'}`}>{date.getDate()}</div>
+              <div
+                className={`flex h-6 w-6 items-center justify-center rounded-full text-xs leading-none ${isToday ? 'bg-red-500 font-bold text-white shadow-[0_0_0_3px_rgba(239,68,68,0.25)]' : 'text-primary'}`}
+              >
+                {date.getDate()}
+              </div>
               <div className="flex h-1.5 items-center gap-1">
                 {dayEvents.slice(0, maxLanes).map((colorId, i) => (
                   <span key={i} className={`h-1.5 w-1.5 shrink-0 rounded-full event-color-${colorId} bg-(--event-color)`} />

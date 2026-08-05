@@ -44,9 +44,9 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
           <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
             <Tooltip content="설정" side="bottom">
               <DropdownMenuTrigger asChild>
-                <button type="button" tabIndex={-1} className="inline-flex cursor-pointer appearance-none border-0 bg-transparent p-0 [&_svg]:pointer-events-none">
+                <div role="button" tabIndex={-1} className="inline-flex cursor-pointer appearance-none border-0 bg-transparent p-0 [&_svg]:pointer-events-none">
                   <Settings strokeWidth={1} size={24} className="[html.mini-view_&]:size-5" />
-                </button>
+                </div>
               </DropdownMenuTrigger>
             </Tooltip>
             <DropdownMenuContent align="end" className="flex w-auto flex-col gap-1.5 px-3 py-2">
