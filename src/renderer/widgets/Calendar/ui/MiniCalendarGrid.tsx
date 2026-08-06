@@ -88,11 +88,9 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
                 if (el) cellRefs.current.set(dateKey, el);
                 else cellRefs.current.delete(dateKey);
               }}
-              className="relative flex h-14 flex-col items-center justify-center gap-1.5"
+              className={`relative flex h-14 flex-col items-center justify-center gap-1.5 rounded-md transition-colors ${hoveredKey === dateKey ? 'bg-main-color/20' : ''}`}
             >
-              {/* opacity는 새 stacking context를 만들어서 팝오버 z-index를 다음 행 셀 밑으로 깔아버린다 -
-                  옅게 표시하는 효과만 이 안쪽 wrapper에 주고, 팝오버는 바깥 셀의 형제로 둬서 영향받지 않게 한다. */}
-              <div className={`flex flex-col items-center gap-1.5 ${!isCurrentMonth && 'opacity-40'}`}>
+              <div className={`-mt-1.5 flex flex-col items-center gap-1.5 ${!isCurrentMonth && 'opacity-40'}`}>
                 <div className={`flex h-7 w-7 items-center justify-center rounded-md text-sm tracking-tighter ${isToday ? 'bg-red-400 text-white' : 'text-primary'}`}>{date.getDate()}</div>
                 <div className="flex h-2 items-center gap-1">
                   {dayEvents.slice(0, maxLanes).map((event, i) => (
@@ -129,7 +127,7 @@ function MiniDayPopover({ date, events, side, align }: MiniDayPopoverProps) {
   return (
     <div
       role="tooltip"
-      className={`bg-layer border-primary animate-in fade-in-0 zoom-in-95 pointer-events-none absolute z-50 w-max max-w-44 rounded-md border px-2 py-1.5 text-xs shadow-lg duration-100 ${sideClass} ${alignClass}`}
+      className={`bg-primary border-primary animate-in fade-in-0 zoom-in-95 pointer-events-none absolute z-50 w-max max-w-44 rounded-md border px-2 py-1.5 text-xs shadow-lg duration-100 ${sideClass} ${alignClass}`}
     >
       <div className="text-primary mb-1 text-[11px] font-semibold">
         {date.getMonth() + 1}월 {date.getDate()}일
