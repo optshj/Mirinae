@@ -26,7 +26,7 @@ export function UpdateNotification() {
   };
 
   return (
-    <div className="animate-in slide-in-from-bottom-4 fade-in bg-primary fixed bottom-4 left-4 z-50 w-72 rounded-xl border border-neutral-200 p-4 shadow-lg duration-300 dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="animate-in slide-in-from-bottom-4 fade-in bg-primary absolute bottom-4 left-4 z-50 w-72 rounded-xl border border-neutral-200 p-4 shadow-lg duration-300 dark:border-neutral-800 dark:bg-neutral-900">
       <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">업데이트가 준비됐어요</p>
       <p className="mt-1 flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
         <span>v{info.currentVersion}</span>

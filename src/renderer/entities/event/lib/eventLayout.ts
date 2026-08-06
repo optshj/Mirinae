@@ -25,39 +25,32 @@ export function getEventRange(event: CalendarEvent): [string, string] {
   return [startDate, endDate < startDate ? startDate : endDate];
 }
 
-function getEventDuration(event: CalendarEvent) {
-  const [start, end] = getEventRange(event);
-  return dayjs(end).diff(start, 'day');
+type RangedEvent = { event: CalendarEvent; start: string; end: string; duration: number };
+
+function toRangedEvents(events: CalendarEvent[]): RangedEvent[] {
+  return events.map((event) => {
+    const [start, end] = getEventRange(event);
+    return { event, start, end, duration: dayjs(end).diff(start, 'day') };
+  });
 }
 
-export function buildWeekSegments(events: CalendarEvent[], weekStart: string, weekEnd: string, maxLanes: number) {
-  // 1. 이번 주 범위에 걸쳐 있는 이벤트들만 필터링하고 주 단위로 자름(clipping)
-  const segmentsInWeek = events.flatMap((event) => {
-    const [fullStart, fullEnd] = getEventRange(event);
-    const start = fullStart < weekStart ? weekStart : fullStart;
-    const end = fullEnd > weekEnd ? weekEnd : fullEnd;
-    if (start > end) return [];
-    return [{ event, start, end, isStart: start === fullStart, isEnd: end === fullEnd }];
-  });
+// 정렬 규칙: 시작일 빠른 순 -> 기간 긴 순 -> 휴일 우선.
+// duration을 미리 계산해둬서 정렬 비교(O(N log N)번)마다 dayjs 파싱을 다시 하지 않게 한다.
+function compareRangedEvents(a: RangedEvent, b: RangedEvent) {
+  if (a.start !== b.start) return a.start.localeCompare(b.start);
+  if (a.duration !== b.duration) return b.duration - a.duration;
+  if (a.event.category === 'holiday' && b.event.category !== 'holiday') return -1;
+  if (b.event.category === 'holiday' && a.event.category !== 'holiday') return 1;
+  return 0;
+}
 
-  // 2. 정렬 규칙: 시작일 빠른 순 -> 기간 긴 순 -> 휴일 우선
-  segmentsInWeek.sort((a, b) => {
-    if (a.start !== b.start) return a.start.localeCompare(b.start);
+type ClippedEvent = { event: CalendarEvent; start: string; end: string; isStart: boolean; isEnd: boolean };
 
-    const durationA = getEventDuration(a.event);
-    const durationB = getEventDuration(b.event);
-    if (durationA !== durationB) return durationB - durationA;
-
-    if (a.event.category === 'holiday' && b.event.category !== 'holiday') return -1;
-    if (b.event.category === 'holiday' && a.event.category !== 'holiday') return 1;
-
-    return 0;
-  });
-
-  // 3. 겹치지 않게 '차선(lane)' 배정 (Greedy Algorithm)
+// 겹치지 않게 '차선(lane)' 배정 (Greedy Algorithm)
+function layoutWeek(clipped: ClippedEvent[], maxLanes: number) {
   const laneEndDates: string[] = []; // 각 차선별로 마지막 일정이 끝나는 날짜 저장
 
-  const segments = segmentsInWeek.map((seg) => {
+  const segments: EventSegment[] = clipped.map((seg) => {
     let assignedLane = laneEndDates.findIndex((lastEndDate) => lastEndDate < seg.start);
     if (assignedLane === -1) {
       assignedLane = laneEndDates.length;
@@ -82,4 +75,28 @@ export function buildWeekSegments(events: CalendarEvent[], weekStart: string, we
   });
 
   return { visible, overflowByDate };
+}
+
+// 이전에는 주(week)마다 전체 이벤트 배열을 다시 훑었다 (O(주 수 x 이벤트 수)) - 예를 들어 공휴일 표시를
+// 껐다 켰다 하면 그 영향이 없는 주까지 매번 전체 재계산됐다. 여기선 한 번만 정렬해두고 시작일 순으로
+// 이미 지나간 이벤트는 건너뛰는 슬라이딩 윈도우(lo)로 훑어서, 정렬 O(N log N) + 스캔 O(N + 주 수) 정도로 줄인다.
+export function buildMonthSegments(events: CalendarEvent[], weeks: Array<{ start: string; end: string }>, maxLanes: number) {
+  const ranged = toRangedEvents(events).sort(compareRangedEvents);
+
+  let lo = 0;
+  return weeks.map(({ start: weekStart, end: weekEnd }) => {
+    while (lo < ranged.length && ranged[lo].end < weekStart) lo++;
+
+    const clipped: ClippedEvent[] = [];
+    for (let i = lo; i < ranged.length; i++) {
+      const r = ranged[i];
+      if (r.start > weekEnd) break; // start 오름차순 정렬이라 이 뒤로는 이번 주에 걸칠 수 없음
+      if (r.end < weekStart) continue; // lo보다 뒤에 있지만 이미 끝난 이벤트 (여러 주 겹치는 긴 이벤트 사이에 낀 경우)
+      const start = r.start < weekStart ? weekStart : r.start;
+      const end = r.end > weekEnd ? weekEnd : r.end;
+      clipped.push({ event: r.event, start, end, isStart: start === r.start, isEnd: end === r.end });
+    }
+
+    return layoutWeek(clipped, maxLanes);
+  });
 }
