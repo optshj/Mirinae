@@ -13,7 +13,9 @@ export function FlipCalendarButton() {
   };
   return (
     <Tooltip content={isFlip ? '캘린더 펼치기' : '캘린더 접기'} side="bottom">
-      {isFlip ? <UnfoldVertical strokeWidth={1.0} role="button" size={24} onClick={handleClick} /> : <FoldVertical strokeWidth={1.0} role="button" size={24} onClick={handleClick} />}
+      <div role="button" tabIndex={-1} onClick={handleClick} className="inline-flex cursor-pointer appearance-none border-0 bg-transparent p-0 [&_svg]:pointer-events-none">
+        {isFlip ? <UnfoldVertical strokeWidth={1.0} size={24} /> : <FoldVertical strokeWidth={1.0} size={24} />}
+      </div>
     </Tooltip>
   );
 }

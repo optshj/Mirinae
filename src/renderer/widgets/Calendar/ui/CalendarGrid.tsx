@@ -2,12 +2,11 @@ import dayjs from 'dayjs';
 import { useState, useMemo } from 'react';
 
 import { ScheduleModal } from './ScheduleModal';
-import { EventList, useCalendarItems, buildWeekSegments, useMaxLanes, EventSegment } from '@/entities/event';
+import { EventList, useCalendarItems, buildMonthSegments, useMaxLanes, EventSegment } from '@/entities/event';
 import { useEventDrag, DragGhost } from '@/features/event-drag';
 
 import { Dialog } from '@/shared/ui/dialog';
 import { DateProps } from '@/shared/hooks/useDate';
-import { CalendarEvent } from '@/shared/types/EventType';
 
 export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -19,6 +18,12 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
   const weekArray = useMemo(() => {
     return Array.from({ length: 6 }, (_, i) => days.slice(i * 7, i * 7 + 7));
   }, [days]);
+
+  const weekRanges = useMemo(() => weekArray.map((week) => ({ start: dayjs(week[0]).format('YYYY-MM-DD'), end: dayjs(week[6]).format('YYYY-MM-DD') })), [weekArray]);
+
+  // 주(week)마다 전체 items를 다시 훑지 않고 한 번에 계산 - 공휴일 표시 토글처럼 items 레퍼런스만
+  // 바뀌는 경우에도 영향 없는 주까지 매번 재계산되던 걸 줄인다.
+  const monthSegments = useMemo(() => buildMonthSegments(items, weekRanges, maxLanes), [items, weekRanges, maxLanes]);
 
   return (
     <div className="bg-primary flex flex-1 flex-col overflow-hidden rounded-xl">
@@ -42,7 +47,8 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
             key={weekIndex}
             week={week}
             month={month}
-            items={items}
+            visible={monthSegments[weekIndex].visible}
+            overflowByDate={monthSegments[weekIndex].overflowByDate}
             maxLanes={maxLanes}
             onPickDate={(date) => {
               setSelectedDate(date);
@@ -67,18 +73,16 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
 interface WeekRowProps {
   week: Date[];
   month: number;
-  items: CalendarEvent[];
+  visible: EventSegment[];
+  overflowByDate: Record<string, number>;
   maxLanes: number;
   onPickDate: (date: Date) => void;
   onEventPointerDown: (e: React.PointerEvent, seg: EventSegment) => void;
   draggingEventId: string | null;
   previewRange: { start: string; end: string } | null;
 }
-function WeekRow({ week, month, items, maxLanes, onPickDate, onEventPointerDown, draggingEventId, previewRange }: WeekRowProps) {
+function WeekRow({ week, month, visible, overflowByDate, maxLanes, onPickDate, onEventPointerDown, draggingEventId, previewRange }: WeekRowProps) {
   const weekStart = dayjs(week[0]).format('YYYY-MM-DD');
-  const weekEnd = dayjs(week[6]).format('YYYY-MM-DD');
-
-  const { visible, overflowByDate } = useMemo(() => buildWeekSegments(items, weekStart, weekEnd, maxLanes), [items, weekStart, weekEnd, maxLanes]);
 
   return (
     <div className="relative grid grid-cols-7">
@@ -98,9 +102,7 @@ function WeekRow({ week, month, items, maxLanes, onPickDate, onEventPointerDown,
           >
             <div className={`grid grid-cols-[1fr_auto_1fr] items-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
               <div />
-              <div className={`flex h-6 w-6 items-center justify-center rounded-full dark:saturate-70 ${isToday && 'bg-main-color text-bg-gray dark:text-[#333333]'} tracking-tighter`}>
-                {date.getDate()}
-              </div>
+              <div className={`flex h-6 w-6 items-center justify-center rounded-md ${isToday && 'bg-red-400 text-white'} tracking-tighter`}>{date.getDate()}</div>
               <div className="pl-1 text-left">{more > 0 && <span className="text-secondary text-[10px] font-normal whitespace-nowrap">+{more}개 일정</span>}</div>
             </div>
 
