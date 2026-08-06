@@ -57,7 +57,7 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
 
   return (
     <div className="bg-primary flex flex-col overflow-hidden rounded-b-lg">
-      <div className="border-primary grid grid-cols-7 border-b py-2.5 text-center text-sm leading-none font-medium">
+      <div className="border-primary grid grid-cols-7 border-b pb-2.5 text-center text-sm leading-none font-medium">
         <div className="text-red-400" aria-label="일요일">
           일
         </div>
@@ -71,7 +71,7 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
         </div>
       </div>
 
-      <div className="grid grid-cols-7 grid-rows-6 py-1">
+      <div className="grid grid-cols-7 grid-rows-6">
         {days.map((date, i) => {
           const isCurrentMonth = date.getMonth() === month;
           const isToday = dayjs(date).isSame(dayjs(), 'day');
@@ -100,9 +100,7 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
                 </div>
               </div>
 
-              {hoveredKey === dateKey && dayEvents.length > 0 && (
-                <MiniDayPopover date={date} events={dayEvents} side={row === 0 ? 'bottom' : 'top'} align={col === 0 ? 'start' : col === 6 ? 'end' : 'center'} />
-              )}
+              {hoveredKey === dateKey && <MiniDayPopover date={date} events={dayEvents} side={row === 0 ? 'bottom' : 'top'} align={col === 0 ? 'start' : col === 6 ? 'end' : 'center'} />}
             </div>
           );
         })}
@@ -132,15 +130,19 @@ function MiniDayPopover({ date, events, side, align }: MiniDayPopoverProps) {
       <div className="text-primary mb-1 text-[11px] font-semibold">
         {date.getMonth() + 1}월 {date.getDate()}일
       </div>
-      <ul className="flex flex-col gap-1">
-        {visible.map((event) => (
-          <li key={event.id} className="text-primary flex items-center gap-1.5">
-            <span className={`h-1.5 w-1.5 shrink-0 rounded-full event-color-${event.colorId} bg-(--event-color)`} />
-            <span className="truncate">{event.summary}</span>
-          </li>
-        ))}
-        {hidden > 0 && <li className="text-secondary">+{hidden}개</li>}
-      </ul>
+      {events.length === 0 ? (
+        <div className="text-secondary">일정 없음</div>
+      ) : (
+        <ul className="flex flex-col gap-1">
+          {visible.map((event) => (
+            <li key={event.id} className="text-primary flex items-center gap-1.5">
+              <span className={`h-3 w-1 shrink-0 rounded-full event-color-${event.colorId} bg-(--event-color)`} />
+              <span className="truncate">{event.summary}</span>
+            </li>
+          ))}
+          {hidden > 0 && <li className="text-secondary">+{hidden}개</li>}
+        </ul>
+      )}
     </div>
   );
 }

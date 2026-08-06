@@ -36,11 +36,11 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
         </div>
 
         <div className="flex items-center gap-4 [html.mini-view_&]:gap-3" style={noDragStyle}>
-          <MiniViewButton />
           <div className="flex items-center gap-4 [html.mini-view_&]:hidden">
             <FlipCalendarButton />
             <RefreshButton />
           </div>
+          <MiniViewButton />
           <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
             <Tooltip content="설정" side="bottom">
               <DropdownMenuTrigger asChild>
