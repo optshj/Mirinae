@@ -13,7 +13,7 @@ import { AskButton } from '@/features/ask';
 import { GuideButton } from '@/features/guide';
 import { OpacityButton } from '@/features/opacity';
 import { DarkModeButton } from '@/features/darkmode';
-import { HolidayButton, MaxLanesButton, ColorFilterButton } from '@/features/event';
+import { HolidayButton, MaxLanesButton, ColorFilterButton, PaletteSetButton } from '@/features/event';
 import { QuitAppButton } from '@/features/quit';
 
 const dragStyle = { WebkitAppRegion: 'drag' } as React.CSSProperties;
@@ -61,6 +61,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
               <DarkModeButton />
               <HolidayButton />
               <FlipFooterButton />
+              <PaletteSetButton />
               <ColorFilterButton />
               <QuitAppButton />
             </DropdownMenuContent>
