@@ -9,6 +9,14 @@ if (localStorage.getItem('flipFooter') === 'true') {
   document.documentElement.classList.add('flip-footer');
 }
 
+const storedTheme = localStorage.getItem('theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const isDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
+if (isDark) {
+  document.documentElement.classList.add('dark');
+}
+posthog.capture('app_launched_theme', { theme: isDark ? 'dark' : 'light' });
+
 const paletteSet = localStorage.getItem(PALETTE_SET_STORAGE_KEY) ?? DEFAULT_PALETTE_SET;
 document.documentElement.classList.add(`palette-${paletteSet}`);
 posthog.capture('app_launched_palette_set', { palette_set: paletteSet });

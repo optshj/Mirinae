@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import { posthog } from '@/shared/lib/posthog';
 
 export function DarkModeButton() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -16,6 +17,7 @@ export function DarkModeButton() {
     setDarkMode((prev) => {
       const newDark = !prev;
       localStorage.setItem('theme', newDark ? 'dark' : 'light');
+      posthog.capture('theme_change', { theme: newDark ? 'dark' : 'light' });
       return newDark;
     });
   };
