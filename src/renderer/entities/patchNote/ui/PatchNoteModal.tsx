@@ -7,6 +7,7 @@ const PATCH_NOTES: { version: string; items: Array<{ tag: PatchTag; text: string
   version: 'v0.5.0',
   items: [
     { tag: '새 기능', text: '미니뷰 기능이 추가되었어요, 캘린더를 작게 볼 수 있어요' },
+    { tag: '새 기능', text: '다양한 색상 팔레트가 추가되었어요. 설정에서 바꿔보세요!' },
     { tag: '개선', text: '캘린더의 UI가 개선되었어요' }
   ]
 };
