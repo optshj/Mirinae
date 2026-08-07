@@ -4,10 +4,10 @@ import { X } from 'lucide-react';
 type PatchTag = '새 기능' | '개선' | '수정';
 
 const PATCH_NOTES: { version: string; items: Array<{ tag: PatchTag; text: string }> } = {
-  version: 'v0.4.3',
+  version: 'v0.5.0',
   items: [
-    { tag: '개선', text: '더 많은 일정을 가져올 수 있게 바뀌었어요' },
-    { tag: '개선', text: '화면조절 UI가 변경되었어요' }
+    { tag: '새 기능', text: '미니뷰 기능이 추가되었어요, 캘린더를 작게 볼 수 있어요' },
+    { tag: '개선', text: '캘린더의 UI가 개선되었어요' }
   ]
 };
 
@@ -18,7 +18,7 @@ const TAG_COLOR: Record<PatchTag, string> = {
 };
 
 export function PatchNoteModal() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const cleanup = window.api.onShowPatchNotes(() => setIsOpen(true));

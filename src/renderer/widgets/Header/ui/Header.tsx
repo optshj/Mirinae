@@ -10,6 +10,7 @@ import { RefreshButton } from '@/features/refresh';
 import { LoginButton } from '@/features/user';
 import { MoveActiveButton, MoveDialog } from '@/features/move';
 import { AskButton } from '@/features/ask';
+import { GuideButton } from '@/features/guide';
 import { OpacityButton } from '@/features/opacity';
 import { DarkModeButton } from '@/features/darkmode';
 import { HolidayButton, MaxLanesButton, ColorFilterButton } from '@/features/event';
@@ -52,6 +53,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
             <DropdownMenuContent align="end" className="flex w-auto flex-col gap-1.5 px-3 py-2">
               <LoginButton />
               <MoveActiveButton onStart={() => setMenuOpen(false)} />
+              <GuideButton />
               <AskButton />
               <DropdownMenuSeparator />
               <OpacityButton />
