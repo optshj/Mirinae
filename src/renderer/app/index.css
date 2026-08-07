@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import './event-color-pallete.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -75,8 +76,7 @@ body {
     --color-layer-background: #39393b;
   }
 }
-/* @utility로 등록하면 Tailwind가 정식 유틸리티로 인식해 bg-primary!, dark:bg-primary 같은 변형도 생성해준다.
-   (shadcn 테마의 --color-primary/--color-secondary는 아래 @theme inline에서 제거해 이름 충돌 해소) */
+
 @utility bg-primary {
   background-color: var(--color-background-primary);
 }
@@ -105,42 +105,6 @@ body {
     color: var(--color-accent);
   }
 }
-@layer base {
-  .event-color-1 {
-    --event-color: #b2c4f7;
-  } /* Soft Blue */
-  .event-color-2 {
-    --event-color: #9edfca;
-  } /* Soft Mint */
-  .event-color-3 {
-    --event-color: #e0c7f5;
-  } /* Soft Lavender */
-  .event-color-4 {
-    --event-color: #f7a399;
-  } /* Soft Coral */
-  .event-color-5 {
-    --event-color: #f7e096;
-  } /* Soft Sand */
-  .event-color-6 {
-    --event-color: #f7c9a1;
-  } /* Soft Peach */
-  .event-color-7 {
-    --event-color: #8fd8db;
-  } /* Soft Aqua */
-  .event-color-8 {
-    --event-color: #e8e8e8;
-  } /* Light Grey */
-  .event-color-9 {
-    --event-color: #8aa7e8;
-  } /* Dust Blue */
-  .event-color-10 {
-    --event-color: #8eca89;
-  } /* Moss Green */
-  .event-color-11 {
-    --event-color: #d65a5e;
-  } /* Muted Red */
-}
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -152,8 +116,6 @@ body {
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  /* --color-primary/--color-secondary(-foreground)는 커스텀 유틸리티(bg-primary 등)와 이름이 겹치고
-     컴포넌트에서 안 쓰여서 제거함 */
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);

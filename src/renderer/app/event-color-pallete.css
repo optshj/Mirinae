@@ -1,0 +1,178 @@
+@layer base {
+  /* 팔레트 세트별 11개 슬롯 값(세트 목록은 shared/const/color.ts의 PALETTE_SETS 참고). .palette-{id}는 html에 전역 적용되거나,
+     세트 선택 UI의 미리보기 스와치처럼 특정 엘리먼트에 로컬로 적용될 수도 있음. */
+  :root,
+  .palette-pastel {
+    --event-color-1: #b2c4f7; /* Soft Blue */
+    --event-color-2: #9edfca; /* Soft Mint */
+    --event-color-3: #e0c7f5; /* Soft Lavender */
+    --event-color-4: #f7a399; /* Soft Coral */
+    --event-color-5: #f7e096; /* Soft Sand */
+    --event-color-6: #f7c9a1; /* Soft Peach */
+    --event-color-7: #8fd8db; /* Soft Aqua */
+    --event-color-8: #cbcbd1; /* Light Grey */
+    --event-color-9: #8aa7e8; /* Dust Blue */
+    --event-color-10: #8eca89; /* Moss Green */
+    --event-color-11: #d65a5e; /* Muted Red */
+  }
+
+  .palette-vivid {
+    --event-color-1: #3b82f6; /* Blue */
+    --event-color-2: #10b981; /* Emerald */
+    --event-color-3: #8b5cf6; /* Violet */
+    --event-color-4: #fb7185; /* Rose */
+    --event-color-5: #f59e0b; /* Amber */
+    --event-color-6: #f97316; /* Orange */
+    --event-color-7: #06b6d4; /* Cyan */
+    --event-color-8: #64748b; /* Slate */
+    --event-color-9: #6366f1; /* Indigo */
+    --event-color-10: #22c55e; /* Green */
+    --event-color-11: #ef4444; /* Red */
+  }
+
+  .palette-muted {
+    --event-color-1: #7c93b3; /* Dusty Blue */
+    --event-color-2: #8fa888; /* Sage */
+    --event-color-3: #a48da0; /* Dusty Mauve */
+    --event-color-4: #c1785b; /* Terracotta */
+    --event-color-5: #c9a66b; /* Muted Gold */
+    --event-color-6: #c99383; /* Clay */
+    --event-color-7: #6e9b96; /* Muted Teal */
+    --event-color-8: #a69c94; /* Warm Grey */
+    --event-color-9: #5e7a99; /* Slate Blue */
+    --event-color-10: #7c8f5a; /* Olive */
+    --event-color-11: #a8524a; /* Brick */
+  }
+
+  .palette-lavender {
+    --event-color-1: #6a0572; /* Deep Violet */
+    --event-color-2: #8e44ad; /* Royal Purple */
+    --event-color-3: #a4508b; /* Mauve */
+    --event-color-4: #c8a2c8; /* Lilac */
+    --event-color-5: #dda0dd; /* Orchid */
+    --event-color-6: #c3b8e8; /* Lavender */
+    --event-color-7: #b19cd9; /* Periwinkle */
+    --event-color-8: #9370db; /* Medium Purple */
+    --event-color-9: #98fb98; /* Pale Green */
+    --event-color-10: #7fb77e; /* Sage */
+    --event-color-11: #4b6f44; /* Forest Green */
+  }
+
+  .palette-nebula {
+    --event-color-1: #2c003e; /* Void Purple */
+    --event-color-2: #5d0e41; /* Dark Magenta */
+    --event-color-3: #8e24aa; /* Nebula Purple */
+    --event-color-4: #4a00e0; /* Cosmic Indigo */
+    --event-color-5: #1e88e5; /* Star Blue */
+    --event-color-6: #7b2ff7; /* Galaxy Violet */
+    --event-color-7: #d16ba5; /* Stardust Pink */
+    --event-color-8: #b983ff; /* Comet Lavender */
+    --event-color-9: #2d437a; /* Deep Space Blue */
+    --event-color-10: #fce38a; /* Starlight Gold */
+    --event-color-11: #0c1446; /* Midnight Void */
+  }
+
+  .palette-jewel {
+    --event-color-1: #2e4374; /* Sapphire Blue */
+    --event-color-2: #01796f; /* Emerald Green */
+    --event-color-3: #a72056; /* Ruby Red */
+    --event-color-4: #e0115f; /* Garnet Pink */
+    --event-color-5: #5e239d; /* Amethyst Purple */
+    --event-color-6: #b9a44c; /* Topaz Gold */
+    --event-color-7: #8a2be2; /* Violet Jewel */
+    --event-color-8: #0f52ba; /* Deep Sapphire */
+    --event-color-9: #50c878; /* Emerald Bright */
+    --event-color-10: #c71585; /* Magenta Jewel */
+    --event-color-11: #4b0082; /* Indigo Jewel */
+  }
+
+  .palette-sakura {
+    --event-color-1: #f5b8c4; /* Blossom Pink */
+    --event-color-2: #ffb6c1; /* Light Pink */
+    --event-color-3: #f0a8c4; /* Petal Pink */
+    --event-color-4: #ffb3c6; /* Sakura Pink */
+    --event-color-5: #e8c4b8; /* Ivory Blush */
+    --event-color-6: #e8a0bf; /* Rose Pink */
+    --event-color-7: #d391b0; /* Mauve Pink */
+    --event-color-8: #c9a0dc; /* Soft Lilac */
+    --event-color-9: #8b5e6b; /* Dusty Mauve */
+    --event-color-10: #ddc9a3; /* Warm Cream */
+    --event-color-11: #d9a8c9; /* Lilac Blush */
+  }
+
+  .palette-deepsea {
+    --event-color-1: #013a63; /* Abyss Navy */
+    --event-color-2: #01497c; /* Deep Ocean */
+    --event-color-3: #0077b6; /* Ocean Blue */
+    --event-color-4: #0096c7; /* Sea Blue */
+    --event-color-5: #00b4d8; /* Aqua Blue */
+    --event-color-6: #48cae4; /* Bright Aqua */
+    --event-color-7: #90e0ef; /* Pale Aqua */
+    --event-color-8: #7dd4e8; /* Sea Foam */
+    --event-color-9: #007f5f; /* Kelp Green */
+    --event-color-10: #2a9d8f; /* Teal */
+    --event-color-11: #023e8a; /* Deep Sapphire Blue */
+  }
+
+  .palette-lemonade {
+    --event-color-1: #ff3b5c; /* Strawberry Red */
+    --event-color-2: #ff8a3d; /* Orange Squeeze */
+    --event-color-3: #ffd93d; /* Lemon Yellow */
+    --event-color-4: #c9184a; /* Deep Berry */
+    --event-color-5: #ff6fa5; /* Bubblegum Pink */
+    --event-color-6: #6fcf97; /* Mint Garnish */
+    --event-color-7: #fff199; /* Pale Lemon */
+    --event-color-8: #f2542d; /* Tangerine Zest */
+    --event-color-9: #70c1b3; /* Iced Teal */
+    --event-color-10: #ff9fb2; /* Peach Blossom */
+    --event-color-11: #b5179e; /* Berry Punch */
+  }
+
+  .palette-cyberpunk {
+    --event-color-1: #ff00ff; /* Magenta Glitch */
+    --event-color-2: #00ffff; /* Neon Cyan */
+    --event-color-3: #8a2be2; /* Ultraviolet */
+    --event-color-4: #00ff7f; /* Acid Green */
+    --event-color-5: #ffd700; /* Gold Circuit */
+    --event-color-6: #ff0055; /* Laser Red */
+    --event-color-7: #7b2ff7; /* Neon Purple */
+    --event-color-8: #0aefff; /* Electric Blue */
+    --event-color-9: #ff6ec7; /* Neon Pink */
+    --event-color-10: #3d2f5c; /* Dark Chrome */
+    --event-color-11: #39ff14; /* Toxic Green */
+  }
+
+  .event-color-1 {
+    --event-color: var(--event-color-1);
+  }
+  .event-color-2 {
+    --event-color: var(--event-color-2);
+  }
+  .event-color-3 {
+    --event-color: var(--event-color-3);
+  }
+  .event-color-4 {
+    --event-color: var(--event-color-4);
+  }
+  .event-color-5 {
+    --event-color: var(--event-color-5);
+  }
+  .event-color-6 {
+    --event-color: var(--event-color-6);
+  }
+  .event-color-7 {
+    --event-color: var(--event-color-7);
+  }
+  .event-color-8 {
+    --event-color: var(--event-color-8);
+  }
+  .event-color-9 {
+    --event-color: var(--event-color-9);
+  }
+  .event-color-10 {
+    --event-color: var(--event-color-10);
+  }
+  .event-color-11 {
+    --event-color: var(--event-color-11);
+  }
+}
