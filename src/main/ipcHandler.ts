@@ -1,4 +1,4 @@
-import { ipcMain, app, shell } from 'electron';
+import { ipcMain, app, shell, Notification } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
 import { mainWindow, getVirtualScreenOffset } from '.';
 import { tryAutoLogin, logoutGoogleOAuth, startGoogleOAuth } from './oauth';
@@ -70,6 +70,20 @@ export const registerIPCHandlers = () => {
   ipcMain.on('set-max-lanes', (_, value) => {
     store.set('max-lanes', value);
     posthog.capture({ distinctId: getDistinctId(), event: 'max_lanes_changed', properties: { max_lanes: value } });
+  });
+
+  ipcMain.handle('get-notifications-enabled', () => store.get('notifications-enabled'));
+  ipcMain.on('set-notifications-enabled', (_, value) => {
+    store.set('notifications-enabled', value);
+    posthog.capture({ distinctId: getDistinctId(), event: 'notifications_enabled_changed', properties: { notifications_enabled: value } });
+  });
+
+  ipcMain.on('show-notification', (_, payload: { title: string; body: string }) => {
+    if (!Notification.isSupported()) {
+      console.warn('Notification API is not supported on this platform');
+      return;
+    }
+    new Notification({ title: payload.title, body: payload.body }).show();
   });
 
   ipcMain.on('renderer-ready', async (event) => {

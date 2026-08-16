@@ -15,6 +15,10 @@ export interface Api {
   getMaxLanes: () => Promise<number>;
   setMaxLanes: (value: number) => void;
 
+  getNotificationsEnabled: () => Promise<boolean>;
+  setNotificationsEnabled: (value: boolean) => void;
+  showNotification: (payload: { title: string; body: string }) => void;
+
   quitApp: () => void;
 
   setOpacity: (opacity: number) => void;
@@ -58,6 +62,10 @@ const api = {
 
   getMaxLanes: () => ipcRenderer.invoke('get-max-lanes'),
   setMaxLanes: (value: number) => ipcRenderer.send('set-max-lanes', value),
+
+  getNotificationsEnabled: () => ipcRenderer.invoke('get-notifications-enabled'),
+  setNotificationsEnabled: (value: boolean) => ipcRenderer.send('set-notifications-enabled', value),
+  showNotification: (payload: { title: string; body: string }) => ipcRenderer.send('show-notification', payload),
 
   onShowPatchNotes: (callback) => {
     const listener = (_, ...args) => callback(...args);

@@ -13,6 +13,7 @@ import { AskButton } from '@/features/ask';
 import { GuideButton } from '@/features/guide';
 import { OpacityButton } from '@/features/opacity';
 import { DarkModeButton } from '@/features/darkmode';
+import { NotificationSettingButton } from '@/features/event-notification';
 import { HolidayButton, MaxLanesButton, ColorFilterButton, PaletteSetButton } from '@/features/event';
 import { QuitAppButton } from '@/features/quit';
 
@@ -59,6 +60,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
               <OpacityButton />
               <MaxLanesButton />
               <DarkModeButton />
+              <NotificationSettingButton />
               <HolidayButton />
               <FlipFooterButton />
               <PaletteSetButton />
