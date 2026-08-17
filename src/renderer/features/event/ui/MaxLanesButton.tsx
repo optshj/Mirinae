@@ -7,29 +7,13 @@ export function MaxLanesButton() {
 
   return (
     <div className="flex flex-row justify-between">
-      <label htmlFor="max-lanes-slider">일정표시</label>
+      <label htmlFor="max-lanes-stepper">일정표시</label>
       <div className="flex items-center gap-0.5">
-        <Button
-          variant="outline"
-          size="icon"
-          className="size-5"
-          tabIndex={-1}
-          onClick={() => {
-            setMaxLanes(Math.max(maxLanes - 1, 1));
-          }}
-        >
+        <Button variant="outline" size="icon" className="size-5" tabIndex={-1} onClick={() => setMaxLanes(Math.max(maxLanes - 1, 1))}>
           <ChevronDown />
         </Button>
-        <span className="flex w-8 justify-center text-xs">{maxLanes}개</span>
-        <Button
-          variant="outline"
-          size="icon"
-          className="size-5"
-          tabIndex={-1}
-          onClick={() => {
-            setMaxLanes(Math.min(maxLanes + 1, 5));
-          }}
-        >
+        <span className="flex w-9 justify-center text-xs font-semibold">{maxLanes}줄</span>
+        <Button variant="outline" size="icon" className="size-5" tabIndex={-1} onClick={() => setMaxLanes(Math.min(maxLanes + 1, 5))}>
           <ChevronUp />
         </Button>
       </div>

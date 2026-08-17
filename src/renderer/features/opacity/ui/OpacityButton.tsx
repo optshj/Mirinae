@@ -32,7 +32,7 @@ export function OpacityButton() {
         >
           <ChevronDown />
         </Button>
-        <span className="flex w-8 justify-center text-xs">{Math.round(opacity * 100)}%</span>
+        <span className="flex w-9 justify-center text-xs font-semibold">{Math.round(opacity * 100)}%</span>
         <Button
           variant="outline"
           size="icon"
