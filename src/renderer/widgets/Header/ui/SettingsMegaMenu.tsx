@@ -50,7 +50,7 @@ export function SettingsMegaMenu({ onMoveStart }: SettingsMegaMenuProps) {
               onKeyDown={(event) => event.preventDefault()}
               className={cn(
                 'flex flex-col items-center gap-1 rounded-lg py-2 text-center text-xs leading-none transition-colors',
-                isActive ? 'bg-accent text-accent-foreground font-semibold' : 'text-secondary hover:bg-accent/40 hover:text-primary'
+                isActive ? 'bg-main-color/25 text-primary font-semibold' : 'text-secondary hover:bg-main-color/10 hover:text-primary'
               )}
             >
               <Icon size={18} strokeWidth={1.5} />

@@ -16,7 +16,7 @@ export function ColorFilterButton() {
         {COLORPALLETTE.map((key) => (
           <div
             key={key}
-            className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded-full transition-all hover:scale-150 dark:saturate-70 event-color-${key} bg-(--event-color)`}
+            className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded-full transition-all hover:scale-125 dark:saturate-70 event-color-${key} bg-(--event-color)`}
             onClick={() => toggleColor(key)}
           >
             {filteredColors.has(key) && <Check className="text-white" strokeWidth={3} size={12} />}

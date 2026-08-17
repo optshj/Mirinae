@@ -12,9 +12,6 @@ export interface Api {
   startDragging: (options?: { resizable?: boolean }) => void;
   stopDragging: () => void;
 
-  getMaxLanes: () => Promise<number>;
-  setMaxLanes: (value: number) => void;
-
   getNotificationsEnabled: () => Promise<boolean>;
   setNotificationsEnabled: (value: boolean) => void;
   getNotificationLeadMinutes: () => Promise<number>;
@@ -61,9 +58,6 @@ const api = {
 
   setOpacity: (opacity: number) => ipcRenderer.send('set-opacity', opacity),
   getInitialOpacity: () => ipcRenderer.invoke('get-initial-opacity'),
-
-  getMaxLanes: () => ipcRenderer.invoke('get-max-lanes'),
-  setMaxLanes: (value: number) => ipcRenderer.send('set-max-lanes', value),
 
   getNotificationsEnabled: () => ipcRenderer.invoke('get-notifications-enabled'),
   setNotificationsEnabled: (value: boolean) => ipcRenderer.send('set-notifications-enabled', value),

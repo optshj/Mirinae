@@ -15,9 +15,7 @@ export const registerIPCHandlers = () => {
   ipcMain.handle('logout-google-oauth', logoutGoogleOAuth);
   ipcMain.on('start-google-oauth', startGoogleOAuth);
 
-  ipcMain.on('quit-app', () => {
-    app.quit();
-  });
+  ipcMain.on('quit-app', () => app.quit());
 
   ipcMain.on('start-dragging', (_, options?: { resizable?: boolean }) => {
     detach(mainWindow);
@@ -66,12 +64,7 @@ export const registerIPCHandlers = () => {
 
   ipcMain.handle('get-initial-opacity', () => store.get('window-opacity'));
 
-  ipcMain.handle('get-max-lanes', () => store.get('max-lanes'));
-  ipcMain.on('set-max-lanes', (_, value) => {
-    store.set('max-lanes', value);
-    posthog.capture({ distinctId: getDistinctId(), event: 'max_lanes_changed', properties: { max_lanes: value } });
-  });
-
+  // 일정 알림 기능
   ipcMain.handle('get-notifications-enabled', () => store.get('notifications-enabled'));
   ipcMain.on('set-notifications-enabled', (_, value) => {
     store.set('notifications-enabled', value);
@@ -85,10 +78,7 @@ export const registerIPCHandlers = () => {
   });
 
   ipcMain.on('show-notification', (_, payload: { title: string; body: string }) => {
-    if (!Notification.isSupported()) {
-      console.warn('Notification API is not supported on this platform');
-      return;
-    }
+    if (!Notification.isSupported()) return;
     new Notification({ title: payload.title, body: payload.body }).show();
   });
 
