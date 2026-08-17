@@ -6,6 +6,7 @@ export const store = new (Store as any).default({
     'window-opacity': 1,
     'last-version': '0.0.1',
     'max-lanes': 3,
-    'notifications-enabled': true
+    'notifications-enabled': true,
+    'notification-lead-minutes': 10
   }
 });

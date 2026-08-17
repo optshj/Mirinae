@@ -17,6 +17,8 @@ export interface Api {
 
   getNotificationsEnabled: () => Promise<boolean>;
   setNotificationsEnabled: (value: boolean) => void;
+  getNotificationLeadMinutes: () => Promise<number>;
+  setNotificationLeadMinutes: (value: number) => void;
   showNotification: (payload: { title: string; body: string }) => void;
 
   quitApp: () => void;
@@ -65,6 +67,8 @@ const api = {
 
   getNotificationsEnabled: () => ipcRenderer.invoke('get-notifications-enabled'),
   setNotificationsEnabled: (value: boolean) => ipcRenderer.send('set-notifications-enabled', value),
+  getNotificationLeadMinutes: () => ipcRenderer.invoke('get-notification-lead-minutes'),
+  setNotificationLeadMinutes: (value: number) => ipcRenderer.send('set-notification-lead-minutes', value),
   showNotification: (payload: { title: string; body: string }) => ipcRenderer.send('show-notification', payload),
 
   onShowPatchNotes: (callback) => {

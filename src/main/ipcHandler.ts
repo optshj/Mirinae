@@ -78,6 +78,12 @@ export const registerIPCHandlers = () => {
     posthog.capture({ distinctId: getDistinctId(), event: 'notifications_enabled_changed', properties: { notifications_enabled: value } });
   });
 
+  ipcMain.handle('get-notification-lead-minutes', () => store.get('notification-lead-minutes'));
+  ipcMain.on('set-notification-lead-minutes', (_, value) => {
+    store.set('notification-lead-minutes', value);
+    posthog.capture({ distinctId: getDistinctId(), event: 'notification_lead_minutes_changed', properties: { notification_lead_minutes: value } });
+  });
+
   ipcMain.on('show-notification', (_, payload: { title: string; body: string }) => {
     if (!Notification.isSupported()) {
       console.warn('Notification API is not supported on this platform');
