@@ -59,7 +59,6 @@ export function SettingsMegaMenu({ onMoveStart }: { onMoveStart?: () => void }) 
           <>
             <LoginButton />
             <MoveActiveButton onStart={onMoveStart} />
-            <FlipFooterButton />
             <NotificationSettingButton />
             <QuitAppButton />
           </>
@@ -67,6 +66,7 @@ export function SettingsMegaMenu({ onMoveStart }: { onMoveStart?: () => void }) 
         {activeCategory === 'display' && (
           <>
             <OpacityButton />
+            <FlipFooterButton />
             <DarkModeButton />
           </>
         )}

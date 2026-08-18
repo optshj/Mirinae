@@ -7,9 +7,7 @@ import activeWindow from 'active-win';
 import { posthog, getDistinctId } from './posthog';
 
 export const registerIPCHandlers = () => {
-  ipcMain.on('open-external', (_, url) => {
-    shell.openExternal(url);
-  });
+  ipcMain.on('open-external', (_, url) => shell.openExternal(url));
 
   ipcMain.handle('try-auto-login', tryAutoLogin);
   ipcMain.handle('logout-google-oauth', logoutGoogleOAuth);
@@ -64,13 +62,14 @@ export const registerIPCHandlers = () => {
 
   ipcMain.handle('get-initial-opacity', () => store.get('window-opacity'));
 
-  // 일정 알림 기능
+  // 일정 알림 활성화
   ipcMain.handle('get-notifications-enabled', () => store.get('notifications-enabled'));
   ipcMain.on('set-notifications-enabled', (_, value) => {
     store.set('notifications-enabled', value);
     posthog.capture({ distinctId: getDistinctId(), event: 'notifications_enabled_changed', properties: { notifications_enabled: value } });
   });
 
+  // 일정 알림 선행 시간
   ipcMain.handle('get-notification-lead-minutes', () => store.get('notification-lead-minutes'));
   ipcMain.on('set-notification-lead-minutes', (_, value) => {
     store.set('notification-lead-minutes', value);
