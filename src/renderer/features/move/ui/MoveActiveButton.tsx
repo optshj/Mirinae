@@ -1,7 +1,6 @@
 import { useMove } from '../model/move-context';
 
 interface MoveActiveButtonProps {
-  // 화면조절을 시작할 때 부모(드롭다운)를 닫기 위한 콜백
   onStart?: () => void;
 }
 

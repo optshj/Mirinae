@@ -1,7 +1,7 @@
 import { Bell, ChevronDown, ChevronUp } from 'lucide-react';
 import { Switch } from '@/shared/ui/switch';
 import { Button } from '@/shared/ui/button';
-import { useNotificationSettings } from '../model/notification-settings-context';
+import { useNotificationSettings } from '../model/notificationSettingsContext';
 
 export function NotificationSettingButton() {
   const { enabled, leadMinutes, leadMinutesIndex, toggleEnabled, changeLeadMinutes } = useNotificationSettings();

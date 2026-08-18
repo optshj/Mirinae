@@ -28,12 +28,7 @@ const CATEGORIES: Category[] = [
   { id: 'support', label: '지원', icon: CircleHelp }
 ];
 
-interface SettingsMegaMenuProps {
-  // 화면조절(드래그) 시작 시 부모(드롭다운)를 닫기 위한 콜백
-  onMoveStart?: () => void;
-}
-
-export function SettingsMegaMenu({ onMoveStart }: SettingsMegaMenuProps) {
+export function SettingsMegaMenu({ onMoveStart }: { onMoveStart?: () => void }) {
   const [activeCategory, setActiveCategory] = useState<CategoryId>('general');
 
   return (
@@ -42,9 +37,8 @@ export function SettingsMegaMenu({ onMoveStart }: SettingsMegaMenuProps) {
         {CATEGORIES.map(({ id, label, icon: Icon }) => {
           const isActive = activeCategory === id;
           return (
-            <button
+            <div
               key={id}
-              type="button"
               tabIndex={-1}
               onClick={() => setActiveCategory(id)}
               onKeyDown={(event) => event.preventDefault()}
@@ -55,7 +49,7 @@ export function SettingsMegaMenu({ onMoveStart }: SettingsMegaMenuProps) {
             >
               <Icon size={18} strokeWidth={1.5} />
               {label}
-            </button>
+            </div>
           );
         })}
       </div>
