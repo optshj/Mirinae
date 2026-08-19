@@ -1,4 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { posthog } from '@/shared/lib/posthog';
+
+const STORAGE_KEY = 'max-lanes';
+const DEFAULT_MAX_LANES = 3;
 
 interface MaxLanesContextValue {
   maxLanes: number;
@@ -8,15 +12,18 @@ interface MaxLanesContextValue {
 const MaxLanesContext = createContext<MaxLanesContextValue | null>(null);
 
 export function MaxLanesProvider({ children }: { children: React.ReactNode }) {
-  const [maxLanes, setMaxLanesState] = useState(3);
+  const [maxLanes, setMaxLanesState] = useState(() => {
+    const saved = Number(localStorage.getItem(STORAGE_KEY));
+    return saved || DEFAULT_MAX_LANES;
+  });
 
   useEffect(() => {
-    window.api.getMaxLanes().then(setMaxLanesState);
-  }, []);
+    localStorage.setItem(STORAGE_KEY, String(maxLanes));
+  }, [maxLanes]);
 
   const setMaxLanes = (value: number) => {
     setMaxLanesState(value);
-    window.api.setMaxLanes(value);
+    posthog.capture('max_lanes_changed', { max_lanes: value });
   };
 
   return <MaxLanesContext.Provider value={{ maxLanes, setMaxLanes }}>{children}</MaxLanesContext.Provider>;

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Check } from 'lucide-react';
 import { COLORPALLETTE, DEFAULT_PALETTE_SET, PALETTE_SET_STORAGE_KEY, PALETTE_SETS, PaletteSetId } from '@/shared/const/color';
 import { DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from '@/shared/ui/dropdown-menu';
 import { posthog } from '@/shared/lib/posthog';
+import { cn } from '@/shared/lib/utils';
 
 function isPaletteSetId(value: string | null): value is PaletteSetId {
   return PALETTE_SETS.some((set) => set.id === value);
@@ -28,25 +28,31 @@ export function PaletteSetButton() {
   return (
     <DropdownMenuSub open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuSubTrigger
-        className="p-0 text-base"
+        className="p-0"
         onClick={(event) => {
           event.preventDefault();
           setIsOpen((prev) => !prev);
         }}
       >
-        <span>일정 색상 팔레트</span>
+        <span>캘린더 팔레트</span>
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent className="max-h-(--radix-dropdown-menu-content-available-height) w-auto overflow-y-auto py-2">
-        <div className="flex flex-col gap-0.5 px-1">
+        <div className="grid grid-cols-2 gap-1.5 px-1.5">
           {PALETTE_SETS.map((set) => (
-            <div key={set.id} onClick={() => handleChange(set.id)} className="hover:bg-accent flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors">
-              <span className="flex w-3 shrink-0 items-center justify-center">{paletteSet === set.id && <Check strokeWidth={3} size={12} />}</span>
+            <div
+              key={set.id}
+              onClick={() => handleChange(set.id)}
+              className={cn(
+                'flex cursor-pointer flex-col items-center gap-1.5 rounded-lg border-2 px-2 py-2.5 text-center transition-colors',
+                paletteSet === set.id ? 'border-main-color bg-main-color/20' : 'border-primary hover:bg-main-color/10'
+              )}
+            >
               <div className="flex -space-x-1.5">
                 {COLORPALLETTE.map((key) => (
-                  <div key={key} className={`h-4 w-4 rounded-full dark:saturate-70 palette-${set.id} event-color-${key} bg-(--event-color)`} />
+                  <div key={key} className={`h-3.5 w-3.5 rounded-full dark:saturate-70 palette-${set.id} event-color-${key} bg-(--event-color)`} />
                 ))}
               </div>
-              <span className="flex-1 text-sm">{set.label}</span>
+              <span className="text-xs">{set.label}</span>
             </div>
           ))}
         </div>

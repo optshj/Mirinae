@@ -1,4 +1,4 @@
-import { ipcMain, app, shell } from 'electron';
+import { ipcMain, app, shell, Notification } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
 import { mainWindow, getVirtualScreenOffset } from '.';
 import { tryAutoLogin, logoutGoogleOAuth, startGoogleOAuth } from './oauth';
@@ -7,17 +7,13 @@ import activeWindow from 'active-win';
 import { posthog, getDistinctId } from './posthog';
 
 export const registerIPCHandlers = () => {
-  ipcMain.on('open-external', (_, url) => {
-    shell.openExternal(url);
-  });
+  ipcMain.on('open-external', (_, url) => shell.openExternal(url));
 
   ipcMain.handle('try-auto-login', tryAutoLogin);
   ipcMain.handle('logout-google-oauth', logoutGoogleOAuth);
   ipcMain.on('start-google-oauth', startGoogleOAuth);
 
-  ipcMain.on('quit-app', () => {
-    app.quit();
-  });
+  ipcMain.on('quit-app', () => app.quit());
 
   ipcMain.on('start-dragging', (_, options?: { resizable?: boolean }) => {
     detach(mainWindow);
@@ -66,10 +62,23 @@ export const registerIPCHandlers = () => {
 
   ipcMain.handle('get-initial-opacity', () => store.get('window-opacity'));
 
-  ipcMain.handle('get-max-lanes', () => store.get('max-lanes'));
-  ipcMain.on('set-max-lanes', (_, value) => {
-    store.set('max-lanes', value);
-    posthog.capture({ distinctId: getDistinctId(), event: 'max_lanes_changed', properties: { max_lanes: value } });
+  // 일정 알림 활성화
+  ipcMain.handle('get-notifications-enabled', () => store.get('notifications-enabled'));
+  ipcMain.on('set-notifications-enabled', (_, value) => {
+    store.set('notifications-enabled', value);
+    posthog.capture({ distinctId: getDistinctId(), event: 'notifications_enabled_changed', properties: { notifications_enabled: value } });
+  });
+
+  // 일정 알림 선행 시간
+  ipcMain.handle('get-notification-lead-minutes', () => store.get('notification-lead-minutes'));
+  ipcMain.on('set-notification-lead-minutes', (_, value) => {
+    store.set('notification-lead-minutes', value);
+    posthog.capture({ distinctId: getDistinctId(), event: 'notification_lead_minutes_changed', properties: { notification_lead_minutes: value } });
+  });
+
+  ipcMain.on('show-notification', (_, payload: { title: string; body: string }) => {
+    if (!Notification.isSupported()) return;
+    new Notification({ title: payload.title, body: payload.body }).show();
   });
 
   ipcMain.on('renderer-ready', async (event) => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Moon, Sun } from 'lucide-react';
+import { cn } from '@/shared/lib/utils';
 import { posthog } from '@/shared/lib/posthog';
 
 export function DarkModeButton() {
@@ -13,29 +13,48 @@ export function DarkModeButton() {
     document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
 
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => {
-      const newDark = !prev;
-      localStorage.setItem('theme', newDark ? 'dark' : 'light');
-      posthog.capture('theme_change', { theme: newDark ? 'dark' : 'light' });
-      return newDark;
-    });
+  const selectTheme = (isDark: boolean) => {
+    if (isDark === darkMode) return;
+    setDarkMode(isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    posthog.capture('theme_change', { theme: isDark ? 'dark' : 'light' });
   };
 
   return (
-    <div className="flex flex-row justify-between">
-      <label htmlFor="dark-mode-toggle">다크모드</label>
-      <button
-        type="button"
-        id="dark-mode-toggle"
-        onClick={toggleDarkMode}
-        onKeyDown={(e) => e.preventDefault()}
-        className="group relative flex h-6 w-12 items-center justify-center rounded-full bg-yellow-400 transition-colors duration-300 dark:bg-gray-500"
-      >
-        <div className={`absolute h-5 w-5 rounded-full bg-white p-1 transition-transform duration-300 group-active:scale-80 ${darkMode ? '-translate-x-3' : 'translate-x-3'}`}>
-          {darkMode ? <Moon strokeWidth={3} className="h-full w-full text-gray-500" fill="currentColor" /> : <Sun strokeWidth={3} className="h-full w-full text-yellow-500" fill="currentColor" />}
-        </div>
-      </button>
+    <div className="flex flex-col gap-1.5">
+      <span>화면 테마</span>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          aria-pressed={!darkMode}
+          onClick={() => selectTheme(false)}
+          className={cn(
+            'flex flex-1 flex-col items-center gap-1.5 rounded-lg border-2 p-1.5 transition-colors',
+            !darkMode ? 'border-main-color bg-main-color/20' : 'border-primary hover:bg-main-color/10'
+          )}
+        >
+          <div className="flex h-8 w-full flex-col justify-center gap-1 rounded-md bg-[#f2f3f7] px-1.5">
+            <div className="h-1 w-3/5 rounded-full bg-white" />
+            <div className="h-1 w-4/5 rounded-full bg-white" />
+          </div>
+          <span className="text-xs">라이트</span>
+        </button>
+        <button
+          type="button"
+          aria-pressed={darkMode}
+          onClick={() => selectTheme(true)}
+          className={cn(
+            'flex flex-1 flex-col items-center gap-1.5 rounded-lg border-2 p-1.5 transition-colors',
+            darkMode ? 'border-main-color bg-main-color/20' : 'border-primary hover:bg-main-color/10'
+          )}
+        >
+          <div className="flex h-8 w-full flex-col justify-center gap-1 rounded-md bg-[#2b2b30] px-1.5">
+            <div className="h-1 w-3/5 rounded-full bg-[#46464c]" />
+            <div className="h-1 w-4/5 rounded-full bg-[#46464c]" />
+          </div>
+          <span className="text-xs">다크</span>
+        </button>
+      </div>
     </div>
   );
 }

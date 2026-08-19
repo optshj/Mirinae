@@ -1,6 +1,5 @@
 import { useColorFilter } from '@/entities/event';
 import { COLORPALLETTE } from '@/shared/const/color';
-import { DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from '@/shared/ui/dropdown-menu';
 import { Check } from 'lucide-react';
 
 export function ColorFilterButton() {
@@ -8,31 +7,27 @@ export function ColorFilterButton() {
   const isActive = filteredColors.size > 0;
 
   return (
-    <DropdownMenuSub>
-      <DropdownMenuSubTrigger className="p-0 text-base">
-        <span>일정 필터링</span>
-        {isActive && <span className="text-muted-foreground ml-auto text-xs">{filteredColors.size}개</span>}
-      </DropdownMenuSubTrigger>
-      <DropdownMenuSubContent className="w-auto py-2">
-        <div className="grid grid-cols-6 gap-2 px-2">
-          {COLORPALLETTE.map((key) => (
-            <div
-              key={key}
-              className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded-full transition-all hover:scale-150 dark:saturate-70 event-color-${key} bg-(--event-color)`}
-              onClick={() => toggleColor(key)}
-            >
-              {filteredColors.has(key) && <Check className="text-white" strokeWidth={3} size={12} />}
-            </div>
-          ))}
-        </div>
-        {isActive && (
-          <div className="mt-2 px-2">
-            <button onClick={clearFilter} className="text-muted-foreground hover:text-foreground w-full rounded text-xs transition-colors">
-              필터 초기화
-            </button>
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between">
+        <span>색상 필터</span>
+        {isActive && <span className="text-muted-foreground text-xs">{filteredColors.size}개</span>}
+      </div>
+      <div className="grid grid-cols-6 gap-1.5">
+        {COLORPALLETTE.map((key) => (
+          <div
+            key={key}
+            className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded-full transition-all hover:scale-125 dark:saturate-70 event-color-${key} bg-(--event-color)`}
+            onClick={() => toggleColor(key)}
+          >
+            {filteredColors.has(key) && <Check className="text-white" strokeWidth={3} size={12} />}
           </div>
-        )}
-      </DropdownMenuSubContent>
-    </DropdownMenuSub>
+        ))}
+      </div>
+      {isActive && (
+        <button onClick={clearFilter} className="text-muted-foreground hover:text-foreground w-full rounded text-xs transition-colors">
+          필터 초기화
+        </button>
+      )}
+    </div>
   );
 }

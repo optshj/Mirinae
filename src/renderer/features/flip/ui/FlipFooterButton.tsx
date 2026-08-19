@@ -14,8 +14,8 @@ export function FlipFooterButton() {
   };
 
   return (
-    <div className="flex flex-row justify-between">
-      <label htmlFor="flip-footer-toggle">하단 접기</label>
+    <div className="flex flex-row items-center justify-between gap-4">
+      <label htmlFor="flip-footer-toggle">일정 요약 숨기기</label>
       <Switch id="flip-footer-toggle" onClick={onClick} isOn={isFlip} />
     </div>
   );

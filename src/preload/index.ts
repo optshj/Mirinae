@@ -12,8 +12,11 @@ export interface Api {
   startDragging: (options?: { resizable?: boolean }) => void;
   stopDragging: () => void;
 
-  getMaxLanes: () => Promise<number>;
-  setMaxLanes: (value: number) => void;
+  getNotificationsEnabled: () => Promise<boolean>;
+  setNotificationsEnabled: (value: boolean) => void;
+  getNotificationLeadMinutes: () => Promise<number>;
+  setNotificationLeadMinutes: (value: number) => void;
+  showNotification: (payload: { title: string; body: string }) => void;
 
   quitApp: () => void;
 
@@ -56,8 +59,11 @@ const api = {
   setOpacity: (opacity: number) => ipcRenderer.send('set-opacity', opacity),
   getInitialOpacity: () => ipcRenderer.invoke('get-initial-opacity'),
 
-  getMaxLanes: () => ipcRenderer.invoke('get-max-lanes'),
-  setMaxLanes: (value: number) => ipcRenderer.send('set-max-lanes', value),
+  getNotificationsEnabled: () => ipcRenderer.invoke('get-notifications-enabled'),
+  setNotificationsEnabled: (value: boolean) => ipcRenderer.send('set-notifications-enabled', value),
+  getNotificationLeadMinutes: () => ipcRenderer.invoke('get-notification-lead-minutes'),
+  setNotificationLeadMinutes: (value: number) => ipcRenderer.send('set-notification-lead-minutes', value),
+  showNotification: (payload: { title: string; body: string }) => ipcRenderer.send('show-notification', payload),
 
   onShowPatchNotes: (callback) => {
     const listener = (_, ...args) => callback(...args);

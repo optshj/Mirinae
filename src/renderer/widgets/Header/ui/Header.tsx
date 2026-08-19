@@ -1,20 +1,15 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Settings } from 'lucide-react';
 import { DateProps } from '@/shared/hooks/useDate';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
 import { Tooltip } from '@/shared/ui/tooltip';
 
-import { FlipCalendarButton, FlipFooterButton } from '@/features/flip';
+import { FlipCalendarButton } from '@/features/flip';
 import { MiniViewButton } from '@/features/mini-view';
 import { RefreshButton } from '@/features/refresh';
-import { LoginButton } from '@/features/user';
-import { MoveActiveButton, MoveDialog } from '@/features/move';
-import { AskButton } from '@/features/ask';
-import { GuideButton } from '@/features/guide';
-import { OpacityButton } from '@/features/opacity';
-import { DarkModeButton } from '@/features/darkmode';
-import { HolidayButton, MaxLanesButton, ColorFilterButton, PaletteSetButton } from '@/features/event';
-import { QuitAppButton } from '@/features/quit';
+import { MoveDialog } from '@/features/move';
+
+import { SettingsMegaMenu } from './SettingsMegaMenu';
 
 const dragStyle = { WebkitAppRegion: 'drag' } as React.CSSProperties;
 const noDragStyle = { WebkitAppRegion: 'no-drag' } as React.CSSProperties;
@@ -50,20 +45,8 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
                 </div>
               </DropdownMenuTrigger>
             </Tooltip>
-            <DropdownMenuContent align="end" className="flex w-auto flex-col gap-1.5 px-3 py-2">
-              <LoginButton />
-              <MoveActiveButton onStart={() => setMenuOpen(false)} />
-              <GuideButton />
-              <AskButton />
-              <DropdownMenuSeparator />
-              <OpacityButton />
-              <MaxLanesButton />
-              <DarkModeButton />
-              <HolidayButton />
-              <FlipFooterButton />
-              <PaletteSetButton />
-              <ColorFilterButton />
-              <QuitAppButton />
+            <DropdownMenuContent align="end" className="w-auto p-0">
+              <SettingsMegaMenu onMoveStart={() => setMenuOpen(false)} />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
