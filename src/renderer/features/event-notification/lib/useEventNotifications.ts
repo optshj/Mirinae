@@ -9,7 +9,7 @@ const SCHEDULE_WINDOW_MS = 60 * 60 * 1000; // 1시간 이내의 알림만 예약
 export function useEventNotifications() {
   const { items } = useCalendarItems();
   const { enabled, leadMinutes } = useNotificationSettings();
-  const notifiedIdsRef = useRef<Set<string>>(new Set());
+  const notifiedKeysRef = useRef<Set<string>>(new Set());
   const timersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
 
   useEffect(() => {
@@ -20,7 +20,8 @@ export function useEventNotifications() {
       const now = Date.now();
 
       timeEvents.forEach((event) => {
-        if (notifiedIdsRef.current.has(event.id)) return;
+        const notificationKey = `${event.id}:${event.start.dateTime}`;
+        if (notifiedKeysRef.current.has(notificationKey)) return;
 
         const notifyAt = new Date(event.start.dateTime).getTime() - leadMinutes * 60 * 1000;
         const delay = notifyAt - now;
@@ -29,7 +30,7 @@ export function useEventNotifications() {
         if (delay < 0 || delay > SCHEDULE_WINDOW_MS) return;
 
         const timer = setTimeout(() => {
-          notifiedIdsRef.current.add(event.id);
+          notifiedKeysRef.current.add(notificationKey);
           window.api.showNotification({ title: event.summary || '일정', body: `${leadMinutes}분 후 시작` });
           posthog.capture('event_notification_shown', { event_id: event.id });
         }, delay);

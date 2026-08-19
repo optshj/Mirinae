@@ -35,7 +35,7 @@ export function NotificationSettingButton() {
             </div>
           </div>
           <div className="border-main-color/30 bg-main-color/12 relative flex items-start gap-2 rounded-lg border px-2.5 py-2">
-            <span className="bg-muted text-muted-foreground absolute top-1.5 right-2 rounded px-1 text-[8.5px] font-bold tracking-wide">미리보기</span>
+            <span className="bg-muted text-muted-foreground absolute top-1.5 right-2 rounded px-1 text-[8.5px] font-bold tracking-wide">예시</span>
             <div className="flex flex-col">
               <span className="text-xs font-semibold">일정 이름</span>
               <span className="text-secondary text-[11px]">{leadMinutes}분 후 시작</span>
