@@ -1,10 +1,9 @@
 import { useState, type ComponentType } from 'react';
-import { Calendar, CircleHelp, Monitor, SlidersHorizontal } from 'lucide-react';
+import { Calendar, Monitor, SlidersHorizontal } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
 import { LoginButton } from '@/features/user';
 import { MoveActiveButton } from '@/features/move';
-import { GuideButton } from '@/features/guide';
 import { AskButton } from '@/features/ask';
 import { OpacityButton } from '@/features/opacity';
 import { DarkModeButton } from '@/features/darkmode';
@@ -13,7 +12,7 @@ import { HolidayButton, MaxLanesButton, PaletteSetButton, ColorFilterButton } fr
 import { FlipFooterButton } from '@/features/flip';
 import { QuitAppButton } from '@/features/quit';
 
-type CategoryId = 'general' | 'display' | 'calendar' | 'support';
+type CategoryId = 'general' | 'display' | 'calendar';
 
 interface Category {
   id: CategoryId;
@@ -24,8 +23,7 @@ interface Category {
 const CATEGORIES: Category[] = [
   { id: 'general', label: '일반', icon: SlidersHorizontal },
   { id: 'display', label: '화면', icon: Monitor },
-  { id: 'calendar', label: '캘린더', icon: Calendar },
-  { id: 'support', label: '지원', icon: CircleHelp }
+  { id: 'calendar', label: '캘린더', icon: Calendar }
 ];
 
 export function SettingsMegaMenu({ onMoveStart }: { onMoveStart?: () => void }) {
@@ -60,6 +58,7 @@ export function SettingsMegaMenu({ onMoveStart }: { onMoveStart?: () => void }) 
             <LoginButton />
             <MoveActiveButton onStart={onMoveStart} />
             <NotificationSettingButton />
+            <AskButton />
             <QuitAppButton />
           </>
         )}
@@ -76,12 +75,6 @@ export function SettingsMegaMenu({ onMoveStart }: { onMoveStart?: () => void }) 
             <HolidayButton />
             <PaletteSetButton />
             <ColorFilterButton />
-          </>
-        )}
-        {activeCategory === 'support' && (
-          <>
-            <GuideButton />
-            <AskButton />
           </>
         )}
       </div>

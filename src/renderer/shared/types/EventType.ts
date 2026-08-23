@@ -152,6 +152,10 @@ export type Events = {
     customTypeName: string;
   };
   eventType: string;
+  extendedProperties: {
+    private: Record<string, string>;
+    shared: Record<string, string>;
+  };
   start: {
     date?: string;
     dateTime?: string;

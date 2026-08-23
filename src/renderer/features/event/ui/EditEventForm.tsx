@@ -12,9 +12,10 @@ import { useEditEvent, getEventRange } from '@/entities/event';
 
 interface EditEventFormProps {
   event: CalendarEvent;
+  completeButton: React.ReactNode;
   deleteButton: React.ReactNode;
 }
-export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
+export function EditEventForm({ event, completeButton, deleteButton }: EditEventFormProps) {
   const { editEvent } = useEditEvent();
   const [startDate, endDate] = getEventRange(event);
   // 수정 전 상태 — 폼 초기값이자 되돌리기 시 복원할 값 (event prop은 수정 반영 전 시점의 원본)
@@ -49,13 +50,14 @@ export function EditEventForm({ event, deleteButton }: EditEventFormProps) {
     return true;
   };
 
-  return <EventForm form={form} updateForm={updateForm} onSubmit={handleSubmit} type="edit" trigger={<Event event={event} deleteButton={deleteButton} />} />;
+  return <EventForm form={form} updateForm={updateForm} onSubmit={handleSubmit} type="edit" trigger={<Event event={event} completeButton={completeButton} deleteButton={deleteButton} />} />;
 }
 
-function Event({ event, deleteButton }: { event: CalendarEvent; deleteButton: React.ReactNode }) {
+function Event({ event, completeButton, deleteButton }: { event: CalendarEvent; completeButton: React.ReactNode; deleteButton: React.ReactNode }) {
   const isHoliday = event.category === 'holiday';
   const [start, end] = getEventRange(event);
   const isMultiDay = start !== end;
+  const completed = event.extendedProperties?.private?.completed === 'true';
 
   const renderTimeRange = () => {
     if (event.category !== 'time') return '하루 종일';
@@ -70,12 +72,19 @@ function Event({ event, deleteButton }: { event: CalendarEvent; deleteButton: Re
         if (isHoliday) e.stopPropagation();
       }}
     >
-      <div className={`h-10 w-2 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />
-      <div className="text-primary flex-1 pl-3">
-        <span className="font-semibold">{event.summary}</span>
-        <div className="text-xs">{renderTimeRange()}</div>
+      <div className={`flex flex-1 items-center ${completed ? 'opacity-50' : ''}`}>
+        <div className={`h-10 w-2 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />
+        <div className="text-primary flex-1 pl-3">
+          <span className={`font-semibold ${completed ? 'line-through decoration-current/40 decoration-1' : ''}`}>{event.summary}</span>
+          <div className="text-xs">{renderTimeRange()}</div>
+        </div>
       </div>
-      {!isHoliday && <div className="flex items-center gap-1">{deleteButton}</div>}
+      {!isHoliday && (
+        <div className="flex items-center">
+          {completeButton}
+          {deleteButton}
+        </div>
+      )}
     </div>
   );
 }
