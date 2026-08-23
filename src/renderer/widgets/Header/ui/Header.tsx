@@ -7,6 +7,7 @@ import { Tooltip } from '@/shared/ui/tooltip';
 import { FlipCalendarButton } from '@/features/flip';
 import { MiniViewButton } from '@/features/mini-view';
 import { RefreshButton } from '@/features/refresh';
+import { GuideButton } from '@/features/guide';
 import { MoveDialog } from '@/features/move';
 
 import { SettingsMegaMenu } from './SettingsMegaMenu';
@@ -37,6 +38,10 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
             <RefreshButton />
           </div>
           <MiniViewButton />
+          <div className="flex items-center gap-4">
+            <div className="bg-current h-3.5 w-px opacity-15" />
+            <GuideButton />
+          </div>
           <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
             <Tooltip content="설정" side="bottom">
               <DropdownMenuTrigger asChild>

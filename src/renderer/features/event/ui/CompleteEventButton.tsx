@@ -22,7 +22,7 @@ export function CompleteEventButton({ event }: { event: CalendarEvent }) {
 
   return (
     <Tooltip content={completed ? '미완료로 표시하기' : '일정 완료하기'}>
-      <button onClick={handleToggleComplete} tabIndex={-1} className={`flex h-8 w-8 items-center justify-center ${completed ? 'opacity-50' : ''}`}>
+      <button onClick={handleToggleComplete} tabIndex={-1} className={`flex h-8 w-8 items-center justify-center ${completed ? 'opacity-25' : ''}`}>
         <Check strokeWidth={1.5} size={18} />
       </button>
     </Tooltip>
