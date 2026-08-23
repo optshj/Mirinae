@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { CalendarEvent } from '@/shared/types/EventType';
 import { posthog } from '@/shared/lib/posthog';
 import { showUndoToast } from '@/shared/ui/sonner';
+import { Tooltip } from '@/shared/ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
 
 export function DeleteEventButton({ event }: { event: CalendarEvent }) {
@@ -31,24 +32,29 @@ export function DeleteEventButton({ event }: { event: CalendarEvent }) {
 
   if (!isRecurring) {
     return (
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleDelete('일정을 삭제했어요', { eventId: event.id });
-        }}
-        tabIndex={-1}
-      >
-        <X strokeWidth={1.5} size={16} />
-      </button>
+      <Tooltip content="일정 삭제하기">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDelete('일정을 삭제했어요', { eventId: event.id });
+          }}
+          tabIndex={-1}
+          className="flex h-8 w-8 items-center justify-center"
+        >
+          <X strokeWidth={1.5} size={18} />
+        </button>
+      </Tooltip>
     );
   }
 
   return (
     <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <X strokeWidth={1.5} size={16} />
-        </DropdownMenuTrigger>
+        <Tooltip content="일정 삭제하기">
+          <DropdownMenuTrigger tabIndex={-1} className="flex h-8 w-8 items-center justify-center">
+            <X strokeWidth={1.5} size={18} />
+          </DropdownMenuTrigger>
+        </Tooltip>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => handleDelete('일정을 삭제했어요', { eventId: event.id })}>이 일정만 삭제</DropdownMenuItem>
           <DropdownMenuItem variant="destructive" onClick={() => handleDelete('반복 일정을 모두 삭제했어요', { eventId: event.id, recurringEventId: event.recurringEventId })}>

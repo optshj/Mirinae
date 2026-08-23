@@ -48,5 +48,11 @@ export const eventApi = {
   },
   update: ({ eventId, eventData }: { eventId: string; eventData: GoogleEventBody }) => {
     return http.put<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, eventData);
+  },
+
+  setCompleted: ({ eventId, completed }: { eventId: string; completed: boolean }) => {
+    return http.patch<Events>(`${CALENDAR_API_URL}/primary/events/${eventId}`, {
+      extendedProperties: { private: { completed: completed ? 'true' : 'false' } }
+    });
   }
 };
