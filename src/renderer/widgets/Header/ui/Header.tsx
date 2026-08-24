@@ -39,7 +39,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
           </div>
           <MiniViewButton />
           <div className="flex items-center gap-4">
-            <div className="bg-current h-3.5 w-px opacity-15" />
+            <div className="h-3.5 w-px bg-current opacity-15" />
             <GuideButton />
           </div>
           <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>

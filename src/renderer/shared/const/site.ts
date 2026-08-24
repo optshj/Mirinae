@@ -1,1 +1,1 @@
-export const SITE_URL = 'https://www.mirinaecalendar.store';
+export const SITE_URL = 'https://www.mirinae.today';
