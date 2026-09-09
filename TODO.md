@@ -86,11 +86,6 @@
 벽지 창에서 클릭 가능한 `<button>`엔 `tabIndex={-1}`이 필요하다(첫 클릭이 포커스만 먹는 문제). 같은 누락: `PatchNoteModal.tsx:37,52`, `UpdateNotification`의 두 버튼, `range-picker.tsx:51,70,73,121`, `sonner.tsx:24`, `EventForm.tsx`의 반복/색상/제출 버튼들.
 모달 안에서는 창이 이미 포커스된 상태라 대개 괜찮으니, **모달 밖 버튼부터** 확인.
 
-### 14. PostHog 집계가 어긋난다
-
-- 알림 설정 이벤트가 **두 번** 기록된다: `features/event-notification/model/notificationSettingsContext.tsx:35,45`(렌더러)와 `main/ipcHandler.ts:69,76`(메인)에서 같은 이벤트명을 각각 capture.
-- 메인은 `store`의 `posthog-device-id`, 렌더러는 posthog-js 익명 id를 쓴다 → **한 사용자가 두 사람으로 잡힌다.** 렌더러에서 device id로 `posthog.identify()` 필요.
-
 ### 15. 자정에 끝나는 시간 일정이 하루 더 걸쳐 보인다
 
 `entities/event/lib/eventLayout.ts:14-18` — `end.dateTime`의 날짜 부분만 쓰므로 `22:00~24:00` 일정이 이틀짜리로 렌더된다. 종료가 정확히 `00:00`이면 하루 빼면 된다.
@@ -130,15 +125,6 @@
 ### 23. `VITE_CLIENT_SECRET`이 메인 번들과 소스맵에 인라인된다
 
 `electron.vite.config.ts:14,26-27` — 설치형 앱의 client secret은 구글 기준 "비밀이 아님"이라 치명적이진 않지만, `sourcemap: true` + Sentry 업로드로 더 널리 퍼진다. 프로덕션 메인 소스맵이 정말 필요한지 한 번 판단할 것.
-
----
-
-## ⚪ 죽은 코드 · 정리
-
-| 위치                       | 내용                                                                                                                                                                                       |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `main/ipcHandler.ts:84-88` | `renderer-ready` 핸들러가 죽어 있다(preload에 노출도, 호출도 없음). 게다가 `title === 'Program Manager'`로 Explorer를 판별해서 `activeWindow.ts:17`의 `owner.path` 방식과 이중화 — 지울 것 |
-| `preload/index.ts:76`      | `ipcRenderer.removeListener(listener)`를 등록 **전에** 호출 — 방금 만든 함수라 항상 no-op                                                                                                  |
 
 ---
 

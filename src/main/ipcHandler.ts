@@ -3,7 +3,6 @@ import { attach, detach } from 'electron-as-wallpaper';
 import { mainWindow, getVirtualScreenOffset } from '.';
 import { tryAutoLogin, logoutGoogleOAuth, startGoogleOAuth } from './oauth';
 import { store } from './store';
-import activeWindow from 'active-win';
 
 export const registerIPCHandlers = () => {
   ipcMain.on('open-external', (_, url) => shell.openExternal(url));
@@ -74,11 +73,5 @@ export const registerIPCHandlers = () => {
   ipcMain.on('show-notification', (_, payload: { title: string; body: string }) => {
     if (!Notification.isSupported()) return;
     new Notification({ title: payload.title, body: payload.body }).show();
-  });
-
-  ipcMain.on('renderer-ready', async (event) => {
-    const window = await activeWindow();
-    const isExplorer = window?.title === 'Program Manager';
-    event.sender.send('update-clickable', isExplorer);
   });
 };

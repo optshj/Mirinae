@@ -89,7 +89,6 @@ const api = {
 
   onUpdateClickable: (callback: (isExplorer: boolean) => void) => {
     const listener = (_, isExplorer: boolean) => callback(isExplorer);
-    ipcRenderer.removeListener('update-clickable', listener);
     ipcRenderer.on('update-clickable', listener);
     return () => ipcRenderer.removeListener('update-clickable', listener);
   },
