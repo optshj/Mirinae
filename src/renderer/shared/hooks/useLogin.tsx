@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { setAuthToken, getAuthToken } from '../lib/http';
+import { posthog } from '@/shared/lib/posthog';
 
 export function useLogin() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getAuthToken()));
@@ -13,11 +14,13 @@ export function useLogin() {
     setIsAuthenticated(false);
     setAuthToken(null);
     window.api.logoutGoogleOAuth();
+    posthog.capture('user_logged_out');
   }, []);
 
-  const handleLogin = useCallback((receivedTokens) => {
+  const handleLogin = useCallback(async (receivedTokens) => {
     setAuthToken(receivedTokens.access_token);
     setIsAuthenticated(true);
+    posthog.capture('user_logged_in', { app_version: await window.api.getAppVersion() });
   }, []);
 
   const handleError = useCallback((message?: string) => {

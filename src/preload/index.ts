@@ -1,8 +1,21 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
 
+export interface WindowBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface UpdateInfo {
+  currentVersion: string;
+  newVersion: string;
+}
+
 export interface Api {
   openExternal: (url: string) => void;
+  getAppVersion: () => Promise<string>;
   startGoogleOauth: () => void;
   onGoogleOauthSuccess: (callback: (tokens: any) => void) => () => void;
   onGoogleOauthError: (callback: (error: any) => void) => () => void;
@@ -10,7 +23,7 @@ export interface Api {
   logoutGoogleOAuth: () => Promise<boolean>;
 
   startDragging: (options?: { resizable?: boolean }) => void;
-  stopDragging: () => void;
+  stopDragging: () => Promise<WindowBounds>;
 
   getNotificationsEnabled: () => Promise<boolean>;
   setNotificationsEnabled: (value: boolean) => void;
@@ -27,13 +40,16 @@ export interface Api {
 
   onShowPatchNotes: (callback: () => void) => () => void;
 
-  onUpdateDownloaded: (callback: (info: { currentVersion: string; newVersion: string }) => void) => () => void;
+  onUpdateAvailable: (callback: (info: UpdateInfo) => void) => () => void;
+  onUpdateDownloaded: (callback: (info: UpdateInfo) => void) => () => void;
+  onUpdateError: (callback: (info: { currentVersion: string; message: string }) => void) => () => void;
   installUpdate: () => void;
   dismissUpdate: () => void;
 }
 
 const api = {
   openExternal: (url: string) => ipcRenderer.send('open-external', url),
+  getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   startGoogleOauth: () => ipcRenderer.send('start-google-oauth'),
 
   onGoogleOauthSuccess: (callback) => {
@@ -52,7 +68,7 @@ const api = {
   logoutGoogleOAuth: () => ipcRenderer.invoke('logout-google-oauth'),
 
   startDragging: (options) => ipcRenderer.send('start-dragging', options),
-  stopDragging: () => ipcRenderer.send('stop-dragging'),
+  stopDragging: () => ipcRenderer.invoke('stop-dragging'),
 
   quitApp: () => ipcRenderer.send('quit-app'),
 
@@ -78,6 +94,11 @@ const api = {
     return () => ipcRenderer.removeListener('update-clickable', listener);
   },
 
+  onUpdateAvailable: (callback) => {
+    const listener = (_, info) => callback(info);
+    ipcRenderer.on('update-available', listener);
+    return () => ipcRenderer.removeListener('update-available', listener);
+  },
   onUpdateDownloaded: (callback) => {
     const listener = (_, info) => callback(info);
     ipcRenderer.on('update-downloaded', listener);

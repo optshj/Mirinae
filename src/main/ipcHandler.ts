@@ -4,10 +4,11 @@ import { mainWindow, getVirtualScreenOffset } from '.';
 import { tryAutoLogin, logoutGoogleOAuth, startGoogleOAuth } from './oauth';
 import { store } from './store';
 import activeWindow from 'active-win';
-import { posthog, getDistinctId } from './posthog';
 
 export const registerIPCHandlers = () => {
   ipcMain.on('open-external', (_, url) => shell.openExternal(url));
+
+  ipcMain.handle('get-app-version', () => app.getVersion());
 
   ipcMain.handle('try-auto-login', tryAutoLogin);
   ipcMain.handle('logout-google-oauth', logoutGoogleOAuth);
@@ -29,7 +30,8 @@ export const registerIPCHandlers = () => {
     mainWindow.setResizable(options?.resizable ?? true);
   });
 
-  ipcMain.on('stop-dragging', () => {
+  // 렌더러가 window_moved 애널리틱스를 남길 수 있도록 최종 bounds를 돌려준다
+  ipcMain.handle('stop-dragging', () => {
     mainWindow.setResizable(false);
 
     const { x, y, width, height } = mainWindow.getBounds();
@@ -47,17 +49,12 @@ export const registerIPCHandlers = () => {
     mainWindow.setBounds(finalBounds);
     store.set('window-bounds', finalBounds);
 
-    posthog.capture({
-      distinctId: getDistinctId(),
-      event: 'window_moved',
-      properties: { x: finalBounds.x, y: finalBounds.y, width: finalBounds.width, height: finalBounds.height }
-    });
+    return finalBounds;
   });
 
   ipcMain.on('set-opacity', (_, newOpacity) => {
     mainWindow.setOpacity(newOpacity);
     store.set('window-opacity', newOpacity);
-    posthog.capture({ distinctId: getDistinctId(), event: 'opacity_changed', properties: { opacity: newOpacity } });
   });
 
   ipcMain.handle('get-initial-opacity', () => store.get('window-opacity'));
@@ -66,14 +63,12 @@ export const registerIPCHandlers = () => {
   ipcMain.handle('get-notifications-enabled', () => store.get('notifications-enabled'));
   ipcMain.on('set-notifications-enabled', (_, value) => {
     store.set('notifications-enabled', value);
-    posthog.capture({ distinctId: getDistinctId(), event: 'notifications_enabled_changed', properties: { notifications_enabled: value } });
   });
 
   // 일정 알림 선행 시간
   ipcMain.handle('get-notification-lead-minutes', () => store.get('notification-lead-minutes'));
   ipcMain.on('set-notification-lead-minutes', (_, value) => {
     store.set('notification-lead-minutes', value);
-    posthog.capture({ distinctId: getDistinctId(), event: 'notification_lead_minutes_changed', properties: { notification_lead_minutes: value } });
   });
 
   ipcMain.on('show-notification', (_, payload: { title: string; body: string }) => {
