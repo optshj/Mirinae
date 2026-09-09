@@ -16,16 +16,6 @@
 
 **고치는 법:** effect 안에 `setInterval(schedule, 10분)` 추가하고 cleanup에서 clear.
 
-### 4. "로그인 시 미리내 실행" 토글이 실제로 동작하지 않는다
-
-`main/tray.ts:11,30` + `main/index.ts:21-24`
-
-- `autoLaunchStatus`를 메뉴 만들 때 **한 번** 읽고, 클릭할 때마다 그 고정값의 `!`를 넣는다 → 두 번째 클릭부터 같은 값 재설정. 체크박스 표시도 갱신 안 됨.
-- 그와 별개로 `index.ts`가 매 실행마다 `new AutoLaunch(...).enable()`을 무조건 호출 → 꺼도 다음 실행에 다시 켜진다.
-- 자동 실행을 `auto-launch` 패키지와 `app.setLoginItemSettings` 두 경로로 이중 관리 중이라 서로 안 맞을 수 있다.
-
-**고치는 법:** `index.ts`의 무조건 `enable()` 제거, 트레이는 클릭 시점에 `app.getLoginItemSettings().openAtLogin`을 읽고 `menuItem.checked`를 갱신. 관리 주체는 `setLoginItemSettings` 하나로.
-
 ### 5. 뮤테이션이 실패해도 사용자는 성공했다고 본다
 
 `features/event/ui/AddEventForm.tsx:38-41`, `DeleteEventButton.tsx:19-25`, `EditEventForm.tsx:44-48`
@@ -89,10 +79,6 @@
 
 **고치는 법:** 모듈 스코프에 `let refreshing: Promise | null` 하나 두고 공유.
 
-### 12. 다른 날짜를 열어도 "오늘은 일정이 없어요"
-
-`widgets/Calendar/ui/ScheduleModal.tsx:52` — 문구 고정. 날짜에 맞춰 바꾸거나 "일정이 없어요"로.
-
 ### 13. 모달 로그인 버튼에 `tabIndex={-1}`이 없다
 
 `widgets/Calendar/ui/ScheduleModal.tsx:40`
@@ -123,11 +109,6 @@
 `widgets/Calendar/ui/MiniCalendarGrid.tsx:36-56` — 컴포넌트가 항상 마운트되고 CSS로만 숨겨져 있어서, 일반 뷰에서도 마우스를 움직일 때마다 42회 `getBoundingClientRect()`가 돈다.
 **고치는 법:** `onMove` 첫 줄에서 컨테이너가 안 보이면 즉시 return, 또는 미니뷰일 때만 마운트.
 
-### 18. 새로고침이 앱 전체 리로드
-
-`features/refresh/ui/RefreshButton.tsx:7` — `window.location.reload()`라 모든 상태가 날아가고 6번의 토큰 갱신 폭주가 다시 일어난다.
-**고치는 법:** `queryClient.invalidateQueries({ queryKey: eventKeys.events })`.
-
 ---
 
 ## 🔵 보안 / 하드닝
@@ -141,10 +122,6 @@
 
 `main/oauth.ts:34-47,155-163` — 로컬 서버가 **어떤 경로로든** `?code=` 만 오면 받아들이고, `state` 파라미터가 없다. 로컬에서 도는 다른 프로세스가 공격자 코드를 밀어 넣어 엉뚱한 계정으로 로그인시킬 수 있다.
 **고치는 법:** `crypto.randomBytes`로 state 생성 → authUrl에 추가 → 콜백에서 대조, 그리고 `url.pathname === '/callback'` 확인.
-
-### 21. `open-external`에 URL 검증이 없다
-
-`main/ipcHandler.ts:10` — `shell.openExternal(url)`에 아무 문자열이나 들어간다. 지금 호출부는 `SITE_URL` 뿐이니 `https://`만 통과시키는 가드 한 줄이면 끝.
 
 ### 22. 로그아웃해도 구글 쪽 토큰이 살아 있다
 
@@ -167,11 +144,6 @@
 
 ## 🧪 품질 · 인프라
 
-### 24. `npm run lint`가 지금 실패한다 (21건)
-
-`setupTests.ts`(9), `FlipCalendarButton.test.tsx`(11), `MoveDialog.tsx`(1). 대부분 들여쓰기라 `--fix`로 끝난다. `vitest.config.ts`도 4-space라 prettier 설정(2-space)과 어긋남.
-CI에 lint가 없다(워크플로는 chromatic, notion-to-github 둘뿐) — 그래서 깨진 채 머지됐다.
-
 ### 25. `noImplicitAny`가 꺼져 있다
 
 `@electron-toolkit/tsconfig`가 `noImplicitAny: false`. 그래서 `preload/index.ts`의 콜백들, `useLogin.tsx:18`의 `receivedTokens`, `EventType.ts:95`의 `preferences: { (key): string }`(인덱스 시그니처가 아니라 **호출 시그니처** 오타 — `Record<string, string>`이어야 함)가 다 통과한다.
@@ -181,21 +153,3 @@ CI에 lint가 없다(워크플로는 chromatic, notion-to-github 둘뿐) — 그
 `shared/types/EventType.ts:1-169` — 구글은 `description`/`location`/`attendees` 등을 대부분 응답에서 **생략**한다. 타입은 `string`인데 런타임은 `undefined` → 나중에 그 필드를 쓰는 순간 터진다. 실제 쓰는 필드만 남기고 나머지는 optional로.
 
 또 `entities/event/types/index.tsx:9`의 `recurrence?: string | null`은 `RecurrenceType`이어야 한다. 지금은 아무 문자열이나 들어가면 `RRULE_MAP[...]`이 `undefined`가 되어 `recurrence: [undefined]`가 전송된다.
-
-### 30. 문서와 코드가 어긋난다
-
-- CLAUDE.md 제약 2번은 "연속 드래그(pointermove) 신뢰 불가"인데, 실제로는 `useEventDrag`(일정 이동)와 `LinearSlider`(시간 조절)가 pointermove 드래그로 구현돼 있다. 실기에서 되는 거면 제약 문구를 갱신하고, 아니면 코드를 바꿔야 한다 — 지금은 어느 쪽인지 알 수 없다.
-- CLAUDE.md 제약 1번이 가리키는 `WeekCalendar/lib/useHourScroll.ts`는 **존재하지 않는다**(주간 뷰가 사라짐).
-- `entities/patchNote/ui/PatchNoteModal.tsx:8`의 버전이 하드코딩이라 릴리스마다 수동 갱신해야 하고, 버전을 건너뛴 사용자는 중간 패치노트를 못 본다.
-- `.env.example`이 없어서 새로 클론하면 `VITE_CLIENT_ID` 등을 알 방법이 없다. README에도 설명 없음.
-
----
-
-## 먼저 손대면 좋은 순서
-
-1. **1번 (PUT → PATCH)** — 유일하게 사용자 데이터가 실제로 없어지는 항목, 고치는 건 한 단어
-2. **2번 (`prompt=consent`)** — 한 줄, 로그인 불능 상태를 막는다
-3. **4번 (자동 실행)** + **5번 (실패 토스트)** — 작고 체감 큼
-4. **3번 (알림 주기 재예약)** — 기능이 조용히 안 도는 문제
-5. **6번 (useLogin 단일화)** — 리팩터링이 좀 있지만 7·11·18번의 뿌리
-6. 죽은 코드/의존성 정리 + lint 통과 — 기계적 작업, PR 하나로
