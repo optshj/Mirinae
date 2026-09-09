@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCalendarItems, useMaxLanes, getEventRange } from '@/entities/event';
 import { DateProps } from '@/shared/hooks/useDate';
+import { cn } from '@/shared/lib/utils';
 
 interface DayEvent {
   id: string;
@@ -90,7 +91,7 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
               }}
               className={`relative flex h-14 flex-col items-center justify-center gap-1.5 rounded-md transition-colors ${hoveredKey === dateKey ? 'bg-main-color/20' : ''}`}
             >
-              <div className={`-mt-1.5 flex flex-col items-center gap-1.5 ${!isCurrentMonth && 'opacity-40'}`}>
+              <div className={cn('-mt-1.5 flex flex-col items-center gap-1.5', !isCurrentMonth && 'opacity-40')}>
                 <div className={`flex h-7 w-7 items-center justify-center rounded-md text-sm tracking-tighter ${isToday ? 'bg-red-400 text-white' : 'text-primary'}`}>{date.getDate()}</div>
                 <div className="flex h-2 items-center gap-1">
                   {dayEvents.slice(0, maxLanes).map((event, i) => (

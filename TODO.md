@@ -1,28 +1,3 @@
-# TODO — 전체 코드 점검 결과
-
-2026-09-09 기준 `main`(v0.5.1) 전수 점검. 위에서부터 심각한 순서.
-각 항목은 `파일:줄` → 증상 → 가장 짧은 고치는 법 순으로 적었다.
-
----
-
-## 🔴 데이터 손실 · 기능이 조용히 망가지는 것
-
-### 1. 일정을 수정/드래그하면 구글 캘린더의 나머지 정보가 전부 지워진다
-
-`entities/event/api/index.ts:49` (`http.put`) + `entities/event/lib/createEventBody.ts`
-
-`eventApi.update`는 **PUT**이고, `createEventBody`는 `summary`/`colorId`/`start`/`end`(+`recurrence`)만 만든다.
-구글 `events.update`(PUT)는 리소스 **전체 교체**라, 보내지 않은 필드는 삭제된다:
-
-- `description`(설명), `location`(장소), `attendees`(참석자), `reminders`(알림), `conferenceData`(Meet 링크), `attachments`
-- `extendedProperties.private.completed` → **완료 표시한 일정을 드래그로 옮기면 완료가 풀린다**
-
-구글 웹에서 만든 일정을 미리내에서 한 칸 옮기기만 해도 발생한다. 되돌릴 방법 없음.
-
-**~~고치는 법: `update`를 `http.patch`로 바꾼다~~ → ✅ 완료** (`entities/event/api/index.ts`)
-PATCH는 `start`/`end` 중첩 객체를 *병합*하므로 `{ date: null, dateTime: null, ...eventData.start }`로 반대쪽 키를 명시적으로 지운다.
-⚠️ 종일↔시간 전환은 실기 1회 확인 필요.
-
 ### 2. 로그아웃 후 재로그인하면 자동 로그인이 영구히 깨질 수 있다
 
 `main/oauth.ts:155-165`
@@ -183,17 +158,10 @@ PATCH는 `start`/`end` 중첩 객체를 *병합*하므로 `{ date: null, dateTim
 
 ## ⚪ 죽은 코드 · 정리
 
-| 위치                                                             | 내용                                                                                                                                                                                       |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `shared/ui/command.tsx`, `shared/ui/textarea.tsx` (+ 각 stories) | 프로덕션 코드에서 **전혀 안 쓴다.** 지우면 `cmdk` 의존성도 같이 제거 가능                                                                                                                  |
-| `package.json` devDeps                                           | `jest`(^30) — vitest를 쓰고 있고 `@testing-library/jest-dom`만 필요하다. `@react-oauth/google` — 어디서도 import 안 함. 둘 다 삭제                                                         |
-| `main/ipcHandler.ts:84-88`                                       | `renderer-ready` 핸들러가 죽어 있다(preload에 노출도, 호출도 없음). 게다가 `title === 'Program Manager'`로 Explorer를 판별해서 `activeWindow.ts:17`의 `owner.path` 방식과 이중화 — 지울 것 |
-| `main/posthog.ts:29-37`                                          | `setUserDistinctId`/`getUserDistinctId`/`appVersion` 전부 미사용                                                                                                                           |
-| `preload/index.ts:76`                                            | `ipcRenderer.removeListener(listener)`를 등록 **전에** 호출 — 방금 만든 함수라 항상 no-op                                                                                                  |
-| `electron.vite.config.ts:50`                                     | `connect-src`의 `https://discord.com` 미사용 (문의하기는 외부 브라우저로 연다)                                                                                                             |
-| `pages/Calender/`                                                | 폴더명 오타 (Calender → Calendar)                                                                                                                                                          |
-| `components.json:6`                                              | tailwind css 경로가 `src/renderer/src/index.css`인데 실제는 `src/renderer/app/index.css` — `shadcn add`가 엉뚱한 데를 본다                                                                 |
-| `CalendarGrid.tsx:100,105`                                       | `${cond && 'class'}` 패턴이 false일 때 `"false"`를 클래스로 넣는다. `cond ? 'class' : ''`로                                                                                                |
+| 위치                       | 내용                                                                                                                                                                                       |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `main/ipcHandler.ts:84-88` | `renderer-ready` 핸들러가 죽어 있다(preload에 노출도, 호출도 없음). 게다가 `title === 'Program Manager'`로 Explorer를 판별해서 `activeWindow.ts:17`의 `owner.path` 방식과 이중화 — 지울 것 |
+| `preload/index.ts:76`      | `ipcRenderer.removeListener(listener)`를 등록 **전에** 호출 — 방금 만든 함수라 항상 no-op                                                                                                  |
 
 ---
 

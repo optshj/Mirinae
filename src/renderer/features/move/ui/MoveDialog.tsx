@@ -5,7 +5,7 @@ import { useMove } from '../model/move-context';
 
 // 드롭다운 바깥에서 렌더되어, 드롭다운이 닫혀도 안내창과 '적용' 버튼이 유지된다.
 // 캘린더를 가리지 않도록 상단에 토스트(sonner)와 같은 형태로 띄운다: 아이콘 | 타이틀·설명 | 적용.
-// 조절 가능한 창 경계는 액센트 점선 아웃라인이 표시한다 (pages/Calender의 html.resizable 아웃라인, 미니뷰에선 크기 조절이 불가해 표시하지 않는다).
+// 조절 가능한 창 경계는 액센트 점선 아웃라인이 표시한다 (pages/Calendar의 html.resizable 아웃라인, 미니뷰에선 크기 조절이 불가해 표시하지 않는다).
 export function MoveDialog() {
   const { isDrag, canResize, container, stop } = useMove();
 

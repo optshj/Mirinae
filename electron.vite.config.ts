@@ -47,8 +47,7 @@ export default defineConfig(({ mode }) => {
         csp({
           policy: {
             'default-src': ["'self'"],
-            'connect-src': ["'self'", 'https://www.googleapis.com', 'https://discord.com', 'https://*.i.posthog.com', 'https://*.posthog.com'],
-            // posthog 세션 리플레이 recorder가 blob: 워커로 스냅샷을 처리하므로 허용 필요
+            'connect-src': ["'self'", 'https://www.googleapis.com', 'https://*.i.posthog.com', 'https://*.posthog.com'],
             'worker-src': ["'self'", 'blob:']
           }
         })
