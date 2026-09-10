@@ -42,7 +42,6 @@ export interface Api {
 
   onUpdateAvailable: (callback: (info: UpdateInfo) => void) => () => void;
   onUpdateDownloaded: (callback: (info: UpdateInfo) => void) => () => void;
-  onUpdateError: (callback: (info: { currentVersion: string; message: string }) => void) => () => void;
   installUpdate: () => void;
   dismissUpdate: () => void;
 }
