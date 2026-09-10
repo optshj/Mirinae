@@ -12,7 +12,6 @@ interface DragState {
   seg: EventSegment;
   grabDate: string;
   targetDate: string | null;
-  // 일정 전체 길이 기준 고스트 크기와, 그 안에서 잡은 지점 (커서가 잡은 날 위에 그대로 붙어 있도록)
   ghost: { width: number; height: number; offsetX: number; offsetY: number };
 }
 
@@ -44,7 +43,6 @@ export function useEventDrag() {
       allDay: event.category === 'allDay',
       start: event.category === 'time' ? dayjs(event.start.dateTime).format('HH:mm') : '08:00',
       end: event.category === 'time' ? dayjs(event.end.dateTime).format('HH:mm') : '12:00',
-      // singleEvents=true로 받은 인스턴스에 대한 PUT → 해당 회차만 이동 (EditEventForm과 동일)
       recurrence: null
     };
     editEvent({
@@ -135,7 +133,6 @@ export function useEventDrag() {
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointercancel', onCancel);
     window.addEventListener('keydown', onKey);
-    // 벽지가 포커스를 잃으면(disable-click) pointerup이 안 올 수 있으므로 취소
     window.addEventListener('blur', onCancel);
   };
 

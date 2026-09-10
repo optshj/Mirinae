@@ -42,12 +42,16 @@ export const eventApi = {
     return http.delete(`${CALENDAR_API_URL}/primary/events/${eventId}`);
   },
 
-  // 삭제된 일정은 status: 'cancelled'로 남아 있어서 confirmed로 patch하면 복원됨 (반복 일정 부모/인스턴스 포함)
   restore: (eventId: string) => {
     return http.patch<Events>(`${CALENDAR_API_URL}/primary/events/${eventId}`, { status: 'confirmed' });
   },
+
   update: ({ eventId, eventData }: { eventId: string; eventData: GoogleEventBody }) => {
-    return http.put<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, eventData);
+    return http.patch<CalendarEvent>(`${CALENDAR_API_URL}/primary/events/${eventId}`, {
+      ...eventData,
+      start: { date: null, dateTime: null, ...eventData.start },
+      end: { date: null, dateTime: null, ...eventData.end }
+    });
   },
 
   setCompleted: ({ eventId, completed }: { eventId: string; completed: boolean }) => {

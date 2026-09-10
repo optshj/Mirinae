@@ -92,7 +92,7 @@ export type Events = {
     height: number;
     display: string;
     preferences: {
-      (key): string;
+      [key: string]: string;
     };
   };
   anyoneCanAddSelf: boolean;

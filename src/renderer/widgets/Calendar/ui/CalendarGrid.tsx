@@ -2,11 +2,12 @@ import dayjs from 'dayjs';
 import { useState, useMemo } from 'react';
 
 import { ScheduleModal } from './ScheduleModal';
-import { EventList, useCalendarItems, buildMonthSegments, useMaxLanes, EventSegment } from '@/entities/event';
+import { EventList, useCalendarItems, buildMonthSegments, buildHolidayDates, useMaxLanes, useHolidayEvents, useHoliday, EventSegment } from '@/entities/event';
 import { useEventDrag, DragGhost } from '@/features/event-drag';
 
 import { Dialog } from '@/shared/ui/dialog';
 import { DateProps } from '@/shared/hooks/useDate';
+import { cn } from '@/shared/lib/utils';
 
 export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -14,6 +15,11 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
   const { items } = useCalendarItems();
   const { maxLanes } = useMaxLanes();
   const { drag, previewRange, ghostRef, posRef, startDrag } = useEventDrag();
+  const { data: holidayData } = useHolidayEvents();
+  const { showHoliday } = useHoliday();
+
+  // 날짜 숫자를 빨갛게 칠하기 위한 공휴일 날짜 집합. 색상 필터와 무관하게 '공휴일 표시' 토글만 따른다.
+  const holidayDates = useMemo(() => (showHoliday ? buildHolidayDates(holidayData?.items ?? []) : new Set<string>()), [holidayData, showHoliday]);
 
   const weekArray = useMemo(() => {
     return Array.from({ length: 6 }, (_, i) => days.slice(i * 7, i * 7 + 7));
@@ -50,6 +56,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
             visible={monthSegments[weekIndex].visible}
             overflowByDate={monthSegments[weekIndex].overflowByDate}
             maxLanes={maxLanes}
+            holidayDates={holidayDates}
             onPickDate={(date) => {
               setSelectedDate(date);
               setOpen(true);
@@ -76,12 +83,13 @@ interface WeekRowProps {
   visible: EventSegment[];
   overflowByDate: Record<string, number>;
   maxLanes: number;
+  holidayDates: Set<string>;
   onPickDate: (date: Date) => void;
   onEventPointerDown: (e: React.PointerEvent, seg: EventSegment) => void;
   draggingEventId: string | null;
   previewRange: { start: string; end: string } | null;
 }
-function WeekRow({ week, month, visible, overflowByDate, maxLanes, onPickDate, onEventPointerDown, draggingEventId, previewRange }: WeekRowProps) {
+function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidayDates, onPickDate, onEventPointerDown, draggingEventId, previewRange }: WeekRowProps) {
   const weekStart = dayjs(week[0]).format('YYYY-MM-DD');
 
   return (
@@ -92,17 +100,26 @@ function WeekRow({ week, month, visible, overflowByDate, maxLanes, onPickDate, o
         const dateKey = dayjs(date).format('YYYY-MM-DD');
         const more = overflowByDate[dateKey] ?? 0;
         const isDropPreview = previewRange !== null && dateKey >= previewRange.start && dateKey <= previewRange.end;
+        const isRestDay = date.getDay() === 0 || holidayDates.has(dateKey);
 
         return (
           <div
             key={dateKey}
             data-date={dateKey}
-            className={`border-primary flex h-full w-full flex-col overflow-hidden border ${isDropPreview && 'bg-main-color/10'}`}
+            className={cn('border-primary flex h-full w-full flex-col overflow-hidden border', isDropPreview && 'bg-main-color/10')}
             onDoubleClick={() => onPickDate(date)}
           >
             <div className={`grid grid-cols-[1fr_auto_1fr] items-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
               <div />
-              <div className={`flex h-6 w-6 items-center justify-center rounded-md ${isToday && 'bg-red-400 text-white'} tracking-tighter`}>{date.getDate()}</div>
+              <div
+                className={cn(
+                  'flex h-6 w-6 items-center justify-center rounded-md tracking-tighter',
+                  isRestDay && (isCurrentMonth ? 'text-red-400' : 'text-red-400/50'),
+                  isToday && 'bg-red-400 text-white'
+                )}
+              >
+                {date.getDate()}
+              </div>
               <div className="pl-1 text-left">{more > 0 && <span className="text-secondary text-[10px] font-normal whitespace-nowrap">+{more}개 일정</span>}</div>
             </div>
 

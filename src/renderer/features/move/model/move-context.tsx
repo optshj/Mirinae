@@ -25,10 +25,11 @@ export function MoveProvider({ children, container = null }: { children: React.R
     posthog.capture('move_active_button');
   };
 
-  const stop = () => {
+  const stop = async () => {
     setIsDrag(false);
-    window.api.stopDragging();
     document.documentElement.classList.remove('resizable');
+    const bounds = await window.api.stopDragging();
+    posthog.capture('window_moved', bounds);
   };
 
   return <MoveContext.Provider value={{ isDrag, canResize, container, start, stop }}>{children}</MoveContext.Provider>;

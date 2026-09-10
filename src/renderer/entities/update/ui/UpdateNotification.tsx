@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/shared/ui/button';
+import { posthog } from '@/shared/lib/posthog';
 
 interface UpdateInfo {
   currentVersion: string;
@@ -9,7 +10,10 @@ export function UpdateNotification() {
   const [info, setInfo] = useState<UpdateInfo | null>(null);
 
   useEffect(() => {
-    const cleanup = window.api.onUpdateDownloaded((data) => setInfo(data));
+    const cleanup = window.api.onUpdateDownloaded((data) => {
+      setInfo(data);
+      posthog.capture('update_downloaded', { new_version: data.newVersion });
+    });
     return cleanup;
   }, []);
 
@@ -17,11 +21,13 @@ export function UpdateNotification() {
 
   const handleInstall = () => {
     window.api.installUpdate();
+    posthog.capture('update_accepted', { current_version: info.currentVersion });
     setInfo(null);
   };
 
   const handleDismiss = () => {
     window.api.dismissUpdate();
+    posthog.capture('update_declined', { current_version: info.currentVersion });
     setInfo(null);
   };
 

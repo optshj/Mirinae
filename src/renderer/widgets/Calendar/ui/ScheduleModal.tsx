@@ -49,7 +49,7 @@ export function ScheduleModal({ date }: { date: Date }) {
               <div className="text-secondary my-4 flex items-center justify-center">
                 <CalendarOff size={36} strokeWidth={0.75} />
               </div>
-              <h3 className="text-primary text-lg font-medium">오늘은 일정이 없어요</h3> <p className="text-secondary mt-1 mb-4 text-sm">아래 버튼으로 새로운 일정을 추가해보세요.</p>
+              <h3 className="text-primary text-lg font-medium">일정이 없어요</h3> <p className="text-secondary mt-1 mb-4 text-sm">아래 버튼으로 새로운 일정을 추가해보세요.</p>
             </div>
           )}
           <AddEventForm date={date} />

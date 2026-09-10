@@ -25,7 +25,14 @@ if (localStorage.getItem('miniView') === 'true') {
   document.documentElement.classList.add('mini-view');
 }
 
+window.api.getAppVersion().then((appVersion) => {
+  posthog.capture('app_launched', { app_version: appVersion, platform: window.electron.process.platform });
+});
+window.api.onUpdateAvailable(({ currentVersion, newVersion }) => {
+  posthog.capture('update_available', { current_version: currentVersion, new_version: newVersion });
+});
 window.api.onUpdateClickable((isExplorer: boolean) => {
   document.documentElement.classList.toggle('disable-click', !isExplorer);
 });
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<App />);

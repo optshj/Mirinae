@@ -1,4 +1,6 @@
 import dayjs from 'dayjs';
+
+import { cn } from '@/shared/lib/utils';
 import { EventSegment } from '../lib/eventLayout';
 
 interface EventListProps {
@@ -20,7 +22,15 @@ export function EventList({ seg, weekStart, onDoubleClick, onPointerDown, dimmed
 
   return (
     <div
-      className={`${interactive ? 'pointer-events-auto' : 'pointer-events-none'} flex max-h-5 items-center overflow-hidden text-sm md:bg-(--event-color)/20 dark:saturate-70 event-color-${event.colorId} ${seg.isStart && 'rounded-l-sm'} ${seg.isEnd && 'rounded-r-sm'} ${dimmed ? 'opacity-30' : completed ? 'opacity-50' : 'opacity-100'} ${isDraggable && 'cursor-grab'}`}
+      className={cn(
+        'flex max-h-5 items-center overflow-hidden text-sm md:bg-(--event-color)/20 dark:saturate-70',
+        `event-color-${event.colorId}`,
+        interactive ? 'pointer-events-auto' : 'pointer-events-none',
+        seg.isStart && 'rounded-l-sm',
+        seg.isEnd && 'rounded-r-sm',
+        dimmed ? 'opacity-30' : completed ? 'opacity-50' : 'opacity-100',
+        isDraggable && 'cursor-grab'
+      )}
       style={{
         gridColumnStart: colStart + 1,
         gridColumnEnd: colStart + span + 1,

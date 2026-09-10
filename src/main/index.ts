@@ -10,7 +10,6 @@ import { store } from './store';
 import { checkVersionAndShowPatchNotes } from './versionCheck';
 import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindow';
 import * as Sentry from '@sentry/electron/main';
-import { posthog, getDistinctId, shutdownPostHog } from './posthog';
 
 const SERVICE_NAME = 'Mirinae';
 
@@ -23,7 +22,8 @@ new AutoLaunch({
   path: process.execPath
 }).enable();
 
-// Sentry는 네이티브 크래시(minidump) 수집용으로만 유지 — JS 에러/리플레이는 PostHog가 담당
+// main 프로세스의 관측(네이티브 크래시 + JS 예외)은 Sentry 전담.
+// PostHog는 렌더러(posthog-js)에서만 돌린다 — distinct_id를 하나로 유지하고 세션 리플레이에 이벤트를 묶기 위함.
 Sentry.init({
   dsn: 'https://e14a01e7695b60bc88127406d382c174@o4511528205615104.ingest.us.sentry.io/4511528463630336',
   enableLogs: true
@@ -103,15 +103,6 @@ app.whenReady().then(() => {
   checkVersionAndShowPatchNotes();
   startActiveWindowWatcher(mainWindow);
 
-  posthog.capture({
-    distinctId: getDistinctId(),
-    event: 'app_launched',
-    properties: {
-      app_version: app.getVersion(),
-      platform: process.platform
-    }
-  });
-
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -122,6 +113,6 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   stopActiveWindowWatcher();
   if (process.platform !== 'darwin') {
-    shutdownPostHog().finally(() => app.quit());
+    app.quit();
   }
 });
