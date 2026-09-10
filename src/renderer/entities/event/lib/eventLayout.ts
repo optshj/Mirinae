@@ -100,3 +100,27 @@ export function buildMonthSegments(events: CalendarEvent[], weeks: Array<{ start
     return layoutWeek(clipped, maxLanes);
   });
 }
+
+// 구글 '대한민국의 휴일' 캘린더엔 실제로 쉬지 않는 날(제헌절, 식목일, 절기, 정월대보름 등)도 섞여 있다.
+// 각 항목의 description이 '공휴일' / '기념일' / '절기' 식으로 구분되므로 공휴일만 골라낸다.
+// ponytail: description 문자열 매칭. 구글이 표기를 바꾸면 아무 날도 안 빨개짐(조용히 틀리진 않음).
+//           그때는 공공데이터포털 특일정보 API로 갈아타는 게 정공법.
+const PUBLIC_HOLIDAY = /공휴일|public holiday/i;
+
+// 날짜 숫자를 빨갛게 칠하기 위한 공휴일 날짜(YYYY-MM-DD) 집합. 여러 날에 걸친 연휴도 펼쳐서 담는다.
+export function buildHolidayDates(events: Array<{ description?: string; start?: { date?: string }; end?: { date?: string } }>) {
+  const dates = new Set<string>();
+  for (const event of events) {
+    const start = event.start?.date;
+    if (!start) continue;
+    if (!PUBLIC_HOLIDAY.test(event.description ?? '')) continue;
+    // Google API의 end.date는 exclusive(종료일+1). 없으면 하루짜리로 본다.
+    const endExclusive = dayjs(event.end?.date ?? start);
+    let cur = dayjs(start);
+    do {
+      dates.add(cur.format('YYYY-MM-DD'));
+      cur = cur.add(1, 'day');
+    } while (cur.isBefore(endExclusive, 'day'));
+  }
+  return dates;
+}
