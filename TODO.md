@@ -90,22 +90,6 @@
 
 `entities/event/lib/eventLayout.ts:14-18` — `end.dateTime`의 날짜 부분만 쓰므로 `22:00~24:00` 일정이 이틀짜리로 렌더된다. 종료가 정확히 `00:00`이면 하루 빼면 된다.
 
----
-
-## 🟡 성능
-
-### 16. Tooltip마다 전역 pointermove 리스너 + 레이아웃 측정
-
-`shared/ui/tooltip.tsx:54-80` — 인스턴스마다 `window.pointermove`에 붙어 매 이벤트 `getBoundingClientRect()`를 호출한다. 헤더에만 5~6개, 모달을 열면 일정 수만큼 늘어난다.
-**고치는 법:** 리스너 하나를 공유하는 작은 디스패처(또는 `elementFromPoint` 한 번)로 통합.
-
-### 17. 미니뷰가 꺼져 있어도 셀 42개의 rect를 매번 잰다
-
-`widgets/Calendar/ui/MiniCalendarGrid.tsx:36-56` — 컴포넌트가 항상 마운트되고 CSS로만 숨겨져 있어서, 일반 뷰에서도 마우스를 움직일 때마다 42회 `getBoundingClientRect()`가 돈다.
-**고치는 법:** `onMove` 첫 줄에서 컨테이너가 안 보이면 즉시 return, 또는 미니뷰일 때만 마운트.
-
----
-
 ## 🔵 보안 / 하드닝
 
 ### 19. 렌더러에 범용 `ipcRenderer`가 그대로 노출돼 있다
@@ -122,17 +106,9 @@
 
 `main/oauth.ts:140-144` — keytar만 지운다. `https://oauth2.googleapis.com/revoke` 호출을 추가하면 2번 항목(재로그인 시 refresh_token 미발급)도 같이 해소된다.
 
-### 23. `VITE_CLIENT_SECRET`이 메인 번들과 소스맵에 인라인된다
-
-`electron.vite.config.ts:14,26-27` — 설치형 앱의 client secret은 구글 기준 "비밀이 아님"이라 치명적이진 않지만, `sourcemap: true` + Sentry 업로드로 더 널리 퍼진다. 프로덕션 메인 소스맵이 정말 필요한지 한 번 판단할 것.
-
 ---
 
 ## 🧪 품질 · 인프라
-
-### 25. `noImplicitAny`가 꺼져 있다
-
-`@electron-toolkit/tsconfig`가 `noImplicitAny: false`. 그래서 `preload/index.ts`의 콜백들, `useLogin.tsx:18`의 `receivedTokens`, `EventType.ts:95`의 `preferences: { (key): string }`(인덱스 시그니처가 아니라 **호출 시그니처** 오타 — `Record<string, string>`이어야 함)가 다 통과한다.
 
 ### 26. `Events` 타입의 모든 필드가 필수로 선언돼 있다
 
