@@ -1,7 +1,7 @@
 import { ipcMain, app, shell, Notification } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
 import { mainWindow, getVirtualScreenOffset } from '.';
-import { tryAutoLogin, logoutGoogleOAuth, startGoogleOAuth } from './oauth';
+import { tokenRefresh, logoutGoogleOAuth, startGoogleOAuth } from './oauth';
 import { store } from './store';
 
 export const registerIPCHandlers = () => {
@@ -9,7 +9,7 @@ export const registerIPCHandlers = () => {
 
   ipcMain.handle('get-app-version', () => app.getVersion());
 
-  ipcMain.handle('try-auto-login', tryAutoLogin);
+  ipcMain.handle('tokenRefresh', tokenRefresh);
   ipcMain.handle('logout-google-oauth', logoutGoogleOAuth);
   ipcMain.on('start-google-oauth', startGoogleOAuth);
 

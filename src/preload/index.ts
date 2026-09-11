@@ -16,10 +16,11 @@ export interface UpdateInfo {
 export interface Api {
   openExternal: (url: string) => void;
   getAppVersion: () => Promise<string>;
+
   startGoogleOauth: () => void;
   onGoogleOauthSuccess: (callback: (tokens: any) => void) => () => void;
   onGoogleOauthError: (callback: (error: any) => void) => () => void;
-  refreshToken: () => Promise<any>;
+  tokenRefresh: () => Promise<any>;
   logoutGoogleOAuth: () => Promise<boolean>;
 
   startDragging: (options?: { resizable?: boolean }) => void;
@@ -49,22 +50,20 @@ export interface Api {
 const api = {
   openExternal: (url: string) => ipcRenderer.send('open-external', url),
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
-  startGoogleOauth: () => ipcRenderer.send('start-google-oauth'),
 
+  startGoogleOauth: () => ipcRenderer.send('start-google-oauth'),
+  logoutGoogleOAuth: () => ipcRenderer.invoke('logout-google-oauth'),
   onGoogleOauthSuccess: (callback) => {
     const listener = (_, ...args) => callback(...args);
-    ipcRenderer.on('google-oauth-token', listener);
-    return () => ipcRenderer.removeListener('google-oauth-token', listener);
+    ipcRenderer.on('google-oauth-success', listener);
+    return () => ipcRenderer.removeListener('google-oauth-success', listener);
   },
   onGoogleOauthError: (callback) => {
     const listener = (_, ...args) => callback(...args);
     ipcRenderer.on('google-oauth-error', listener);
     return () => ipcRenderer.removeListener('google-oauth-error', listener);
   },
-
-  refreshToken: () => ipcRenderer.invoke('try-auto-login'),
-
-  logoutGoogleOAuth: () => ipcRenderer.invoke('logout-google-oauth'),
+  tokenRefresh: () => ipcRenderer.invoke('tokenRefresh'),
 
   startDragging: (options) => ipcRenderer.send('start-dragging', options),
   stopDragging: () => ipcRenderer.invoke('stop-dragging'),

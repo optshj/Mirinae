@@ -1,9 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { setAuthToken, getAuthToken } from '../lib/http';
 import { posthog } from '@/shared/lib/posthog';
 
-export function useLogin() {
+interface LoginContextValue {
+  isAuthenticated: boolean;
+  login: () => void;
+  logout: () => void;
+}
+
+const LoginContext = createContext<LoginContextValue | null>(null);
+
+// IPC 리스너 등록과 시작 시 토큰 갱신은 앱에 한 번만 일어나야 하므로 Provider 하나가 소유한다.
+export function LoginProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getAuthToken()));
 
   const login = () => {
@@ -23,15 +32,14 @@ export function useLogin() {
     posthog.capture('user_logged_in', { app_version: await window.api.getAppVersion() });
   }, []);
 
-  const handleError = useCallback((message?: string) => {
-    console.error('OAuth Error:', message);
-    toast.error(message || '로그인에 실패했어요. 잠시 후 다시 시도해 주세요');
+  const handleError = useCallback(() => {
+    toast.error('로그인에 실패했어요. 잠시 후 다시 시도해 주세요', { id: 'login-error' });
   }, []);
 
   const refreshToken = useCallback(async () => {
-    if (window.api.refreshToken) {
+    if (window.api.tokenRefresh) {
       try {
-        const restoredTokens = await window.api.refreshToken();
+        const restoredTokens = await window.api.tokenRefresh();
         if (restoredTokens?.access_token) {
           setAuthToken(restoredTokens.access_token);
           setIsAuthenticated(true);
@@ -60,5 +68,11 @@ export function useLogin() {
     };
   }, [handleLogin, handleError, refreshToken, logout]);
 
-  return { login, logout, isAuthenticated, refreshToken };
+  return <LoginContext.Provider value={{ isAuthenticated, login, logout }}>{children}</LoginContext.Provider>;
+}
+
+export function useLogin() {
+  const ctx = useContext(LoginContext);
+  if (!ctx) throw new Error('useLogin must be used within a LoginProvider');
+  return ctx;
 }

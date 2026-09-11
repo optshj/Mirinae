@@ -32,7 +32,7 @@ const fetcher = async <T>(url: string, options: RequestOptions = {}): Promise<T>
 
   if (response.status === 401) {
     try {
-      const newTokens = await window.api.refreshToken?.();
+      const newTokens = await window.api.tokenRefresh?.();
       if (newTokens?.access_token) {
         setAuthToken(newTokens.access_token);
         response = await executeRequest(url, queryString, customOptions, headers);

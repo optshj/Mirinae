@@ -63,7 +63,7 @@ const startAuthServer = (onListening: (redirectUri: string) => void): Promise<st
           cleanup();
           reject(new Error('Authentication timeout'));
         },
-        5 * 60 * 1000
+        5 * 60 * 1000 // 5분
       );
 
       onListening(`http://${LOOPBACK_HOST}:${address.port}/callback`);
@@ -114,7 +114,7 @@ const refreshAccessToken = async (refresh_token: string) => {
 };
 
 // 자동 로그인 시도
-export const tryAutoLogin = async () => {
+export const tokenRefresh = async () => {
   const refreshToken = await keytar.getPassword(SERVICE_NAME, ACCOUNT_NAME);
   if (!refreshToken) return null;
 
@@ -157,7 +157,7 @@ export const startGoogleOAuth = async (event: Electron.IpcMainEvent) => {
       await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokens.refresh_token);
     }
 
-    event.sender.send('google-oauth-token', tokens);
+    event.sender.send('google-oauth-success', tokens);
   } catch (error) {
     console.error('OAuth Error:', error);
     event.sender.send('google-oauth-error', error instanceof Error ? error.message : String(error));
