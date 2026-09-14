@@ -26,9 +26,7 @@ export function initTray() {
           label: '로그인 시 미리내 실행',
           type: 'checkbox',
           checked: autoLaunchStatus,
-          click: (): void => {
-            app.setLoginItemSettings({ openAtLogin: !autoLaunchStatus });
-          }
+          click: (): void => app.setLoginItemSettings({ openAtLogin: !autoLaunchStatus })
         }
       ]
     },

@@ -16,11 +16,12 @@ export interface UpdateInfo {
 export interface Api {
   openExternal: (url: string) => void;
   getAppVersion: () => Promise<string>;
-  startGoogleOauth: () => void;
-  onGoogleOauthSuccess: (callback: (tokens: any) => void) => () => void;
-  onGoogleOauthError: (callback: (error: any) => void) => () => void;
-  refreshToken: () => Promise<any>;
+
+  loginGoogleOAuth: () => Promise<void>;
+  restoreSession: () => Promise<boolean>;
   logoutGoogleOAuth: () => Promise<boolean>;
+  googleRequest: (url: string, init?: { method?: string; body?: string }) => Promise<{ status: number; body: unknown }>;
+  onAuthExpired: (callback: () => void) => () => void;
 
   startDragging: (options?: { resizable?: boolean }) => void;
   stopDragging: () => Promise<WindowBounds>;
@@ -49,22 +50,16 @@ export interface Api {
 const api = {
   openExternal: (url: string) => ipcRenderer.send('open-external', url),
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
-  startGoogleOauth: () => ipcRenderer.send('start-google-oauth'),
 
-  onGoogleOauthSuccess: (callback) => {
-    const listener = (_, ...args) => callback(...args);
-    ipcRenderer.on('google-oauth-token', listener);
-    return () => ipcRenderer.removeListener('google-oauth-token', listener);
-  },
-  onGoogleOauthError: (callback) => {
-    const listener = (_, ...args) => callback(...args);
-    ipcRenderer.on('google-oauth-error', listener);
-    return () => ipcRenderer.removeListener('google-oauth-error', listener);
-  },
-
-  refreshToken: () => ipcRenderer.invoke('try-auto-login'),
-
+  loginGoogleOAuth: () => ipcRenderer.invoke('login-google-oauth'),
   logoutGoogleOAuth: () => ipcRenderer.invoke('logout-google-oauth'),
+  restoreSession: () => ipcRenderer.invoke('restore-session'),
+  googleRequest: (url: string, init?: { method?: string; body?: string }) => ipcRenderer.invoke('google-request', url, init),
+  onAuthExpired: (callback: () => void) => {
+    const listener = () => callback();
+    ipcRenderer.on('auth-expired', listener);
+    return () => ipcRenderer.removeListener('auth-expired', listener);
+  },
 
   startDragging: (options) => ipcRenderer.send('start-dragging', options),
   stopDragging: () => ipcRenderer.invoke('stop-dragging'),
