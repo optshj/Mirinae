@@ -37,7 +37,6 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     restoreSession();
     window.addEventListener('online', restoreSession);
-    // 만료는 사용자 로그아웃이 아니라 상태만 내린다 — 토큰 삭제·로그아웃 이벤트 없이, 여러 번 와도 결과가 같다
     const removeAuthExpiredListener = window.api.onAuthExpired(() => setIsAuthenticated(false));
 
     return () => {

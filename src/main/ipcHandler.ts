@@ -61,15 +61,11 @@ export const registerIPCHandlers = () => {
 
   // 일정 알림 활성화
   ipcMain.handle('get-notifications-enabled', () => store.get('notifications-enabled'));
-  ipcMain.on('set-notifications-enabled', (_, value) => {
-    store.set('notifications-enabled', value);
-  });
+  ipcMain.on('set-notifications-enabled', (_, value) => store.set('notifications-enabled', value));
 
   // 일정 알림 선행 시간
   ipcMain.handle('get-notification-lead-minutes', () => store.get('notification-lead-minutes'));
-  ipcMain.on('set-notification-lead-minutes', (_, value) => {
-    store.set('notification-lead-minutes', value);
-  });
+  ipcMain.on('set-notification-lead-minutes', (_, value) => store.set('notification-lead-minutes', value));
 
   ipcMain.on('show-notification', (_, payload: { title: string; body: string }) => {
     if (!Notification.isSupported()) return;

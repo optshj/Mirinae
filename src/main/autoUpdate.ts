@@ -3,7 +3,6 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { mainWindow } from '.';
 
-// 업데이터는 앱 시작 직후 동작하므로 렌더러가 아직 로딩 중일 수 있다 — 로드 완료까지 전송을 미룬다
 const sendToRenderer = (channel: string, payload: unknown) => {
   const send = () => mainWindow?.webContents.send(channel, payload);
   if (mainWindow?.webContents.isLoading()) {
