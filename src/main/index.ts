@@ -23,7 +23,6 @@ new AutoLaunch({
 }).enable();
 
 // main 프로세스의 관측(네이티브 크래시 + JS 예외)은 Sentry 전담.
-// PostHog는 렌더러(posthog-js)에서만 돌린다 — distinct_id를 하나로 유지하고 세션 리플레이에 이벤트를 묶기 위함.
 Sentry.init({
   dsn: 'https://e14a01e7695b60bc88127406d382c174@o4511528205615104.ingest.us.sentry.io/4511528463630336',
   enableLogs: true

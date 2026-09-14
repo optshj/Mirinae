@@ -1,64 +1,55 @@
-import { useCallback, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { setAuthToken, getAuthToken } from '../lib/http';
 import { posthog } from '@/shared/lib/posthog';
 
-export function useLogin() {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getAuthToken()));
+interface LoginContextValue {
+  isAuthenticated: boolean;
+  login: () => void;
+  logout: () => void;
+}
 
-  const login = () => {
-    window.api.startGoogleOauth();
+const LoginContext = createContext<LoginContextValue | null>(null);
+
+export function LoginProvider({ children }: { children: React.ReactNode }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const login = async () => {
+    try {
+      await window.api.loginGoogleOAuth();
+    } catch {
+      toast.error('로그인에 실패했어요. 잠시 후 다시 시도해 주세요', { id: 'login-error' });
+      return;
+    }
+    setIsAuthenticated(true);
+    posthog.capture('user_logged_in');
   };
 
-  const logout = useCallback(() => {
+  const logout = () => {
     setIsAuthenticated(false);
-    setAuthToken(null);
     window.api.logoutGoogleOAuth();
     posthog.capture('user_logged_out');
-  }, []);
+  };
 
-  const handleLogin = useCallback(async (receivedTokens) => {
-    setAuthToken(receivedTokens.access_token);
-    setIsAuthenticated(true);
-    posthog.capture('user_logged_in', { app_version: await window.api.getAppVersion() });
-  }, []);
-
-  const handleError = useCallback((message?: string) => {
-    console.error('OAuth Error:', message);
-    toast.error(message || '로그인에 실패했어요. 잠시 후 다시 시도해 주세요');
-  }, []);
-
-  const refreshToken = useCallback(async () => {
-    if (window.api.refreshToken) {
-      try {
-        const restoredTokens = await window.api.refreshToken();
-        if (restoredTokens?.access_token) {
-          setAuthToken(restoredTokens.access_token);
-          setIsAuthenticated(true);
-          return restoredTokens;
-        }
-      } catch (err) {
-        console.error('Auto login failed:', err);
-      }
-    }
-    return null;
+  const restoreSession = useCallback(async () => {
+    if (await window.api.restoreSession()) setIsAuthenticated(true);
   }, []);
 
   useEffect(() => {
-    refreshToken();
-    window.addEventListener('online', refreshToken);
-    window.addEventListener('auth-expired', logout);
-
-    const removeSuccessListener = window.api.onGoogleOauthSuccess(handleLogin);
-    const removeErrorListener = window.api.onGoogleOauthError(handleError);
+    restoreSession();
+    window.addEventListener('online', restoreSession);
+    const removeAuthExpiredListener = window.api.onAuthExpired(() => setIsAuthenticated(false));
 
     return () => {
-      removeSuccessListener();
-      removeErrorListener();
-      window.removeEventListener('online', refreshToken);
-      window.removeEventListener('auth-expired', logout);
+      removeAuthExpiredListener();
+      window.removeEventListener('online', restoreSession);
     };
-  }, [handleLogin, handleError, refreshToken, logout]);
+  }, [restoreSession]);
 
-  return { login, logout, isAuthenticated, refreshToken };
+  return <LoginContext.Provider value={{ isAuthenticated, login, logout }}>{children}</LoginContext.Provider>;
+}
+
+export function useLogin() {
+  const ctx = useContext(LoginContext);
+  if (!ctx) throw new Error('useLogin must be used within a LoginProvider');
+  return ctx;
 }

@@ -1,7 +1,7 @@
 import { ipcMain, app, shell, Notification } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
 import { mainWindow, getVirtualScreenOffset } from '.';
-import { tryAutoLogin, logoutGoogleOAuth, startGoogleOAuth } from './oauth';
+import { restoreSession, logoutGoogleOAuth, loginGoogleOAuth, googleRequest } from './oauth';
 import { store } from './store';
 
 export const registerIPCHandlers = () => {
@@ -9,9 +9,10 @@ export const registerIPCHandlers = () => {
 
   ipcMain.handle('get-app-version', () => app.getVersion());
 
-  ipcMain.handle('try-auto-login', tryAutoLogin);
+  ipcMain.handle('restore-session', restoreSession);
   ipcMain.handle('logout-google-oauth', logoutGoogleOAuth);
-  ipcMain.on('start-google-oauth', startGoogleOAuth);
+  ipcMain.handle('login-google-oauth', loginGoogleOAuth);
+  ipcMain.handle('google-request', googleRequest);
 
   ipcMain.on('quit-app', () => app.quit());
 
@@ -60,15 +61,11 @@ export const registerIPCHandlers = () => {
 
   // 일정 알림 활성화
   ipcMain.handle('get-notifications-enabled', () => store.get('notifications-enabled'));
-  ipcMain.on('set-notifications-enabled', (_, value) => {
-    store.set('notifications-enabled', value);
-  });
+  ipcMain.on('set-notifications-enabled', (_, value) => store.set('notifications-enabled', value));
 
   // 일정 알림 선행 시간
   ipcMain.handle('get-notification-lead-minutes', () => store.get('notification-lead-minutes'));
-  ipcMain.on('set-notification-lead-minutes', (_, value) => {
-    store.set('notification-lead-minutes', value);
-  });
+  ipcMain.on('set-notification-lead-minutes', (_, value) => store.set('notification-lead-minutes', value));
 
   ipcMain.on('show-notification', (_, payload: { title: string; body: string }) => {
     if (!Notification.isSupported()) return;

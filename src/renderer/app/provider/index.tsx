@@ -1,6 +1,7 @@
 import { ReactQueryProvider } from './QueryClient';
 import { MaxLanesProvider, HolidayProvider, ColorFilterProvider } from '@/entities/event';
 import { NotificationSettingsProvider } from '@/features/event-notification';
+import { LoginProvider } from '@/shared/hooks/useLogin';
 
 export default function Provider({ children }: { children: React.ReactNode }) {
   return (
@@ -8,7 +9,9 @@ export default function Provider({ children }: { children: React.ReactNode }) {
       <ColorFilterProvider>
         <HolidayProvider>
           <NotificationSettingsProvider>
-            <ReactQueryProvider>{children}</ReactQueryProvider>
+            <ReactQueryProvider>
+              <LoginProvider>{children}</LoginProvider>
+            </ReactQueryProvider>
           </NotificationSettingsProvider>
         </HolidayProvider>
       </ColorFilterProvider>

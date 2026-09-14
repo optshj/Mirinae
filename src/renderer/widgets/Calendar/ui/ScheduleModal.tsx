@@ -5,6 +5,7 @@ import { useCalendarItems, getEventRange } from '@/entities/event';
 import { DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 import { useLogin } from '@/shared/hooks/useLogin';
 import { getDDay } from '../lib/getDDay';
+import { GoogleIcon } from '@/shared/icon/GoogleIcon';
 
 export function ScheduleModal({ date }: { date: Date }) {
   const dDay = getDDay(date);
@@ -36,11 +37,11 @@ export function ScheduleModal({ date }: { date: Date }) {
             <LogIn size={36} strokeWidth={0.75} />
           </div>
           <h3 className="text-primary text-lg font-medium">로그인 후 일정을 추가할 수 있어요</h3>
-          <p className="text-secondary mt-1 mb-4 text-sm">우측 상단 설정에서도 로그인할 수 있어요.</p>
-          <button onClick={login} className="bg-main-color flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:scale-105 hover:brightness-105">
-            <LogIn size={16} />
-            구글 로그인
-          </button>
+          <p className="text-secondary mt-1 mb-4 text-sm">구글 캘린더 일정이 바탕화면에 바로 보여요</p>
+          <div onClick={login} className="border-primary bg-layer flex h-13 w-full items-center justify-center gap-2.5 rounded-lg border pr-3 pl-2.5 text-left shadow-xs">
+            <GoogleIcon />
+            <span className="text-primary text-sm">Google 계정으로 로그인</span>
+          </div>
         </div>
       ) : (
         <>
