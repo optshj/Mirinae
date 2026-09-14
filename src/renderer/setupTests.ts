@@ -4,9 +4,8 @@ import '@testing-library/jest-dom';
 beforeAll(() => {
   // @ts-ignore 혹은 타입 선언 추가
   window.api = {
-    tokenRefresh: vi.fn().mockResolvedValue({ access_token: 'test-token' }),
-    onGoogleOauthSuccess: vi.fn(),
-    onGoogleOauthError: vi.fn()
+    restoreSession: vi.fn().mockResolvedValue(true),
+    onAuthExpired: vi.fn(() => () => {})
   };
 });
 afterEach(() => {

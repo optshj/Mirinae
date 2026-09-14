@@ -1,7 +1,7 @@
 import { ipcMain, app, shell, Notification } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
 import { mainWindow, getVirtualScreenOffset } from '.';
-import { tokenRefresh, logoutGoogleOAuth, startGoogleOAuth } from './oauth';
+import { restoreSession, logoutGoogleOAuth, loginGoogleOAuth, googleRequest } from './oauth';
 import { store } from './store';
 
 export const registerIPCHandlers = () => {
@@ -9,9 +9,10 @@ export const registerIPCHandlers = () => {
 
   ipcMain.handle('get-app-version', () => app.getVersion());
 
-  ipcMain.handle('tokenRefresh', tokenRefresh);
+  ipcMain.handle('restore-session', restoreSession);
   ipcMain.handle('logout-google-oauth', logoutGoogleOAuth);
-  ipcMain.on('start-google-oauth', startGoogleOAuth);
+  ipcMain.handle('login-google-oauth', loginGoogleOAuth);
+  ipcMain.handle('google-request', googleRequest);
 
   ipcMain.on('quit-app', () => app.quit());
 

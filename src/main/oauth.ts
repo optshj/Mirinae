@@ -61,7 +61,7 @@ const startAuthServer = (onListening: (redirectUri: string) => void): Promise<st
       timeout = setTimeout(
         () => {
           cleanup();
-          reject(new Error('Authentication timeout'));
+          reject(new Error('인증 시간 초과'));
         },
         5 * 60 * 1000 // 5분
       );
@@ -92,7 +92,6 @@ const fetchAccessTokens = async (code: string, codeVerifier: string, redirectUri
   return await response.json();
 };
 
-// Access 토큰 재발급
 const refreshAccessToken = async (refresh_token: string) => {
   const params = new URLSearchParams({
     client_id: CLIENT_ID!,
@@ -113,53 +112,82 @@ const refreshAccessToken = async (refresh_token: string) => {
   return await response.json();
 };
 
-// 자동 로그인 시도
-export const tokenRefresh = async () => {
-  const refreshToken = await keytar.getPassword(SERVICE_NAME, ACCOUNT_NAME);
-  if (!refreshToken) return null;
+// Access 토큰은 메모리에서 관리
+let accessToken: string | null = null;
+let refreshing: Promise<boolean> | null = null;
 
-  const tokenData = await refreshAccessToken(refreshToken);
-  if (tokenData.refresh_token) {
-    await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokenData.refresh_token);
+const refreshSession = async () => {
+  try {
+    const refreshToken = await keytar.getPassword(SERVICE_NAME, ACCOUNT_NAME);
+    if (!refreshToken) return false;
+
+    const tokenData = await refreshAccessToken(refreshToken);
+    if (tokenData.refresh_token) {
+      await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokenData.refresh_token);
+    }
+    accessToken = tokenData.access_token;
+    return true;
+  } catch (error) {
+    console.error('Token refresh failed:', error);
+    return false;
   }
-  return tokenData;
 };
 
-// 로그아웃
+// 싱글플라이트
+export const restoreSession = async () => {
+  if (refreshing) return refreshing;
+  refreshing = refreshSession();
+  try {
+    return await refreshing;
+  } finally {
+    refreshing = null;
+  }
+};
+
+export const googleRequest = async (event: Electron.IpcMainInvokeEvent, url: string, { method, body }: { method?: string; body?: string } = {}) => {
+  const { href } = new URL(url);
+  if (!href.startsWith('https://www.googleapis.com/calendar/v3/')) throw new Error(`허용되지 않은 요청 주소입니다: ${url}`);
+
+  const send = () => fetch(href, { method, body, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` } });
+  let response = await send();
+
+  if (response.status === 401) {
+    await restoreSession();
+    response = await send();
+  }
+
+  if (response.status === 401) event.sender.send('auth-expired');
+
+  return { status: response.status, body: await response.json().catch(() => null) };
+};
+
 export const logoutGoogleOAuth = async () => {
+  accessToken = null;
   await keytar.deletePassword(SERVICE_NAME, ACCOUNT_NAME);
   return true;
 };
 
-// Google OAuth 시작
-export const startGoogleOAuth = async (event: Electron.IpcMainEvent) => {
+export const loginGoogleOAuth = async () => {
   const { codeVerifier, codeChallenge } = generatePKCE();
   let redirectUri = '';
 
-  try {
-    const authCode = await startAuthServer((listeningRedirectUri) => {
-      redirectUri = listeningRedirectUri;
+  const authCode = await startAuthServer((listeningRedirectUri) => {
+    redirectUri = listeningRedirectUri;
 
-      const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-      authUrl.searchParams.append('client_id', CLIENT_ID!);
-      authUrl.searchParams.append('redirect_uri', redirectUri);
-      authUrl.searchParams.append('response_type', 'code');
-      authUrl.searchParams.append('scope', SCOPES);
-      authUrl.searchParams.append('code_challenge', codeChallenge);
-      authUrl.searchParams.append('code_challenge_method', 'S256');
-      authUrl.searchParams.append('access_type', 'offline');
+    const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    authUrl.searchParams.append('client_id', CLIENT_ID!);
+    authUrl.searchParams.append('redirect_uri', redirectUri);
+    authUrl.searchParams.append('response_type', 'code');
+    authUrl.searchParams.append('scope', SCOPES);
+    authUrl.searchParams.append('code_challenge', codeChallenge);
+    authUrl.searchParams.append('code_challenge_method', 'S256');
+    authUrl.searchParams.append('access_type', 'offline');
+    shell.openExternal(authUrl.toString());
+  });
 
-      shell.openExternal(authUrl.toString());
-    });
-
-    const tokens = await fetchAccessTokens(authCode, codeVerifier, redirectUri);
-    if (tokens.refresh_token) {
-      await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokens.refresh_token);
-    }
-
-    event.sender.send('google-oauth-success', tokens);
-  } catch (error) {
-    console.error('OAuth Error:', error);
-    event.sender.send('google-oauth-error', error instanceof Error ? error.message : String(error));
+  const tokens = await fetchAccessTokens(authCode, codeVerifier, redirectUri);
+  if (tokens.refresh_token) {
+    await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokens.refresh_token);
   }
+  accessToken = tokens.access_token;
 };
