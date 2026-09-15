@@ -1,7 +1,7 @@
 {
   "name": "mirinae",
   "productName": "Mirinae",
-  "version": "0.5.1",
+  "version": "1.0.0",
   "description": "미리내",
   "main": "./out/main/index.js",
   "author": "Mirinae",
@@ -24,7 +24,9 @@
     "publish": "npm run build:win && electron-builder --publish always",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
+    "chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
+    "ota:stage": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/ota.mjs",
+    "ota:publish": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/ota.mjs --publish"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",

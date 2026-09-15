@@ -11,6 +11,11 @@ export function startActiveWindowWatcher(mainWindow: BrowserWindow) {
     return;
   }
 
+  // 리로드된 페이지는 disable-click 상태를 모르므로 다음 틱에 다시 보낸다
+  mainWindow.webContents.on('did-finish-load', () => {
+    lastIsExplorer = undefined;
+  });
+
   windowCheckInterval = setInterval(async () => {
     try {
       const window = await activeWindow();

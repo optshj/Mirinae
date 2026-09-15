@@ -1,5 +1,16 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { electronAPI } from '@electron-toolkit/preload';
+
+// 설정 이관(docs/renderer-ota-plan.md 2.2). 앱 코드보다 먼저 실행돼야 하므로 최상단에 둔다.
+// 재시도할 때 사용자가 새 origin에서 바꾼 값을 덮지 않도록 없는 키만 넣는다.
+try {
+  const legacyStorage: Array<[string, string]> | null = ipcRenderer.sendSync('take-legacy-storage');
+  if (legacyStorage) {
+    for (const [key, value] of legacyStorage) if (localStorage.getItem(key) === null) localStorage.setItem(key, value);
+    ipcRenderer.send('legacy-storage-applied');
+  }
+} catch (error) {
+  console.error('설정 이관 실패', error);
+}
 
 export interface WindowBounds {
   x: number;
@@ -14,6 +25,9 @@ export interface UpdateInfo {
 }
 
 export interface Api {
+  platform: string;
+  rendererReady: () => void;
+
   openExternal: (url: string) => void;
   getAppVersion: () => Promise<string>;
 
@@ -48,6 +62,9 @@ export interface Api {
 }
 
 const api = {
+  platform: process.platform,
+  rendererReady: () => ipcRenderer.send('renderer-ready'),
+
   openExternal: (url: string) => ipcRenderer.send('open-external', url),
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
 
@@ -105,12 +122,10 @@ const api = {
 // context isolation is enabled, otherwise just add to the DOM global.
 if (process.contextIsolated) {
   try {
-    contextBridge.exposeInMainWorld('electron', electronAPI);
     contextBridge.exposeInMainWorld('api', api);
   } catch (error) {
     console.error(error);
   }
 } else {
-  window.electron = electronAPI;
   window.api = api;
 }

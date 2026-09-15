@@ -1,5 +1,5 @@
 import { app, BrowserWindow, screen } from 'electron';
-import { electronApp, optimizer, is } from '@electron-toolkit/utils';
+import { electronApp, optimizer } from '@electron-toolkit/utils';
 import { attach } from 'electron-as-wallpaper';
 import AutoLaunch from 'auto-launch';
 import { join } from 'path';
@@ -9,9 +9,15 @@ import { registerIPCHandlers } from './ipcHandler';
 import { store } from './store';
 import { checkVersionAndShowPatchNotes } from './versionCheck';
 import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindow';
+import { handleRendererProtocol, loadRenderer, registerRendererScheme } from './rendererUpdate';
+import { migrateLegacyStorage } from './legacyStorage';
 import * as Sentry from '@sentry/electron/main';
 
 const SERVICE_NAME = 'Mirinae';
+
+// 프로세스가 둘이면 OTA 상태와 번들 폴더를 서로 덮어쓴다. 아무것도 하기 전에 종료한다
+if (!app.requestSingleInstanceLock()) process.exit(0);
+registerRendererScheme();
 
 export let mainWindow: BrowserWindow;
 let isWindowAttached = false;
@@ -84,27 +90,29 @@ function createWindow(): void {
     }
   });
 
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
-  }
+  // 창 안에서 다른 페이지로 이동하지 않는다. 외부 링크는 openExternal만 쓴다
+  mainWindow.webContents.on('will-navigate', (event) => event.preventDefault());
+  mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.mirinae');
   app.on('browser-window-created', (_, window) => optimizer.watchWindowShortcuts(window));
 
+  handleRendererProtocol();
   createWindow();
   initTray();
-  initAutoUpdater();
   registerIPCHandlers();
+  await migrateLegacyStorage();
+  loadRenderer(mainWindow);
+  initAutoUpdater();
   checkVersionAndShowPatchNotes();
   startActiveWindowWatcher(mainWindow);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
+      loadRenderer(mainWindow);
     }
   });
 });

@@ -13,3 +13,6 @@ GEMINI.md
 
 *storybook.log
 storybook-static
+
+# 렌더러 OTA 서명 키
+*.pem
