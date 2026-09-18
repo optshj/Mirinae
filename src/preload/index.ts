@@ -1,17 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
-// 설정 이관(docs/renderer-ota-plan.md 2.2). 앱 코드보다 먼저 실행돼야 하므로 최상단에 둔다.
-// 재시도할 때 사용자가 새 origin에서 바꾼 값을 덮지 않도록 없는 키만 넣는다.
-try {
-  const legacyStorage: Array<[string, string]> | null = ipcRenderer.sendSync('take-legacy-storage');
-  if (legacyStorage) {
-    for (const [key, value] of legacyStorage) if (localStorage.getItem(key) === null) localStorage.setItem(key, value);
-    ipcRenderer.send('legacy-storage-applied');
-  }
-} catch (error) {
-  console.error('설정 이관 실패', error);
-}
-
 export interface WindowBounds {
   x: number;
   y: number;
@@ -52,9 +40,6 @@ export interface Api {
   getInitialOpacity: () => Promise<number>;
 
   onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void;
-
-  onShowPatchNotes: (callback: () => void) => () => void;
-
   onUpdateAvailable: (callback: (info: UpdateInfo) => void) => () => void;
   onUpdateDownloaded: (callback: (info: UpdateInfo) => void) => () => void;
   installUpdate: () => void;
@@ -92,18 +77,11 @@ const api = {
   setNotificationLeadMinutes: (value: number) => ipcRenderer.send('set-notification-lead-minutes', value),
   showNotification: (payload: { title: string; body: string }) => ipcRenderer.send('show-notification', payload),
 
-  onShowPatchNotes: (callback) => {
-    const listener = (_, ...args) => callback(...args);
-    ipcRenderer.on('show-patch-notes', listener);
-    return () => ipcRenderer.removeListener('show-patch-notes', listener);
-  },
-
   onUpdateClickable: (callback: (isExplorer: boolean) => void) => {
     const listener = (_, isExplorer: boolean) => callback(isExplorer);
     ipcRenderer.on('update-clickable', listener);
     return () => ipcRenderer.removeListener('update-clickable', listener);
   },
-
   onUpdateAvailable: (callback) => {
     const listener = (_, info) => callback(info);
     ipcRenderer.on('update-available', listener);

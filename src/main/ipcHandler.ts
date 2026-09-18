@@ -3,7 +3,7 @@ import { attach, detach } from 'electron-as-wallpaper';
 import log from 'electron-log';
 import { mainWindow, getVirtualScreenOffset } from '.';
 import { restoreSession, logoutGoogleOAuth, loginGoogleOAuth, googleRequest } from './oauth';
-import { RENDERER_URL_PREFIX } from './rendererUpdate';
+import { RENDERER_URL_PREFIX } from './bundleUpdate';
 import { store } from './store';
 
 // 앱 렌더러의 메인 프레임에서 온 요청만 믿는다. 커스텀 스킴은 URL.origin이 "null"이라 접두사로 비교한다

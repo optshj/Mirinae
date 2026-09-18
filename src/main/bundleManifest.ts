@@ -1,5 +1,3 @@
-// 렌더러 OTA manifest 검증 (docs/renderer-ota-plan.md 2.6).
-// electron을 import하지 않는다 — vitest와 scripts/ota.mjs(Node 타입 스트리핑)에서 그대로 쓴다.
 import { createHash, createPublicKey, verify } from 'crypto';
 import { isAbsolute, relative, resolve, sep } from 'path';
 

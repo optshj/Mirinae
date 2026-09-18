@@ -17,7 +17,6 @@ function EventNotifications() {
 }
 
 export default function App() {
-  // 렌더러 OTA 부팅 성공 신호. 루트가 커밋되면 정상 렌더다 — 루트에 ErrorBoundary/Suspense를 넣으면 호출 위치를 옮길 것
   useEffect(() => window.api.rendererReady(), []);
 
   return (

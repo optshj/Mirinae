@@ -7,15 +7,12 @@ import { initTray } from './tray';
 import { initAutoUpdater } from './autoUpdate';
 import { registerIPCHandlers } from './ipcHandler';
 import { store } from './store';
-import { checkVersionAndShowPatchNotes } from './versionCheck';
 import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindow';
-import { handleRendererProtocol, loadRenderer, registerRendererScheme } from './rendererUpdate';
-import { migrateLegacyStorage } from './legacyStorage';
+import { handleRendererProtocol, loadRenderer, registerRendererScheme } from './bundleUpdate';
 import * as Sentry from '@sentry/electron/main';
 
 const SERVICE_NAME = 'Mirinae';
 
-// 프로세스가 둘이면 OTA 상태와 번들 폴더를 서로 덮어쓴다. 아무것도 하기 전에 종료한다
 if (!app.requestSingleInstanceLock()) process.exit(0);
 registerRendererScheme();
 
@@ -28,7 +25,6 @@ new AutoLaunch({
   path: process.execPath
 }).enable();
 
-// main 프로세스의 관측(네이티브 크래시 + JS 예외)은 Sentry 전담.
 Sentry.init({
   dsn: 'https://e14a01e7695b60bc88127406d382c174@o4511528205615104.ingest.us.sentry.io/4511528463630336',
   enableLogs: true
@@ -90,12 +86,11 @@ function createWindow(): void {
     }
   });
 
-  // 창 안에서 다른 페이지로 이동하지 않는다. 외부 링크는 openExternal만 쓴다
   mainWindow.webContents.on('will-navigate', (event) => event.preventDefault());
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
 }
 
-app.whenReady().then(async () => {
+app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.mirinae');
   app.on('browser-window-created', (_, window) => optimizer.watchWindowShortcuts(window));
 
@@ -103,10 +98,8 @@ app.whenReady().then(async () => {
   createWindow();
   initTray();
   registerIPCHandlers();
-  await migrateLegacyStorage();
   loadRenderer(mainWindow);
   initAutoUpdater();
-  checkVersionAndShowPatchNotes();
   startActiveWindowWatcher(mainWindow);
 
   app.on('activate', () => {
