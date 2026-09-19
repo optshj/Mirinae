@@ -58,7 +58,7 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
 
   return (
     <div className="bg-surface flex flex-col overflow-hidden rounded-b-lg">
-      <div className="border-primary grid grid-cols-7 border-b pb-2.5 text-center text-sm leading-none font-medium">
+      <div className="border-surface grid grid-cols-7 border-b pb-2.5 text-center text-sm leading-none font-medium">
         <div className="text-red-400" aria-label="일요일">
           일
         </div>

@@ -96,6 +96,10 @@ body {
 @utility border-primary {
   border-color: var(--color-border-primary);
 }
+/* bg-surface와 같은 투명도를 따르는 보더색 */
+@utility border-surface {
+  border-color: color-mix(in srgb, var(--color-border-primary) calc(var(--bg-opacity, 1) * 100%), transparent);
+}
 @utility text-depend {
   color: var(--color-text-depend);
 }

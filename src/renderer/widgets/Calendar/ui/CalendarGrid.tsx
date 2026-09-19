@@ -106,7 +106,7 @@ function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidayDates,
           <div
             key={dateKey}
             data-date={dateKey}
-            className={cn('border-primary flex h-full w-full flex-col overflow-hidden border', isDropPreview && 'bg-main-color/10')}
+            className={cn('border-surface flex h-full w-full flex-col overflow-hidden border', isDropPreview && 'bg-main-color/10')}
             onDoubleClick={() => onPickDate(date)}
           >
             <div className={`grid grid-cols-[1fr_auto_1fr] items-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
