@@ -58,7 +58,6 @@ export const registerIPCHandlers = () => {
       width,
       height
     };
-
     mainWindow.setBounds(finalBounds);
     store.set('window-bounds', finalBounds);
 
