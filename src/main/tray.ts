@@ -48,9 +48,6 @@ export function initTray() {
 
         store.set('window-bounds', bounds);
         mainWindow.setBounds(bounds);
-
-        store.set('window-opacity', 1);
-        mainWindow.setOpacity(1);
       }
     },
     { type: 'separator' },

@@ -80,6 +80,10 @@ body {
 @utility bg-primary {
   background-color: var(--color-background-primary);
 }
+/* bg-opacity 기반의 투명도 적용 배경색 */
+@utility bg-surface {
+  background-color: color-mix(in srgb, var(--color-background-primary) calc(var(--bg-opacity, 1) * 100%), transparent);
+}
 @utility text-primary {
   color: var(--color-text-primary);
 }

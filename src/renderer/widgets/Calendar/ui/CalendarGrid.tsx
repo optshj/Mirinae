@@ -32,7 +32,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
   const monthSegments = useMemo(() => buildMonthSegments(items, weekRanges, maxLanes), [items, weekRanges, maxLanes]);
 
   return (
-    <div className="bg-primary flex flex-1 flex-col overflow-hidden rounded-xl">
+    <div className="bg-surface flex flex-1 flex-col overflow-hidden rounded-xl">
       <div className="bg-background-primary grid grid-cols-7 py-2 text-center">
         <div className="text-red-400" aria-label="일요일">
           일
