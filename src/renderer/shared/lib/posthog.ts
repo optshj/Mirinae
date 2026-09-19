@@ -10,4 +10,6 @@ posthog.init(import.meta.env.VITE_POSTHOG_API_KEY, {
   disable_external_dependency_loading: true
 });
 
+posthog.register({ bundle_build: import.meta.env.VITE_BUNDLE_BUILD ?? 'embedded' });
+
 export { posthog };

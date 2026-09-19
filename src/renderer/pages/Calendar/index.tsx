@@ -5,7 +5,6 @@ import { Header } from '@/widgets/Header';
 import { Footer } from '@/widgets/Footer';
 import { CalendarGrid, MiniCalendarGrid } from '@/widgets/Calendar';
 import { MoveProvider } from '@/features/move';
-import { PatchNoteModal } from '@/entities/patchNote';
 import { UpdateNotification } from '@/entities/update';
 
 export function Calendar() {
@@ -27,7 +26,6 @@ export function Calendar() {
         <div className="hidden [html.mini-view_&]:block">
           <MiniCalendarGrid days={days} month={month} />
         </div>
-        <PatchNoteModal />
         <UpdateNotification />
       </div>
     </MoveProvider>

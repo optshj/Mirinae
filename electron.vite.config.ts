@@ -8,7 +8,7 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  return {
+  const config = {
     main: {
       build: {
         sourcemap: true
@@ -54,4 +54,5 @@ export default defineConfig(({ mode }) => {
       ]
     }
   };
+  return process.env.VITE_BUNDLE_BUILD ? { renderer: config.renderer } : config;
 });

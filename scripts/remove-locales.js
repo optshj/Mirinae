@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import { path } from 'path';
+import fs from 'fs';
 
 module.exports = async function (context) {
   const resourcesDir = context.appOutDir;
@@ -13,6 +13,5 @@ module.exports = async function (context) {
       fs.unlinkSync(path.join(localesDir, file));
     }
   });
-
   console.log('locales trimmed');
 };

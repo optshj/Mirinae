@@ -1,5 +1,5 @@
 import { app, BrowserWindow, screen } from 'electron';
-import { electronApp, optimizer, is } from '@electron-toolkit/utils';
+import { electronApp, optimizer } from '@electron-toolkit/utils';
 import { attach } from 'electron-as-wallpaper';
 import AutoLaunch from 'auto-launch';
 import { join } from 'path';
@@ -7,11 +7,14 @@ import { initTray } from './tray';
 import { initAutoUpdater } from './autoUpdate';
 import { registerIPCHandlers } from './ipcHandler';
 import { store } from './store';
-import { checkVersionAndShowPatchNotes } from './versionCheck';
 import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindow';
+import { handleRendererProtocol, loadRenderer, registerRendererScheme } from './bundleUpdate';
 import * as Sentry from '@sentry/electron/main';
 
 const SERVICE_NAME = 'Mirinae';
+
+if (!app.requestSingleInstanceLock()) process.exit(0);
+registerRendererScheme();
 
 export let mainWindow: BrowserWindow;
 let isWindowAttached = false;
@@ -22,7 +25,6 @@ new AutoLaunch({
   path: process.execPath
 }).enable();
 
-// main 프로세스의 관측(네이티브 크래시 + JS 예외)은 Sentry 전담.
 Sentry.init({
   dsn: 'https://e14a01e7695b60bc88127406d382c174@o4511528205615104.ingest.us.sentry.io/4511528463630336',
   enableLogs: true
@@ -84,27 +86,26 @@ function createWindow(): void {
     }
   });
 
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
-  }
+  mainWindow.webContents.on('will-navigate', (event) => event.preventDefault());
+  mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
 }
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.mirinae');
   app.on('browser-window-created', (_, window) => optimizer.watchWindowShortcuts(window));
 
+  handleRendererProtocol();
   createWindow();
   initTray();
-  initAutoUpdater();
   registerIPCHandlers();
-  checkVersionAndShowPatchNotes();
+  loadRenderer(mainWindow);
+  initAutoUpdater();
   startActiveWindowWatcher(mainWindow);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
+      loadRenderer(mainWindow);
     }
   });
 });
