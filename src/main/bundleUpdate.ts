@@ -3,7 +3,7 @@ import { is } from '@electron-toolkit/utils';
 import log from 'electron-log';
 import { randomUUID } from 'crypto';
 import { mkdir, readdir, readFile, rename, rm, stat, writeFile } from 'fs/promises';
-import { dirname, join } from 'path';
+import { basename, dirname, join } from 'path';
 import { pathToFileURL } from 'url';
 import { isTrustedSender } from './ipcHandler';
 import { MANIFEST_MAX_BYTES, readManifest, safeJoin, sha256 } from './bundleManifest';
@@ -17,14 +17,14 @@ const APP_URL = 'mirinae://app/';
 const DEV_URL = is.dev ? process.env['ELECTRON_RENDERER_URL'] : undefined;
 export const RENDERER_URL_PREFIX = DEV_URL ?? APP_URL;
 
-const BUNDLE_ENABLED = app.isPackaged; // dev·preview에서는 번들 업데이트 실행 안 함
 const GITHUB_RELEASE_BASE = 'https://github.com/optshj/mirinae-renderer/releases/download';
 const MANIFEST_URL = `${GITHUB_RELEASE_BASE}/shell-${app.getVersion()}/manifest.json`;
 const fileUrl = (build: number, hash: string) => `${GITHUB_RELEASE_BASE}/bundle-${build}/${hash}`;
 const EMBEDDED_ROOT = join(__dirname, '../renderer');
 const MANIFEST_FILE = '.manifest.json';
 const BOOT_TIMEOUT_MS = 10_000;
-const UPDATE_CHECK_DELAY_MS = 30_000;
+const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000; // 1시간
+const UPDATE_CHECK_TIMEOUT_MS = 10 * 60 * 1000; // 확인 한 번의 시간 제한. 확인 간격보다 짧아야 한다
 
 type BundleState = {
   shellVersion: string; // 현재 셸과 다르면 전체 초기화
@@ -42,12 +42,12 @@ const buildDir = (build: number) => join(bundleRoot(), String(build));
 
 export const registerRendererScheme = () => protocol.registerSchemesAsPrivileged([{ scheme: 'mirinae', privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
 
-let served: { root: string; files?: Set<string> } = { root: EMBEDDED_ROOT };
-
-const respond = (status: number) => new Response(null, { status, headers: { 'Cache-Control': 'no-store' } });
+let served: { root: string; files?: Set<string> } = { root: EMBEDDED_ROOT }; // 현재 제공중인 번들
 
 export const handleRendererProtocol = () =>
   protocol.handle('mirinae', async (request) => {
+    const respond = (status: number) => new Response(null, { status, headers: { 'Cache-Control': 'no-store' } });
+
     if (request.method !== 'GET') return respond(405);
     const url = new URL(request.url);
     if (url.host !== 'app') return respond(404);
@@ -83,37 +83,26 @@ const loadEmbedded = (win: BrowserWindow) => {
 
 let booted = false;
 
-export async function loadRenderer(win: BrowserWindow) {
-  if (DEV_URL) return void win.loadURL(DEV_URL);
-  if (booted || !BUNDLE_ENABLED) return void loadServed(win);
+export function loadRenderer(win: BrowserWindow) {
+  if (DEV_URL) return void win.loadURL(DEV_URL); // Dev에서는 개발 서버를 바로 띄운다
+  if (!app.isPackaged) return void loadServed(win); // Preview에서는 내장 렌더러를 띄운다
+  if (booted) return void loadServed(win); // macOS activate로 창을 다시 만들 때는 지금 served로 다시 로드만 한다
   booted = true;
-  setTimeout(checkForUpdate, UPDATE_CHECK_DELAY_MS);
+  checkUpdate(); // 부팅 시 업데이트 확인
+  setInterval(checkUpdate, UPDATE_CHECK_INTERVAL_MS); // 매 시간마다 업데이트 확인
+  bootLatest(win);
+}
 
+async function bootLatest(win: BrowserWindow) {
   const { build } = readState();
-  if (build === 0) return loadEmbedded(win); // 아직 받은 build가 없으면 내장 렌더러로 부팅
-  const files = await verifyBuild(build);
-  if (!files) return loadEmbedded(win); // 검증 실패하면 내장 렌더러로 부팅
+  if (build === 0) return loadEmbedded(win); // 아직 받은 build가 없을 시, 내장 렌더러로 부팅
+  const files = await verifyBuild(build); // 빌드 유효성 검증
+  if (!files) return loadEmbedded(win); // 검증 실패 시, 내장 렌더러로 부팅
 
   served = { root: buildDir(build), files };
-  watchBoot(win, build, `${APP_URL}index.html?attempt=${randomUUID()}`);
-}
 
-async function verifyBuild(build: number) {
-  const dir = buildDir(build);
-  try {
-    const manifest = readManifest(await readFile(join(dir, MANIFEST_FILE), 'utf8'), PUBLIC_KEY, app.getVersion());
-    if (manifest.build !== build) throw new Error(`빌드 번호 불일치: ${manifest.build}`);
-    for (const [path, file] of Object.entries(manifest.files)) {
-      if (sha256(await readFile(join(dir, path))) !== file.sha256) throw new Error(`해시 불일치: ${path}`);
-    }
-    return new Set(Object.keys(manifest.files));
-  } catch (error) {
-    log.warn(`[BundleUpdate] build ${build} 재검증 실패, 내장 렌더러로 부팅`, error);
-    return null;
-  }
-}
-
-function watchBoot(win: BrowserWindow, build: number, url: string) {
+  // 이 번들이 실제로 화면까지 뜨는지 감시한다
+  const url = `${APP_URL}index.html?attempt=${randomUUID()}`;
   const { webContents } = win;
   let settled = false;
   let timer: NodeJS.Timeout | undefined;
@@ -169,8 +158,23 @@ function watchBoot(win: BrowserWindow, build: number, url: string) {
   loadServed(win, url);
 }
 
-async function download(url: string, maxBytes: number) {
-  const response = await net.fetch(url, { cache: 'no-store' });
+async function verifyBuild(build: number) {
+  const dir = buildDir(build);
+  try {
+    const manifest = readManifest(await readFile(join(dir, MANIFEST_FILE), 'utf8'), PUBLIC_KEY, app.getVersion());
+    if (manifest.build !== build) throw new Error(`빌드 번호 불일치: ${manifest.build}`);
+    for (const [path, file] of Object.entries(manifest.files)) {
+      if (sha256(await readFile(join(dir, path))) !== file.sha256) throw new Error(`해시 불일치: ${path}`);
+    }
+    return new Set(Object.keys(manifest.files));
+  } catch (error) {
+    log.warn(`[BundleUpdate] build ${build} 재검증 실패, 내장 렌더러로 부팅`, error);
+    return null;
+  }
+}
+
+async function download(url: string, maxBytes: number, signal: AbortSignal) {
+  const response = await net.fetch(url, { cache: 'no-store', signal }); // signal이 끊기면 응답 대기·본문 읽기 모두 에러로 끝난다
   if (!response.ok) throw Object.assign(new Error(`HTTP ${response.status}: ${url}`), { status: response.status });
   const chunks: Uint8Array[] = [];
   let size = 0;
@@ -184,18 +188,19 @@ async function download(url: string, maxBytes: number) {
   return Buffer.concat(chunks);
 }
 
-// 지금 build 폴더만 남긴다. 옛 build와 중단된 .download 폴더가 여기서 지워진다
-async function removeUnusedBuilds() {
-  const keep = String(readState().build);
-  const names = await readdir(bundleRoot()).catch(() => [] as string[]);
-  await Promise.all(names.filter((name) => name !== keep).map((name) => rm(join(bundleRoot(), name), { recursive: true, force: true })));
-}
+let checking = false;
 
-async function checkForUpdate() {
+async function checkUpdate() {
+  if (checking) return; // 이전 확인이 아직 진행 중이면 건너뛴다. 겹치면 서로의 .download 폴더를 지운다
+  checking = true;
+  const signal = AbortSignal.timeout(UPDATE_CHECK_TIMEOUT_MS); // 멈춘 요청 때문에 확인이 끝나지 않는 걸 막는다
   try {
-    await removeUnusedBuilds();
+    // 최신 build와 이번 실행이 화면에 쓰는 폴더만 남긴다. 옛 build와 중단된 .download 폴더가 여기서 지워진다
+    const keep = [String(readState().build), basename(served.root)];
+    const names = await readdir(bundleRoot()).catch(() => []);
+    await Promise.all(names.filter((name) => !keep.includes(name)).map((name) => rm(join(bundleRoot(), name), { recursive: true, force: true })));
 
-    const raw = await download(MANIFEST_URL, MANIFEST_MAX_BYTES).catch((error) => {
+    const raw = await download(MANIFEST_URL, MANIFEST_MAX_BYTES, signal).catch((error) => {
       if (error.status === 404) return null;
       throw error;
     });
@@ -203,12 +208,12 @@ async function checkForUpdate() {
 
     const text = raw.toString('utf8');
     const { build, files } = readManifest(text, PUBLIC_KEY, app.getVersion());
-    if (build <= readState().build) return;
+    if (build <= readState().build) return; // 다운그레이드 방지
 
     // 다 받고 이름을 바꾸기 전까지는 완성된 build로 보이지 않는다
     const temp = `${buildDir(build)}.download`;
     for (const [path, file] of Object.entries(files)) {
-      const data = await download(fileUrl(build, file.sha256), file.size);
+      const data = await download(fileUrl(build, file.sha256), file.size, signal);
       if (sha256(data) !== file.sha256) throw new Error(`해시 불일치: ${path}`);
       const dest = join(temp, path);
       await mkdir(dirname(dest), { recursive: true });
@@ -217,11 +222,12 @@ async function checkForUpdate() {
     await writeFile(join(temp, MANIFEST_FILE), text);
     await rename(temp, buildDir(build));
 
-    // 이번 세션은 이미 로드한 폴더를 계속 쓰고, 옛 폴더는 다음 실행의 정리 때 지워진다
-    store.set('bundle-update', { shellVersion: app.getVersion(), build } satisfies BundleState);
+    store.set('bundle-update', { shellVersion: app.getVersion(), build });
     log.info(`[BundleUpdate] build ${build} 받음, 다음 실행에 적용`);
   } catch (error) {
-    // 네트워크·서명·해시 실패는 다음 실행에서 재시도한다. 중단된 .download 폴더는 다음 확인 때 지워진다
+    // 네트워크·시간 초과·서명·해시 실패는 다음 확인 때 재시도한다. 중단된 .download 폴더는 다음 확인 때 지워진다
     log.warn('[BundleUpdate] 업데이트 확인 실패', error);
+  } finally {
+    checking = false;
   }
 }

@@ -6,7 +6,6 @@ import { restoreSession, logoutGoogleOAuth, loginGoogleOAuth, googleRequest } fr
 import { RENDERER_URL_PREFIX } from './bundleUpdate';
 import { store } from './store';
 
-// 앱 렌더러의 메인 프레임에서 온 요청만 믿는다. 커스텀 스킴은 URL.origin이 "null"이라 접두사로 비교한다
 export const isTrustedSender = (event: IpcMainEvent | IpcMainInvokeEvent) => {
   const frame = event.senderFrame;
   return event.sender === mainWindow?.webContents && frame !== null && frame.parent === null && frame.url.startsWith(RENDERER_URL_PREFIX);
