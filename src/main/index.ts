@@ -40,7 +40,6 @@ export const getVirtualScreenOffset = () => {
 function createWindow(): void {
   const { height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
   const savedBounds = store.get('window-bounds');
-  const savedOpacity = store.get('window-opacity');
 
   mainWindow = new BrowserWindow({
     x: savedBounds.x,
@@ -67,7 +66,6 @@ function createWindow(): void {
   });
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.setOpacity(savedOpacity);
     mainWindow.setMenu(null);
     mainWindow.show();
     if (!isWindowAttached) {

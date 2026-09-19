@@ -22,7 +22,7 @@ export function FooterEvent({ items, title, description, headerButton }: FooterE
   const handleScrollDown = () => canScrollDown && setVisibleStartIndex((prev) => prev + 1);
 
   return (
-    <section className="bg-primary rounded-xl p-4">
+    <section className="bg-surface rounded-xl p-4">
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h3 className="text-primary font-semibold whitespace-nowrap">{title}</h3>

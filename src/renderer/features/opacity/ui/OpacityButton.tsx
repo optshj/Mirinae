@@ -1,23 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { posthog } from '@/shared/lib/posthog';
 
 export function OpacityButton() {
-  const [opacity, setOpacity] = useState(1.0);
-
-  useEffect(() => {
-    async function fetchOpacity() {
-      const initialOpacity = await window.api.getInitialOpacity();
-      setOpacity(initialOpacity);
-    }
-    fetchOpacity();
-  }, []);
+  const [opacity, setOpacity] = useState(() => Number(localStorage.getItem('bgOpacity') ?? 1));
 
   const changeOpacity = (delta: number) => {
-    const newOpacity = Math.min(Math.max(opacity + delta, 0.2), 1.0);
+    const newOpacity = Math.min(Math.max(opacity + delta, 0), 1.0);
     setOpacity(newOpacity);
-    window.api.setOpacity(newOpacity);
+    localStorage.setItem('bgOpacity', String(newOpacity));
+    document.documentElement.style.setProperty('--bg-opacity', String(newOpacity));
     posthog.capture('opacity_changed', { opacity: newOpacity });
   };
 

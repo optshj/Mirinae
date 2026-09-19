@@ -36,9 +36,6 @@ export interface Api {
 
   quitApp: () => void;
 
-  setOpacity: (opacity: number) => void;
-  getInitialOpacity: () => Promise<number>;
-
   onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void;
   onUpdateAvailable: (callback: (info: UpdateInfo) => void) => () => void;
   onUpdateDownloaded: (callback: (info: UpdateInfo) => void) => () => void;
@@ -67,9 +64,6 @@ const api = {
   stopDragging: () => ipcRenderer.invoke('stop-dragging'),
 
   quitApp: () => ipcRenderer.send('quit-app'),
-
-  setOpacity: (opacity: number) => ipcRenderer.send('set-opacity', opacity),
-  getInitialOpacity: () => ipcRenderer.invoke('get-initial-opacity'),
 
   getNotificationsEnabled: () => ipcRenderer.invoke('get-notifications-enabled'),
   setNotificationsEnabled: (value: boolean) => ipcRenderer.send('set-notifications-enabled', value),
