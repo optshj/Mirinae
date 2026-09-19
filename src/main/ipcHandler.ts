@@ -65,13 +65,6 @@ export const registerIPCHandlers = () => {
     return finalBounds;
   });
 
-  ipcMain.on('set-opacity', (_, newOpacity) => {
-    mainWindow.setOpacity(newOpacity);
-    store.set('window-opacity', newOpacity);
-  });
-
-  ipcMain.handle('get-initial-opacity', () => store.get('window-opacity'));
-
   // 일정 알림 활성화
   ipcMain.handle('get-notifications-enabled', () => store.get('notifications-enabled'));
   ipcMain.on('set-notifications-enabled', (_, value) => store.set('notifications-enabled', value));

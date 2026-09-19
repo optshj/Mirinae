@@ -32,7 +32,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
   const monthSegments = useMemo(() => buildMonthSegments(items, weekRanges, maxLanes), [items, weekRanges, maxLanes]);
 
   return (
-    <div className="bg-primary flex flex-1 flex-col overflow-hidden rounded-xl">
+    <div className="bg-surface flex flex-1 flex-col overflow-hidden rounded-xl">
       <div className="bg-background-primary grid grid-cols-7 py-2 text-center">
         <div className="text-red-400" aria-label="일요일">
           일
@@ -106,7 +106,7 @@ function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidayDates,
           <div
             key={dateKey}
             data-date={dateKey}
-            className={cn('border-primary flex h-full w-full flex-col overflow-hidden border', isDropPreview && 'bg-main-color/10')}
+            className={cn('border-surface flex h-full w-full flex-col overflow-hidden border', isDropPreview && 'bg-main-color/10')}
             onDoubleClick={() => onPickDate(date)}
           >
             <div className={`grid grid-cols-[1fr_auto_1fr] items-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>

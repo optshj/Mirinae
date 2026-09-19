@@ -21,7 +21,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
   return (
     <>
       <div
-        className="bg-primary text-primary mb-2 flex w-full flex-row items-center justify-between rounded-xl px-6 py-3 transition-all duration-300 ease-in-out [html.mini-view_&]:mb-0 [html.mini-view_&]:rounded-b-none [html.mini-view_&]:px-5 [html.mini-view_&]:py-3"
+        className="bg-surface text-primary mb-2 flex w-full flex-row items-center justify-between rounded-xl px-6 py-3 transition-all duration-300 ease-in-out [html.mini-view_&]:mb-0 [html.mini-view_&]:rounded-b-none [html.mini-view_&]:px-5 [html.mini-view_&]:py-3"
         style={dragStyle}
       >
         <div className="flex flex-row items-center p-2 [html.mini-view_&]:p-0" style={noDragStyle}>

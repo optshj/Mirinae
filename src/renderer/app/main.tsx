@@ -25,6 +25,9 @@ if (localStorage.getItem('miniView') === 'true') {
   document.documentElement.classList.add('mini-view');
 }
 
+document.documentElement.style.setProperty('--bg-opacity', localStorage.getItem('bgOpacity') ?? '1');
+posthog.capture('app_launched_bg_opacity', { bg_opacity: localStorage.getItem('bgOpacity') ?? '1' });
+
 window.api.getAppVersion().then((appVersion) => {
   posthog.capture('app_launched', { app_version: appVersion, platform: window.api.platform });
 });
