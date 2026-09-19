@@ -26,7 +26,7 @@ if (localStorage.getItem('miniView') === 'true') {
 }
 
 window.api.getAppVersion().then((appVersion) => {
-  posthog.capture('app_launched', { app_version: appVersion, platform: window.electron.process.platform });
+  posthog.capture('app_launched', { app_version: appVersion, platform: window.api.platform });
 });
 window.api.onUpdateAvailable(({ currentVersion, newVersion }) => {
   posthog.capture('update_available', { current_version: currentVersion, new_version: newVersion });

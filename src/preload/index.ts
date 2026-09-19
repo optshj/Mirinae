@@ -1,5 +1,4 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { electronAPI } from '@electron-toolkit/preload';
 
 export interface WindowBounds {
   x: number;
@@ -14,6 +13,9 @@ export interface UpdateInfo {
 }
 
 export interface Api {
+  platform: string;
+  rendererReady: () => void;
+
   openExternal: (url: string) => void;
   getAppVersion: () => Promise<string>;
 
@@ -38,9 +40,6 @@ export interface Api {
   getInitialOpacity: () => Promise<number>;
 
   onUpdateClickable: (callback: (isExplorer: boolean) => void) => () => void;
-
-  onShowPatchNotes: (callback: () => void) => () => void;
-
   onUpdateAvailable: (callback: (info: UpdateInfo) => void) => () => void;
   onUpdateDownloaded: (callback: (info: UpdateInfo) => void) => () => void;
   installUpdate: () => void;
@@ -48,6 +47,9 @@ export interface Api {
 }
 
 const api = {
+  platform: process.platform,
+  rendererReady: () => ipcRenderer.send('renderer-ready'),
+
   openExternal: (url: string) => ipcRenderer.send('open-external', url),
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
 
@@ -75,18 +77,11 @@ const api = {
   setNotificationLeadMinutes: (value: number) => ipcRenderer.send('set-notification-lead-minutes', value),
   showNotification: (payload: { title: string; body: string }) => ipcRenderer.send('show-notification', payload),
 
-  onShowPatchNotes: (callback) => {
-    const listener = (_, ...args) => callback(...args);
-    ipcRenderer.on('show-patch-notes', listener);
-    return () => ipcRenderer.removeListener('show-patch-notes', listener);
-  },
-
   onUpdateClickable: (callback: (isExplorer: boolean) => void) => {
     const listener = (_, isExplorer: boolean) => callback(isExplorer);
     ipcRenderer.on('update-clickable', listener);
     return () => ipcRenderer.removeListener('update-clickable', listener);
   },
-
   onUpdateAvailable: (callback) => {
     const listener = (_, info) => callback(info);
     ipcRenderer.on('update-available', listener);
@@ -105,12 +100,10 @@ const api = {
 // context isolation is enabled, otherwise just add to the DOM global.
 if (process.contextIsolated) {
   try {
-    contextBridge.exposeInMainWorld('electron', electronAPI);
     contextBridge.exposeInMainWorld('api', api);
   } catch (error) {
     console.error(error);
   }
 } else {
-  window.electron = electronAPI;
   window.api = api;
 }

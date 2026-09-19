@@ -1,18 +1,31 @@
-import { ipcMain, app, shell, Notification } from 'electron';
+import { ipcMain, app, shell, Notification, type IpcMainEvent, type IpcMainInvokeEvent } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
+import log from 'electron-log';
 import { mainWindow, getVirtualScreenOffset } from '.';
 import { restoreSession, logoutGoogleOAuth, loginGoogleOAuth, googleRequest } from './oauth';
+import { RENDERER_URL_PREFIX } from './bundleUpdate';
 import { store } from './store';
 
+export const isTrustedSender = (event: IpcMainEvent | IpcMainInvokeEvent) => {
+  const frame = event.senderFrame;
+  return event.sender === mainWindow?.webContents && frame !== null && frame.parent === null && frame.url.startsWith(RENDERER_URL_PREFIX);
+};
+
 export const registerIPCHandlers = () => {
-  ipcMain.on('open-external', (_, url) => shell.openExternal(url));
+  ipcMain.on('open-external', (event, url: unknown) => {
+    if (!isTrustedSender(event) || typeof url !== 'string' || !URL.canParse(url) || new URL(url).protocol !== 'https:') return;
+    shell.openExternal(url).catch((error) => log.warn('[IPC] openExternal 실패', url, error));
+  });
 
   ipcMain.handle('get-app-version', () => app.getVersion());
 
   ipcMain.handle('restore-session', restoreSession);
   ipcMain.handle('logout-google-oauth', logoutGoogleOAuth);
   ipcMain.handle('login-google-oauth', loginGoogleOAuth);
-  ipcMain.handle('google-request', googleRequest);
+  ipcMain.handle('google-request', (event, url: string, init?: { method?: string; body?: string }) => {
+    if (!isTrustedSender(event)) throw new Error('허용되지 않은 발신자입니다');
+    return googleRequest(event, url, init);
+  });
 
   ipcMain.on('quit-app', () => app.quit());
 
