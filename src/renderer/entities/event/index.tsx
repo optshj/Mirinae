@@ -11,4 +11,5 @@ export { useCalendarItems } from './hooks/useCalendarItems';
 export { MaxLanesProvider, useMaxLanes } from './context/MaxLanesContext';
 export { HolidayProvider, useHoliday } from './context/HolidayContext';
 export { ColorFilterProvider, useColorFilter } from './context/ColorFilterContext';
+export { useColorLabels } from './hooks/useColorLabels';
 export * from './lib/eventLayout';
