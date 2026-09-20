@@ -138,10 +138,5 @@ export function HangulInput({ value, onChange, ...props }: HangulInputProps) {
     cursorRef.current = start + pastedText.length;
   };
 
-  return (
-    <div className="relative w-full">
-      <input spellCheck={false} ref={inputRef} {...props} value={value} onKeyDown={handleKeyDown} onPaste={handlePaste} autoComplete="off" />
-      <div className="absolute top-1/2 right-4 -translate-y-1/2 rounded border px-1 text-xs text-gray-400">{inputMode === 'ko' ? '한' : 'A'}</div>
-    </div>
-  );
+  return <input spellCheck={false} ref={inputRef} {...props} value={value} onKeyDown={handleKeyDown} onPaste={handlePaste} autoComplete="off" />;
 }

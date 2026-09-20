@@ -2,6 +2,7 @@ export { HolidayButton } from './ui/HolidayButton';
 export { MaxLanesButton } from './ui/MaxLanesButton';
 export { ColorFilterButton } from './ui/ColorFilterButton';
 export { PaletteSetButton } from './ui/PaletteSetButton';
+export { ColorLabelButton } from './ui/ColorLabelButton';
 
 export { AddEventForm } from './ui/AddEventForm';
 export { CompleteEventButton } from './ui/CompleteEventButton';
