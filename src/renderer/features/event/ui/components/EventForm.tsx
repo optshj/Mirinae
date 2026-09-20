@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Check } from 'lucide-react';
 
 import { HangulInput } from '@/shared/ui/input';
 import { Switch } from '@/shared/ui/switch';
 import { Kbd } from '@/shared/ui/kbd';
 import { Tooltip } from '@/shared/ui/tooltip';
 import { RangePicker } from '@/shared/ui/range-picker';
-import { COLORPALLETTE } from '@/shared/const/color';
 
+import { ColorChips } from './ColorChips';
 import { LinearSlider } from './LinearSlider';
 import { FormState, RecurrenceType } from '../../types/FormType';
 
@@ -83,7 +82,7 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
           <HangulInput
             id="summary"
             placeholder="제목을 입력하세요"
-            className={`text-primary w-full border-b py-2 pr-20 text-base font-medium dark:saturate-70`}
+            className={`text-primary w-full border-b py-2 text-base font-medium dark:saturate-70`}
             type="text"
             value={form.summary}
             onChange={(newSummary) => updateForm('summary', newSummary)}
@@ -136,18 +135,7 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
           {/** 색상 */}
           <div className="flex items-start">
             <span className="text-secondary w-10 shrink-0 pt-1 text-sm font-medium">색상</span>
-            <div className="grid flex-1 grid-cols-6 justify-items-center gap-y-2">
-              {COLORPALLETTE.map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  className={`flex h-6 w-6 items-center justify-center rounded-full transition-transform hover:scale-115 dark:saturate-70 event-color-${key} bg-(--event-color)`}
-                  onClick={() => updateForm('colorId', key)}
-                >
-                  {form.colorId === key && <Check className="text-white" strokeWidth={3} size={15} />}
-                </button>
-              ))}
-            </div>
+            <ColorChips className="flex-1" isSelected={(key) => form.colorId === key} onSelect={(key) => updateForm('colorId', key)} naming={form.colorId} />
           </div>
 
           {/** 버튼 */}

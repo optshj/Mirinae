@@ -8,7 +8,7 @@ import { AskButton } from '@/features/ask';
 import { OpacityButton } from '@/features/opacity';
 import { DarkModeButton } from '@/features/darkmode';
 import { NotificationSettingButton } from '@/features/event-notification';
-import { HolidayButton, MaxLanesButton, PaletteSetButton, ColorFilterButton } from '@/features/event';
+import { HolidayButton, MaxLanesButton, PaletteSetButton, ColorLabelButton, ColorFilterButton } from '@/features/event';
 import { FlipFooterButton } from '@/features/flip';
 import { QuitAppButton } from '@/features/quit';
 
@@ -74,6 +74,7 @@ export function SettingsMegaMenu({ onMoveStart }: { onMoveStart?: () => void }) 
             <MaxLanesButton />
             <HolidayButton />
             <PaletteSetButton />
+            <ColorLabelButton />
             <ColorFilterButton />
           </>
         )}

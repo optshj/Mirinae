@@ -1,6 +1,8 @@
-import { COLOR_STORAGE_KEY, COLORPALLETTE } from '@/shared/const/color';
-import { Check, Palette } from 'lucide-react';
+import { COLOR_STORAGE_KEY } from '@/shared/const/color';
+import { Palette } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
+
+import { ColorChips } from './components/ColorChips';
 
 interface PalletteDropdownProps {
   colorId: string;
@@ -21,18 +23,8 @@ export function PalletteDropdown({ colorId, setColorId }: PalletteDropdownProps)
           <Palette className="h-3.5 w-3.5 text-white" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-auto py-2">
-        <div className="grid grid-cols-6 gap-2 px-2">
-          {COLORPALLETTE.map((key) => (
-            <div
-              key={key}
-              className={`flex h-5 w-5 items-center justify-center rounded-full transition-all hover:scale-150 dark:saturate-70 event-color-${key} bg-(--event-color)`}
-              onClick={() => handleColorChange(key)}
-            >
-              {colorId === key && <Check className="text-white" strokeWidth={3} size={12} />}
-            </div>
-          ))}
-        </div>
+      <DropdownMenuContent align="end" className="w-56 py-2">
+        <ColorChips className="px-2" isSelected={(key) => colorId === key} onSelect={handleColorChange} naming={colorId} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
