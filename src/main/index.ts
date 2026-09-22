@@ -71,7 +71,8 @@ function createWindow(): void {
     if (!isWindowAttached) {
       attach(mainWindow, {
         forwardMouseInput: true,
-        forwardKeyboardInput: true
+        forwardKeyboardInput: true,
+        transparent: true
       });
       // v0.3.1 이전 버전에서 창 위치가 null로 지정되어있어 실행 시 js setBounds에서 오류가 발생하는 문제 해결
       mainWindow.setBounds({

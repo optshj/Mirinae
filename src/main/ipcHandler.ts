@@ -50,7 +50,7 @@ export const registerIPCHandlers = () => {
     const { x, y, width, height } = mainWindow.getBounds();
     const { minX, minY } = getVirtualScreenOffset();
 
-    attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true });
+    attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true, transparent: true });
 
     const finalBounds = {
       x: x - minX,
