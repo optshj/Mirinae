@@ -1,7 +1,8 @@
 import { app, Menu, nativeImage, Tray, screen } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
 import { join } from 'path';
-import { getVirtualScreenOffset, mainWindow } from '.';
+import { mainWindow } from '.';
+import { toScreenBounds, toWallpaperBounds } from './wallpaperBounds';
 import { store } from './store';
 
 export function initTray() {
@@ -46,7 +47,6 @@ export function initTray() {
           y: Math.round(y)
         };
 
-        store.set('window-bounds', bounds);
         mainWindow.setBounds(bounds);
       }
     },
@@ -62,28 +62,14 @@ export function initTray() {
 
   contextMenu.on('menu-will-show', () => {
     detach(mainWindow);
-    const { x, y, width, height } = mainWindow.getBounds();
-    const { minX, minY } = getVirtualScreenOffset();
-
-    mainWindow.setBounds({
-      x: x + minX,
-      y: y + minY,
-      width,
-      height
-    });
+    mainWindow.setBounds(toScreenBounds(mainWindow.getBounds()));
   });
   contextMenu.on('menu-will-close', () => {
-    const { x, y, width, height } = mainWindow.getBounds();
-    const { minX, minY } = getVirtualScreenOffset();
+    // 메뉴가 열린 동안은 분리 상태 = 절대 좌표다('위치 초기화'도 여기서 절대 좌표로 들어온다).
+    const bounds = mainWindow.getBounds();
 
     attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true, transparent: true });
-
-    const finalBounds = {
-      x: x - minX,
-      y: y - minY,
-      width,
-      height
-    };
-    mainWindow.setBounds(finalBounds);
+    mainWindow.setBounds(toWallpaperBounds(bounds));
+    store.set('window-bounds', bounds);
   });
 }

@@ -1,7 +1,8 @@
 import { ipcMain, app, shell, Notification, type IpcMainEvent, type IpcMainInvokeEvent } from 'electron';
 import { attach, detach } from 'electron-as-wallpaper';
 import log from 'electron-log';
-import { mainWindow, getVirtualScreenOffset } from '.';
+import { mainWindow } from '.';
+import { toScreenBounds, toWallpaperBounds } from './wallpaperBounds';
 import { restoreSession, logoutGoogleOAuth, loginGoogleOAuth, googleRequest } from './oauth';
 import { RENDERER_URL_PREFIX } from './bundleUpdate';
 import { store } from './store';
@@ -31,15 +32,7 @@ export const registerIPCHandlers = () => {
 
   ipcMain.on('start-dragging', (_, options?: { resizable?: boolean }) => {
     detach(mainWindow);
-    const { x, y, width, height } = mainWindow.getBounds();
-    const { minX, minY } = getVirtualScreenOffset();
-
-    mainWindow.setBounds({
-      x: x + minX,
-      y: y + minY,
-      width,
-      height
-    });
+    mainWindow.setBounds(toScreenBounds(mainWindow.getBounds()));
     mainWindow.setResizable(options?.resizable ?? true);
   });
 
@@ -47,21 +40,13 @@ export const registerIPCHandlers = () => {
   ipcMain.handle('stop-dragging', () => {
     mainWindow.setResizable(false);
 
-    const { x, y, width, height } = mainWindow.getBounds();
-    const { minX, minY } = getVirtualScreenOffset();
+    const bounds = mainWindow.getBounds();
 
     attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true, transparent: true });
+    mainWindow.setBounds(toWallpaperBounds(bounds));
+    store.set('window-bounds', bounds);
 
-    const finalBounds = {
-      x: x - minX,
-      y: y - minY,
-      width,
-      height
-    };
-    mainWindow.setBounds(finalBounds);
-    store.set('window-bounds', finalBounds);
-
-    return finalBounds;
+    return bounds;
   });
 
   // 일정 알림 활성화
