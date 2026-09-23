@@ -1,9 +1,9 @@
 import { app, Menu, nativeImage, Tray, screen } from 'electron';
-import { attach, detach } from 'electron-as-wallpaper';
 import { join } from 'path';
 import { mainWindow } from '.';
 import { toScreenBounds, toWallpaperBounds } from './wallpaperBounds';
 import { store } from './store';
+import { attachWallpaper, detachWallpaper } from './wallpaper';
 
 export function initTray() {
   const iconPath = app.isPackaged ? join(process.resourcesPath, 'resources/icon.png') : join(__dirname, '../../resources/icon.png');
@@ -61,14 +61,12 @@ export function initTray() {
   tray.setContextMenu(contextMenu);
 
   contextMenu.on('menu-will-show', () => {
-    detach(mainWindow);
+    detachWallpaper(mainWindow);
     mainWindow.setBounds(toScreenBounds(mainWindow.getBounds()));
   });
   contextMenu.on('menu-will-close', () => {
-    // 메뉴가 열린 동안은 분리 상태 = 절대 좌표다('위치 초기화'도 여기서 절대 좌표로 들어온다).
     const bounds = mainWindow.getBounds();
-
-    attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true, transparent: true });
+    attachWallpaper(mainWindow);
     mainWindow.setBounds(toWallpaperBounds(bounds));
     store.set('window-bounds', bounds);
   });

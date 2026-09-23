@@ -1,6 +1,5 @@
 import { app, BrowserWindow, screen } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
-import { attach } from 'electron-as-wallpaper';
 import AutoLaunch from 'auto-launch';
 import { join } from 'path';
 import { initTray } from './tray';
@@ -9,6 +8,8 @@ import { registerIPCHandlers } from './ipcHandler';
 import { store } from './store';
 import { toWallpaperBounds } from './wallpaperBounds';
 import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindow';
+import { attachWallpaper } from './wallpaper';
+import { dropDuplicateKeyInput } from './keyInput';
 import { handleRendererProtocol, loadRenderer, registerRendererScheme } from './bundleUpdate';
 import * as Sentry from '@sentry/electron/main';
 
@@ -18,7 +19,6 @@ if (!app.requestSingleInstanceLock()) process.exit(0);
 registerRendererScheme();
 
 export let mainWindow: BrowserWindow;
-let isWindowAttached = false;
 
 // Enable auto launch on system startup
 new AutoLaunch({
@@ -65,17 +65,11 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     mainWindow.setMenu(null);
     mainWindow.show();
-    if (!isWindowAttached) {
-      attach(mainWindow, {
-        forwardMouseInput: true,
-        forwardKeyboardInput: true,
-        transparent: true
-      });
-      mainWindow.setBounds(toWallpaperBounds(savedBounds));
-      isWindowAttached = true;
-    }
+    attachWallpaper(mainWindow);
+    mainWindow.setBounds(toWallpaperBounds(savedBounds));
   });
 
+  dropDuplicateKeyInput(mainWindow);
   mainWindow.webContents.on('will-navigate', (event) => event.preventDefault());
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
 }

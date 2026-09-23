@@ -5,7 +5,7 @@
 `getBounds`/`setBounds` 좌표가 화면 절대 좌표가 아니라 **부모(가상 화면 원점) 기준 상대값**이 된다.
 이 문서는 그 좌표계를 다룬다.
 
-관련 파일: `src/main/index.ts`, `src/main/wallpaperBounds.ts`, `src/main/ipcHandler.ts`, `src/main/tray.ts`
+관련 파일: `src/main/index.ts`, `src/main/wallpaperBounds.ts`, `src/main/wallpaper.ts`, `src/main/ipcHandler.ts`, `src/main/tray.ts`
 
 ---
 
@@ -24,13 +24,15 @@
 ### 저장 좌표계는 "절대" 하나로 통일
 
 `store`의 `window-bounds`는 **항상 화면 절대 좌표**다 (기본값 `{ width: 1280, height: 800, x: 0, y: 0 }`).
-변환은 부착/분리 경계에서만 한다.
+변환은 부착/분리 경계에서만 한다. 경계를 넘는 호출은 `wallpaper.ts`의 `attachWallpaper`/`detachWallpaper`
+래퍼만 쓴다 — `electron-as-wallpaper`의 `attach`/`detach`를 직접 부르면 부착 여부가 갈려서
+좌표계 변환과 입력 전달이 동시에 어긋난다([`wallpaper-input.md`](./wallpaper-input.md)).
 
 ```
-기동      store(절대) → BrowserWindow 생성(절대) → attach → setBounds(toWallpaperBounds → 상대)
-화면조절 시작   detach → setBounds(toScreenBounds → 절대) → setResizable(true)
-화면조절 종료   getBounds(절대) → attach → setBounds(toWallpaperBounds → 상대) → store.set(절대)
-트레이 메뉴    열림: detach + toScreenBounds / 닫힘: attach + toWallpaperBounds + store.set(절대)
+기동      store(절대) → BrowserWindow 생성(절대) → attachWallpaper → setBounds(toWallpaperBounds → 상대)
+화면조절 시작   detachWallpaper → setBounds(toScreenBounds → 절대) → setResizable(true)
+화면조절 종료   getBounds(절대) → attachWallpaper → setBounds(toWallpaperBounds → 상대) → store.set(절대)
+트레이 메뉴    열림: detachWallpaper + toScreenBounds / 닫힘: attachWallpaper + toWallpaperBounds + store.set(절대)
 ```
 
 ### 변환은 물리 픽셀에서 — `wallpaperBounds.ts`

@@ -1,11 +1,11 @@
 import { ipcMain, app, shell, Notification, type IpcMainEvent, type IpcMainInvokeEvent } from 'electron';
-import { attach, detach } from 'electron-as-wallpaper';
 import log from 'electron-log';
 import { mainWindow } from '.';
 import { toScreenBounds, toWallpaperBounds } from './wallpaperBounds';
 import { restoreSession, logoutGoogleOAuth, loginGoogleOAuth, googleRequest } from './oauth';
 import { RENDERER_URL_PREFIX } from './bundleUpdate';
 import { store } from './store';
+import { attachWallpaper, detachWallpaper } from './wallpaper';
 
 export const isTrustedSender = (event: IpcMainEvent | IpcMainInvokeEvent) => {
   const frame = event.senderFrame;
@@ -31,7 +31,7 @@ export const registerIPCHandlers = () => {
   ipcMain.on('quit-app', () => app.quit());
 
   ipcMain.on('start-dragging', (_, options?: { resizable?: boolean }) => {
-    detach(mainWindow);
+    detachWallpaper(mainWindow);
     mainWindow.setBounds(toScreenBounds(mainWindow.getBounds()));
     mainWindow.setResizable(options?.resizable ?? true);
   });
@@ -42,7 +42,7 @@ export const registerIPCHandlers = () => {
 
     const bounds = mainWindow.getBounds();
 
-    attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true, transparent: true });
+    attachWallpaper(mainWindow);
     mainWindow.setBounds(toWallpaperBounds(bounds));
     store.set('window-bounds', bounds);
 
