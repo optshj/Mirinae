@@ -1,13 +1,15 @@
 import { app, BrowserWindow, screen } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
-import { attach } from 'electron-as-wallpaper';
 import AutoLaunch from 'auto-launch';
 import { join } from 'path';
 import { initTray } from './tray';
 import { initAutoUpdater } from './autoUpdate';
 import { registerIPCHandlers } from './ipcHandler';
 import { store } from './store';
+import { toWallpaperBounds } from './wallpaperBounds';
 import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindow';
+import { attachWallpaper } from './wallpaper';
+import { dropDuplicateKeyInput } from './keyInput';
 import { handleRendererProtocol, loadRenderer, registerRendererScheme } from './bundleUpdate';
 import * as Sentry from '@sentry/electron/main';
 
@@ -17,7 +19,6 @@ if (!app.requestSingleInstanceLock()) process.exit(0);
 registerRendererScheme();
 
 export let mainWindow: BrowserWindow;
-let isWindowAttached = false;
 
 // Enable auto launch on system startup
 new AutoLaunch({
@@ -30,22 +31,18 @@ Sentry.init({
   enableLogs: true
 });
 
-export const getVirtualScreenOffset = () => {
-  const displays = screen.getAllDisplays();
-  const minX = Math.min(...displays.map((d) => d.bounds.x));
-  const minY = Math.min(...displays.map((d) => d.bounds.y));
-  return { minX, minY };
-};
-
 function createWindow(): void {
   const { height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
-  const savedBounds = store.get('window-bounds');
+  const saved = store.get('window-bounds');
+  const savedBounds = {
+    x: saved.x || 0,
+    y: saved.y || 0,
+    width: saved.width,
+    height: saved.height || screenHeight
+  };
 
   mainWindow = new BrowserWindow({
-    x: savedBounds.x,
-    y: savedBounds.y,
-    width: savedBounds.width,
-    height: savedBounds.height ? savedBounds.height : screenHeight,
+    ...savedBounds,
     show: false,
     frame: false,
     focusable: true,
@@ -68,22 +65,11 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     mainWindow.setMenu(null);
     mainWindow.show();
-    if (!isWindowAttached) {
-      attach(mainWindow, {
-        forwardMouseInput: true,
-        forwardKeyboardInput: true
-      });
-      // v0.3.1 이전 버전에서 창 위치가 null로 지정되어있어 실행 시 js setBounds에서 오류가 발생하는 문제 해결
-      mainWindow.setBounds({
-        x: savedBounds.x || 0,
-        y: savedBounds.y || 0,
-        width: savedBounds.width,
-        height: savedBounds.height
-      });
-      isWindowAttached = true;
-    }
+    attachWallpaper(mainWindow);
+    mainWindow.setBounds(toWallpaperBounds(savedBounds));
   });
 
+  dropDuplicateKeyInput(mainWindow);
   mainWindow.webContents.on('will-navigate', (event) => event.preventDefault());
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
 }

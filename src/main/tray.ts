@@ -1,8 +1,9 @@
 import { app, Menu, nativeImage, Tray, screen } from 'electron';
-import { attach, detach } from 'electron-as-wallpaper';
 import { join } from 'path';
-import { getVirtualScreenOffset, mainWindow } from '.';
+import { mainWindow } from '.';
+import { toScreenBounds, toWallpaperBounds } from './wallpaperBounds';
 import { store } from './store';
+import { attachWallpaper, detachWallpaper } from './wallpaper';
 
 export function initTray() {
   const iconPath = app.isPackaged ? join(process.resourcesPath, 'resources/icon.png') : join(__dirname, '../../resources/icon.png');
@@ -46,8 +47,8 @@ export function initTray() {
           y: Math.round(y)
         };
 
+        mainWindow.setBounds(toWallpaperBounds(bounds));
         store.set('window-bounds', bounds);
-        mainWindow.setBounds(bounds);
       }
     },
     { type: 'separator' },
@@ -61,29 +62,13 @@ export function initTray() {
   tray.setContextMenu(contextMenu);
 
   contextMenu.on('menu-will-show', () => {
-    detach(mainWindow);
-    const { x, y, width, height } = mainWindow.getBounds();
-    const { minX, minY } = getVirtualScreenOffset();
-
-    mainWindow.setBounds({
-      x: x + minX,
-      y: y + minY,
-      width,
-      height
-    });
+    detachWallpaper(mainWindow);
+    mainWindow.setBounds(toScreenBounds(mainWindow.getBounds()));
   });
   contextMenu.on('menu-will-close', () => {
-    const { x, y, width, height } = mainWindow.getBounds();
-    const { minX, minY } = getVirtualScreenOffset();
-
-    attach(mainWindow, { forwardKeyboardInput: true, forwardMouseInput: true });
-
-    const finalBounds = {
-      x: x - minX,
-      y: y - minY,
-      width,
-      height
-    };
-    mainWindow.setBounds(finalBounds);
+    const bounds = mainWindow.getBounds();
+    attachWallpaper(mainWindow);
+    mainWindow.setBounds(toWallpaperBounds(bounds));
+    store.set('window-bounds', bounds);
   });
 }

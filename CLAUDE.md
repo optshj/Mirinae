@@ -2,7 +2,7 @@
 
 ## 핵심 전제
 
-미리내는 `electron-as-wallpaper`(`^2.0.3`)로 창을 바탕화면 아이콘 레이어 뒤에 직접 붙이는 위젯형 캘린더다. 일반 Electron 앱처럼 다루면 안 된다. 관련 코드: `src/main/index.ts`, `ipcHandler.ts`, `activeWindow.ts`, `tray.ts`.
+미리내는 `electron-as-wallpaper`(`^2.0.3`)로 창을 바탕화면 아이콘 레이어 뒤에 직접 붙이는 위젯형 캘린더다. 일반 Electron 앱처럼 다루면 안 된다. 관련 코드: `src/main/index.ts`, `wallpaper.ts`, `keyInput.ts`, `ipcHandler.ts`, `activeWindow.ts`, `tray.ts`. 입력 전달 경로와 좌표계는 [`docs/wallpaper-input.md`](docs/wallpaper-input.md), [`docs/wallpaper-window.md`](docs/wallpaper-window.md)에 자세히 있다.
 
 **타겟 플랫폼은 Windows와 macOS 둘 다다.** 지금 코드는 Windows에서만 동작하지만, macOS 지원은 "여유 되면"이 아니라 확정된 목표다. Windows 전용 하드코딩을 새로 추가할 땐 macOS 이식을 항상 염두에 둘 것 (아래 "macOS 지원 현황" 참고).
 
@@ -15,9 +15,11 @@
 5. **이미지/WebGL/플러그인 비활성** (`main/index.ts`의 `images:false` 등) — `<img>`/WebGL 안 뜸. 아이콘·그래픽은 SVG/CSS만.
 6. **CSP가 인라인 스타일 차단** (`vite-plugin-csp-guard`) — Radix/cmdk류가 콘솔에 `Refused to apply inline style` 경고를 낼 수 있음(대체로 비치명적). 새 외부 API 호출 시 `electron.vite.config.ts`의 `connect-src`도 갱신할 것.
 7. **네이티브 IME 신뢰 불가** — 한글 입력 필드는 반드시 `HangulInput`(`shared/ui/input.tsx`) 재사용, 일반 `<input>` 금지. cmdk `CommandInput` 같은 외부 입력 컴포넌트는 한글 입력이 중요하면 실기 검증 전까지 위험 요소로 취급.
+8. **키가 2번 들어올 수 있음** — 창이 활성화되는 환경(Win10 등)에선 네이티브 `WM_KEYDOWN`과 포워딩된 `WM_KEYDOWN`이 같이 도착한다. `src/main/keyInput.ts`가 `before-input-event`에서 5ms dedupe로 거르므로 렌더러 키 리스너마다 따로 방어하지 않는다. 대신 **같은 키를 5ms 안에 연속으로 받는 UI는 설계 불가**다.
+9. **`attach`/`detach`는 `wallpaper.ts` 래퍼로만** — 네이티브 쪽이 hwnd를 중복 검사 없이 push하고 `detach`는 이미 분리 상태면 무시돼서, 짝이 어긋나면 입력이 영구히 2번씩 전달된다. `electron-as-wallpaper`에서 직접 import 금지.
 
 ## macOS 지원 현황 (목표 확정, 구현은 아직)
 
 - `electron-as-wallpaper`가 Windows 전용 네이티브 모듈이라 바탕화면 부착 자체가 안 됨 — 핵심 블로커, 별도 네이티브 통합 필요.
 - 그 외에도 `activeWindow.ts`의 Explorer 하드코딩, `electron-builder.json`(mac 타겟 없음), `active-win` darwin prebuild 패키징 제외 등 손볼 곳이 많음.
-- 제약 3번(드래그 데드존)은 Chromium 공통이라 mac에도 적용될 가능성 높음. 1·2·4번은 Windows 구현체에서 관찰된 것이라 mac 대체 구현에도 같은 제약이 있을지는 재검증 필요.
+- 제약 3번(드래그 데드존)은 Chromium 공통이라 mac에도 적용될 가능성 높음. 1·2·4·8·9번은 Windows 구현체(`electron-as-wallpaper`)에서 나온 것이라 mac 대체 구현에도 같은 제약이 있을지는 재검증 필요 — 특히 8번은 mac 부착 방식이 정해질 때 입력 경로를 처음부터 하나로 정하면 없앨 수 있다.
