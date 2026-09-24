@@ -1,8 +1,9 @@
 import { app, Menu, nativeImage, Tray, screen } from 'electron';
 import { join } from 'path';
 import { mainWindow } from '.';
-import { toWallpaperBounds } from './wallpaperBounds';
+import { toScreenBounds, toWallpaperBounds } from './wallpaperBounds';
 import { store } from './store';
+import { attachWallpaper, detachWallpaper } from './wallpaper';
 
 export function initTray() {
   const iconPath = app.isPackaged ? join(process.resourcesPath, 'resources/icon.png') : join(__dirname, '../../resources/icon.png');
@@ -59,4 +60,15 @@ export function initTray() {
 
   tray.setToolTip('미리내');
   tray.setContextMenu(contextMenu);
+
+  contextMenu.on('menu-will-show', () => {
+    detachWallpaper(mainWindow);
+    mainWindow.setBounds(toScreenBounds(mainWindow.getBounds()));
+  });
+  contextMenu.on('menu-will-close', () => {
+    const bounds = mainWindow.getBounds();
+    attachWallpaper(mainWindow);
+    mainWindow.setBounds(toWallpaperBounds(bounds));
+    store.set('window-bounds', bounds);
+  });
 }
