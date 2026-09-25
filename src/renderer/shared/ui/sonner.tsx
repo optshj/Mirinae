@@ -23,6 +23,7 @@ function ToastUndoButton({ toastId, onClick }: ToastUndoButtonProps) {
     <Tooltip content="되돌리기" side="bottom">
       <button
         aria-label="실행 취소"
+        tabIndex={-1}
         className="relative flex size-[30px] shrink-0 items-center justify-center text-zinc-600 transition-colors hover:text-zinc-900 active:scale-95 dark:text-zinc-300 dark:hover:text-zinc-100"
         onClick={() => {
           onClick();

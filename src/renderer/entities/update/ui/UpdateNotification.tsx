@@ -20,8 +20,9 @@ export function UpdateNotification() {
   if (!info) return null;
 
   const handleInstall = () => {
+    // 설치하면 앱이 바로 종료되므로 배치 대기 없이 먼저 보낸다
+    posthog.capture('update_accepted', { current_version: info.currentVersion }, { send_instantly: true });
     window.api.installUpdate();
-    posthog.capture('update_accepted', { current_version: info.currentVersion });
     setInfo(null);
   };
 
