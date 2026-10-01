@@ -17,13 +17,13 @@ export function CalendarListButton() {
     <DropdownMenu>
       <Tooltip content="표시할 캘린더" side="bottom">
         <DropdownMenuTrigger asChild>
-          <div className="inline-flex cursor-pointer appearance-none border-0 bg-transparent p-0 [&_svg]:pointer-events-none">
+          <div className="data-[state=open]:text-main-color inline-flex cursor-pointer appearance-none border-0 bg-transparent p-0 transition-colors [&_svg]:pointer-events-none">
             <CalendarCheck2 strokeWidth={1} />
           </div>
         </DropdownMenuTrigger>
       </Tooltip>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="text-secondary text-xs">표시할 캘린더</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-primary text-xs">표시할 캘린더</DropdownMenuLabel>
         <DropdownMenuCheckboxItem className={itemClass} checked={showHoliday} onCheckedChange={setShowHoliday} onSelect={keepOpen}>
           <ColorCheckbox colorId="10" checked={showHoliday} />
           <span className="truncate">대한민국 공휴일</span>
