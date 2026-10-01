@@ -1,4 +1,4 @@
-export { HolidayButton } from './ui/HolidayButton';
+export { CalendarListButton } from './ui/CalendarListButton';
 export { MaxLanesButton } from './ui/MaxLanesButton';
 export { ColorFilterButton } from './ui/ColorFilterButton';
 export { PaletteSetButton } from './ui/PaletteSetButton';

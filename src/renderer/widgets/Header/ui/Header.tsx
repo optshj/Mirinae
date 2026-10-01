@@ -9,6 +9,7 @@ import { MiniViewButton } from '@/features/mini-view';
 import { RefreshButton } from '@/features/refresh';
 import { GuideButton } from '@/features/guide';
 import { MoveDialog } from '@/features/move';
+import { CalendarListButton } from '@/features/event';
 
 import { SettingsMegaMenu } from './SettingsMegaMenu';
 
@@ -36,6 +37,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
           <div className="flex items-center gap-4 [html.mini-view_&]:hidden">
             <FlipCalendarButton />
             <RefreshButton />
+            <CalendarListButton />
           </div>
           <MiniViewButton />
           <div className="flex items-center gap-4">
@@ -45,7 +47,7 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
           <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
             <Tooltip content="설정" side="bottom">
               <DropdownMenuTrigger asChild>
-                <div role="button" tabIndex={-1} className="inline-flex cursor-pointer appearance-none border-0 bg-transparent p-0 [&_svg]:pointer-events-none">
+                <div className="inline-flex cursor-pointer appearance-none border-0 bg-transparent p-0 [&_svg]:pointer-events-none">
                   <Settings strokeWidth={1} size={24} className="[html.mini-view_&]:size-6" />
                 </div>
               </DropdownMenuTrigger>
