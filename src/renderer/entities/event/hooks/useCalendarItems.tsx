@@ -1,4 +1,4 @@
-import { CalendarEvent, HolidayEvent } from '@/shared/types/EventType';
+import { CalendarEvent } from '@/shared/types/EventType';
 import { useMemo } from 'react';
 import { useEvents, useHolidayEvents } from './useEvent';
 import { useHoliday } from '../context/HolidayContext';
@@ -33,11 +33,12 @@ export function useCalendarItems() {
       };
     });
 
-    const holidayItems: HolidayEvent[] = showHoliday
+    const holidayItems: CalendarEvent[] = showHoliday
       ? (holidayData?.items ?? []).map((event) => ({
           ...event,
-          category: 'holiday',
+          category: 'allDay',
           colorId: '10',
+          readOnly: true,
           start: { date: event.start?.date ?? '' },
           end: { date: event.end?.date ?? '' }
         }))

@@ -54,7 +54,7 @@ export function EditEventForm({ event, completeButton, deleteButton }: EditEvent
 }
 
 function Event({ event, completeButton, deleteButton }: { event: CalendarEvent; completeButton: React.ReactNode; deleteButton: React.ReactNode }) {
-  const isHoliday = event.category === 'holiday';
+  const isReadOnly = event.readOnly;
   const [start, end] = getEventRange(event);
   const isMultiDay = start !== end;
   const completed = event.extendedProperties?.private?.completed === 'true';
@@ -69,7 +69,7 @@ function Event({ event, completeButton, deleteButton }: { event: CalendarEvent; 
     <div
       className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 [html.show-event-form_&]:hidden event-color-${event.colorId} bg-(--event-color)/20`}
       onClick={(e) => {
-        if (isHoliday) e.stopPropagation();
+        if (isReadOnly) e.stopPropagation();
       }}
     >
       <div className={`flex flex-1 items-center ${completed ? 'opacity-50' : ''}`}>
@@ -79,7 +79,7 @@ function Event({ event, completeButton, deleteButton }: { event: CalendarEvent; 
           <div className="text-xs">{renderTimeRange()}</div>
         </div>
       </div>
-      {!isHoliday && (
+      {!isReadOnly && (
         <div className="flex items-center">
           {completeButton}
           {deleteButton}

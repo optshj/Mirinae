@@ -10,6 +10,8 @@ export type Events = {
   description: string;
   location: string;
   colorId: string;
+  /** 앱 전용: 공휴일은 수정·삭제·완료·드래그 불가 */
+  readOnly?: boolean;
   creator: {
     id: string;
     email: string;
@@ -175,16 +177,10 @@ export interface TimeEvent extends BaseEvent {
   end: { dateTime: string; timeZone: string };
 }
 
-export interface HolidayEvent extends BaseEvent {
-  category: 'holiday';
-  start: { date: string };
-  end: { date: string };
-}
-
 export interface AllDayEvent extends BaseEvent {
   category: 'allDay';
   start: { date: string };
   end: { date: string };
 }
 
-export type CalendarEvent = TimeEvent | HolidayEvent | AllDayEvent;
+export type CalendarEvent = TimeEvent | AllDayEvent;
