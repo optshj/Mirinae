@@ -17,7 +17,7 @@ export function EventList({ seg, weekStart, onDoubleClick, onPointerDown, dimmed
 
   const event = seg.event;
   const timeLabel = event.category === 'time' ? formatDateTime(event.start) : null;
-  const isDraggable = Boolean(onPointerDown) && event.category !== 'holiday';
+  const isDraggable = Boolean(onPointerDown) && !event.readOnly;
   const completed = event.extendedProperties?.private?.completed === 'true';
 
   return (

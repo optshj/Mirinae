@@ -17,7 +17,7 @@ export function getEventRange(event: CalendarEvent): [string, string] {
     return [startDate, endDate < startDate ? startDate : endDate];
   }
 
-  // allDay / holiday: Google API의 end.date는 exclusive(종료일+1)이므로 1일 빼줌
+  // allDay: Google API의 end.date는 exclusive(종료일+1)이므로 1일 빼줌
   const startDate = event.start.date;
   const googleExclusiveDate = event.end.date || startDate;
   const endDate = dayjs(googleExclusiveDate).subtract(1, 'day').format('YYYY-MM-DD');
@@ -34,14 +34,12 @@ function toRangedEvents(events: CalendarEvent[]): RangedEvent[] {
   });
 }
 
-// 정렬 규칙: 시작일 빠른 순 -> 기간 긴 순 -> 휴일 우선.
+// 정렬 규칙: 시작일 빠른 순 -> 기간 긴 순 -> 하루 종일 우선.
 // duration을 미리 계산해둬서 정렬 비교(O(N log N)번)마다 dayjs 파싱을 다시 하지 않게 한다.
 function compareRangedEvents(a: RangedEvent, b: RangedEvent) {
   if (a.start !== b.start) return a.start.localeCompare(b.start);
   if (a.duration !== b.duration) return b.duration - a.duration;
-  if (a.event.category === 'holiday' && b.event.category !== 'holiday') return -1;
-  if (b.event.category === 'holiday' && a.event.category !== 'holiday') return 1;
-  return 0;
+  return Number(b.event.category === 'allDay') - Number(a.event.category === 'allDay');
 }
 
 type ClippedEvent = { event: CalendarEvent; start: string; end: string; isStart: boolean; isEnd: boolean };

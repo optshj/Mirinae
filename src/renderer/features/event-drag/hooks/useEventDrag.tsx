@@ -33,7 +33,7 @@ export function useEventDrag() {
   }, [drag]);
 
   const commitMove = (event: CalendarEvent, grabDate: string, dropDate: string) => {
-    if (event.category === 'holiday') return;
+    if (event.readOnly) return;
     const delta = dayjs(dropDate).diff(grabDate, 'day');
     const [startDate, endDate] = getEventRange(event);
     const payload = {
@@ -62,7 +62,7 @@ export function useEventDrag() {
   };
 
   const startDrag = (e: React.PointerEvent, seg: EventSegment) => {
-    if (e.button !== 0 || seg.event.category === 'holiday') return;
+    if (e.button !== 0 || seg.event.readOnly) return;
     // preventDefault 금지: 더블클릭(수정 모달)이 계속 동작해야 함
 
     // 잡은 날짜 = 세그먼트 내에서 커서 아래에 있는 날
