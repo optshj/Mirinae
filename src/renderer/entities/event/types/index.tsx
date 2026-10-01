@@ -26,3 +26,13 @@ export interface GoogleEventBody {
     timeZone?: string;
   };
 }
+
+export interface GoogleCalendar {
+  id: string;
+  summary: string;
+  summaryOverride?: string;
+  colorId: string;
+  accessRole: 'freeBusyReader' | 'reader' | 'writer' | 'owner';
+  selected?: boolean;
+  primary?: boolean;
+}

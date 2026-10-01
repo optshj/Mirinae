@@ -1,8 +1,9 @@
 import { http } from '@/shared/lib/http';
 import { CalendarEvent, Events } from '@/shared/types/EventType';
-import { GoogleEventBody } from '../types';
+import { GoogleCalendar, GoogleEventBody } from '../types';
 
 const CALENDAR_API_URL = 'https://www.googleapis.com/calendar/v3/calendars';
+export const HOLIDAY_CALENDAR_ID = 'ko.south_korea#holiday@group.v.calendar.google.com';
 
 // 안전 상한: 2500 × 20 = 5만 개 (요청 폭주 방지)
 const MAX_PAGES = 20;
@@ -29,11 +30,14 @@ const fetchAllPages = async (url: string): Promise<{ items: Events[] }> => {
 };
 
 export const eventApi = {
-  getEvents: () => {
-    return fetchAllPages(`${CALENDAR_API_URL}/primary/events?maxResults=2500&singleEvents=true&${getTimeRange()}`);
+  getEvents: (calendarId = 'primary') => {
+    return fetchAllPages(`${CALENDAR_API_URL}/${encodeURIComponent(calendarId)}/events?maxResults=2500&singleEvents=true&${getTimeRange()}`);
+  },
+  getCalendarList: () => {
+    return http.get<{ items: GoogleCalendar[] }>('https://www.googleapis.com/calendar/v3/users/me/calendarList', {});
   },
   getHolidays: () => {
-    return fetchAllPages(`${CALENDAR_API_URL}/ko.south_korea%23holiday%40group.v.calendar.google.com/events?maxResults=2500&${getTimeRange()}`);
+    return fetchAllPages(`${CALENDAR_API_URL}/${encodeURIComponent(HOLIDAY_CALENDAR_ID)}/events?maxResults=2500&${getTimeRange()}`);
   },
   create: (eventData: GoogleEventBody) => {
     return http.post<Events>(`${CALENDAR_API_URL}/primary/events`, eventData);
