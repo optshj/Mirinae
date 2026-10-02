@@ -23,7 +23,7 @@ export function PalletteDropdown({ colorId, setColorId }: PalletteDropdownProps)
           <Palette className="h-3.5 w-3.5 text-white" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 py-2">
+      <DropdownMenuContent side="top" align="end" className="w-56 py-2">
         <ColorChips className="px-2" isSelected={(key) => colorId === key} onSelect={handleColorChange} naming={colorId} />
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 
 import { ScheduleModal } from './ScheduleModal';
 import { EventList, useCalendarItems, buildMonthSegments, buildHolidayDates, useMaxLanes, useHolidayEvents, useHoliday, EventSegment } from '@/entities/event';
@@ -17,6 +17,30 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
   const { drag, previewRange, ghostRef, posRef, startDrag } = useEventDrag();
   const { data: holidayData } = useHolidayEvents();
   const { showHoliday } = useHoliday();
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
+  const cellRefs = useRef(new Map<string, HTMLDivElement>());
+
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      let found: string | null = null;
+      for (const [key, el] of cellRefs.current) {
+        const rect = el.getBoundingClientRect();
+        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          found = key;
+          break;
+        }
+      }
+      setHoveredKey(found);
+    };
+    const hide = () => setHoveredKey(null);
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('blur', hide);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('blur', hide);
+    };
+  }, []);
 
   // 날짜 숫자를 빨갛게 칠하기 위한 공휴일 날짜 집합. 색상 필터와 무관하게 '공휴일 표시' 토글만 따른다.
   const holidayDates = useMemo(() => (showHoliday ? buildHolidayDates(holidayData?.items ?? []) : new Set<string>()), [holidayData, showHoliday]);
@@ -64,6 +88,8 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
             onEventPointerDown={startDrag}
             draggingEventId={drag?.seg.event.id ?? null}
             previewRange={previewRange}
+            hoveredKey={drag ? null : hoveredKey}
+            cellRefs={cellRefs.current}
           />
         ))}
 
@@ -88,12 +114,14 @@ interface WeekRowProps {
   onEventPointerDown: (e: React.PointerEvent, seg: EventSegment) => void;
   draggingEventId: string | null;
   previewRange: { start: string; end: string } | null;
+  hoveredKey: string | null;
+  cellRefs: Map<string, HTMLDivElement>;
 }
-function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidayDates, onPickDate, onEventPointerDown, draggingEventId, previewRange }: WeekRowProps) {
+function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidayDates, onPickDate, onEventPointerDown, draggingEventId, previewRange, hoveredKey, cellRefs }: WeekRowProps) {
   const weekStart = dayjs(week[0]).format('YYYY-MM-DD');
 
   return (
-    <div className="relative grid grid-cols-7">
+    <div className="border-surface relative grid grid-cols-7 border-t first:border-t-0">
       {week.map((date) => {
         const isCurrentMonth = date.getMonth() === month;
         const isToday = dayjs(date).isSame(dayjs(), 'day');
@@ -106,7 +134,11 @@ function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidayDates,
           <div
             key={dateKey}
             data-date={dateKey}
-            className={cn('border-surface flex h-full w-full flex-col overflow-hidden border', isDropPreview && 'bg-main-color/10')}
+            ref={(el) => {
+              if (el) cellRefs.set(dateKey, el);
+              else cellRefs.delete(dateKey);
+            }}
+            className={cn('flex h-full w-full flex-col overflow-hidden rounded-md transition-colors', isDropPreview && 'bg-main-color/10', hoveredKey === dateKey && 'bg-main-color/20')}
             onDoubleClick={() => onPickDate(date)}
           >
             <div className={`grid grid-cols-[1fr_auto_1fr] items-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>

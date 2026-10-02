@@ -4,7 +4,7 @@ import { AddEventForm, CompleteEventButton, DeleteEventButton, EditEventForm } f
 import { useCalendarItems, getEventRange } from '@/entities/event';
 import { DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 import { useLogin } from '@/shared/hooks/useLogin';
-import { getDDay } from '../lib/getDDay';
+import { getDDay } from '@/shared/lib/getDDay';
 import { GoogleIcon } from '@/shared/icon/GoogleIcon';
 
 export function ScheduleModal({ date }: { date: Date }) {
