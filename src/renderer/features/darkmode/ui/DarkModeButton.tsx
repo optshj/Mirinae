@@ -1,22 +1,14 @@
-import { useState, useEffect } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { posthog } from '@/shared/lib/posthog';
+import { usePreference } from '@/shared/lib/preferences';
 
 export function DarkModeButton() {
-  const [darkMode, setDarkMode] = useState(() => {
-    const storedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    return storedTheme === 'dark' || (!storedTheme && prefersDark);
-  });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-  }, [darkMode]);
+  const [theme, setTheme] = usePreference('theme');
+  const darkMode = theme === 'dark';
 
   const selectTheme = (isDark: boolean) => {
     if (isDark === darkMode) return;
-    setDarkMode(isDark);
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    setTheme(isDark ? 'dark' : 'light');
     posthog.capture('theme_change', { theme: isDark ? 'dark' : 'light' });
   };
 

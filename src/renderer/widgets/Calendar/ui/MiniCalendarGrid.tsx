@@ -1,9 +1,10 @@
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useCalendarItems, useMaxLanes, getEventRange } from '@/entities/event';
+import { useCalendarItems, getEventRange } from '@/entities/event';
 import { DateProps } from '@/shared/hooks/useDate';
 import { cn } from '@/shared/lib/utils';
+import { usePreference } from '@/shared/lib/preferences';
 
 interface DayEvent {
   id: string;
@@ -13,7 +14,7 @@ interface DayEvent {
 
 export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>) {
   const { items } = useCalendarItems();
-  const { maxLanes } = useMaxLanes();
+  const [maxLanes] = usePreference('maxLanes');
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const cellRefs = useRef(new Map<string, HTMLDivElement>());
 

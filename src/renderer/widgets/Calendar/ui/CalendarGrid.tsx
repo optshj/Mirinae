@@ -2,21 +2,22 @@ import dayjs from 'dayjs';
 import { useState, useMemo, useEffect, useRef } from 'react';
 
 import { ScheduleModal } from './ScheduleModal';
-import { EventList, useCalendarItems, buildMonthSegments, buildHolidayDates, useMaxLanes, useHolidayEvents, useHoliday, EventSegment } from '@/entities/event';
+import { EventList, useCalendarItems, buildMonthSegments, buildHolidayDates, useHolidayEvents, EventSegment } from '@/entities/event';
 import { useEventDrag, DragGhost } from '@/features/event-drag';
 
 import { Dialog } from '@/shared/ui/dialog';
 import { DateProps } from '@/shared/hooks/useDate';
 import { cn } from '@/shared/lib/utils';
+import { usePreference } from '@/shared/lib/preferences';
 
 export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
   const { items } = useCalendarItems();
-  const { maxLanes } = useMaxLanes();
+  const [maxLanes] = usePreference('maxLanes');
   const { drag, previewRange, ghostRef, posRef, startDrag } = useEventDrag();
   const { data: holidayData } = useHolidayEvents();
-  const { showHoliday } = useHoliday();
+  const [showHoliday] = usePreference('showHoliday');
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const cellRefs = useRef(new Map<string, HTMLDivElement>());
 

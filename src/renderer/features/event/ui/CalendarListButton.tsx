@@ -1,12 +1,13 @@
 import { CalendarCheck2, Check } from 'lucide-react';
-import { useCalendarVisibility, useHoliday, useSubscribedCalendars } from '@/entities/event';
+import { useSubscribedCalendars } from '@/entities/event';
+import { usePreference } from '@/shared/lib/preferences';
 import { cn } from '@/shared/lib/utils';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
 import { Tooltip } from '@/shared/ui/tooltip';
 
 export function CalendarListButton() {
-  const { showHoliday, setShowHoliday } = useHoliday();
-  const { setVisibleIds } = useCalendarVisibility();
+  const [showHoliday, setShowHoliday] = usePreference('showHoliday');
+  const [, setVisibleIds] = usePreference('visibleCalendars');
   const calendars = useSubscribedCalendars();
 
   const keepOpen = (event: Event) => event.preventDefault();

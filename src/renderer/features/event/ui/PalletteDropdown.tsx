@@ -1,4 +1,3 @@
-import { COLOR_STORAGE_KEY } from '@/shared/const/color';
 import { Palette } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
 
@@ -9,11 +8,6 @@ interface PalletteDropdownProps {
   setColorId: (colorId: string) => void;
 }
 export function PalletteDropdown({ colorId, setColorId }: PalletteDropdownProps) {
-  const handleColorChange = (newColor: string) => {
-    setColorId(newColor);
-    localStorage.setItem(COLOR_STORAGE_KEY, newColor);
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -24,7 +18,7 @@ export function PalletteDropdown({ colorId, setColorId }: PalletteDropdownProps)
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top" align="end" className="w-56 py-2">
-        <ColorChips className="px-2" isSelected={(key) => colorId === key} onSelect={handleColorChange} naming={colorId} />
+        <ColorChips className="px-2" isSelected={(key) => colorId === key} onSelect={setColorId} naming={colorId} />
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import { posthog } from '@/shared/lib/posthog';
+import { getPreference } from '@/shared/lib/preferences';
 
 interface MoveContextValue {
   isDrag: boolean;
@@ -17,7 +18,7 @@ export function MoveProvider({ children, container = null }: { children: React.R
   const [canResize, setCanResize] = useState(true);
 
   const start = () => {
-    const isMiniView = document.documentElement.classList.contains('mini-view');
+    const isMiniView = getPreference('miniView');
     setIsDrag(true);
     setCanResize(!isMiniView);
     window.api.startDragging({ resizable: !isMiniView });

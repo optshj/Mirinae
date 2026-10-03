@@ -1,27 +1,16 @@
-import { useEffect, useState } from 'react';
-import { COLORPALLETTE, DEFAULT_PALETTE_SET, PALETTE_SET_STORAGE_KEY, PALETTE_SETS, PaletteSetId } from '@/shared/const/color';
+import { useState } from 'react';
+import { COLORPALLETTE, PALETTE_SETS, PaletteSetId } from '@/shared/const/color';
+import { usePreference } from '@/shared/lib/preferences';
 import { DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from '@/shared/ui/dropdown-menu';
 import { posthog } from '@/shared/lib/posthog';
 import { cn } from '@/shared/lib/utils';
 
-function isPaletteSetId(value: string | null): value is PaletteSetId {
-  return PALETTE_SETS.some((set) => set.id === value);
-}
-
 export function PaletteSetButton() {
   const [isOpen, setIsOpen] = useState(false);
-  const [paletteSet, setPaletteSet] = useState<PaletteSetId>(() => {
-    const stored = localStorage.getItem(PALETTE_SET_STORAGE_KEY);
-    return isPaletteSetId(stored) ? stored : DEFAULT_PALETTE_SET;
-  });
-
-  useEffect(() => {
-    PALETTE_SETS.forEach((set) => document.documentElement.classList.toggle(`palette-${set.id}`, set.id === paletteSet));
-  }, [paletteSet]);
+  const [paletteSet, setPaletteSet] = usePreference('paletteSet');
 
   const handleChange = (id: PaletteSetId) => {
     setPaletteSet(id);
-    localStorage.setItem(PALETTE_SET_STORAGE_KEY, id);
     posthog.capture('palette_set_change', { palette_set: id });
   };
 

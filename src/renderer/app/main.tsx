@@ -3,30 +3,12 @@ import App from './App';
 import './index.css';
 import 'sonner/dist/styles.css';
 import { posthog } from '@/shared/lib/posthog';
-import { DEFAULT_PALETTE_SET, PALETTE_SET_STORAGE_KEY } from '@/shared/const/color';
+import { applyPreferencesToHtml, getPreference } from '@/shared/lib/preferences';
 
-if (localStorage.getItem('flipFooter') === 'true') {
-  document.documentElement.classList.add('flip-footer');
-}
-
-const storedTheme = localStorage.getItem('theme');
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-const isDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
-if (isDark) {
-  document.documentElement.classList.add('dark');
-}
-posthog.capture('app_launched_theme', { theme: isDark ? 'dark' : 'light' });
-
-const paletteSet = localStorage.getItem(PALETTE_SET_STORAGE_KEY) ?? DEFAULT_PALETTE_SET;
-document.documentElement.classList.add(`palette-${paletteSet}`);
-posthog.capture('app_launched_palette_set', { palette_set: paletteSet });
-
-if (localStorage.getItem('miniView') === 'true') {
-  document.documentElement.classList.add('mini-view');
-}
-
-document.documentElement.style.setProperty('--bg-opacity', localStorage.getItem('bgOpacity') ?? '1');
-posthog.capture('app_launched_bg_opacity', { bg_opacity: localStorage.getItem('bgOpacity') ?? '1' });
+applyPreferencesToHtml();
+posthog.capture('app_launched_theme', { theme: getPreference('theme') });
+posthog.capture('app_launched_palette_set', { palette_set: getPreference('paletteSet') });
+posthog.capture('app_launched_bg_opacity', { bg_opacity: String(getPreference('bgOpacity')) });
 
 window.api.getAppVersion().then((appVersion) => {
   posthog.capture('app_launched', { app_version: appVersion, platform: window.api.platform });

@@ -1,19 +1,14 @@
-import { useState } from 'react';
 import { Minimize2, Maximize2 } from 'lucide-react';
 import { posthog } from '@/shared/lib/posthog';
 import { Tooltip } from '@/shared/ui/tooltip';
+import { usePreference } from '@/shared/lib/preferences';
 
 export function MiniViewButton() {
-  const [isMini, setIsMini] = useState(localStorage.getItem('miniView') === 'true');
+  const [isMini, setIsMini] = usePreference('miniView');
 
   const handleClick = () => {
-    setIsMini((prev) => {
-      const next = !prev;
-      document.documentElement.classList.toggle('mini-view', next);
-      localStorage.setItem('miniView', next.toString());
-      posthog.capture('mini_view_button');
-      return next;
-    });
+    setIsMini(!isMini);
+    posthog.capture('mini_view_button');
   };
 
   return (

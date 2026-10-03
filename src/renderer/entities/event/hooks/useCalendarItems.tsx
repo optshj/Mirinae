@@ -1,15 +1,14 @@
 import { CalendarEvent } from '@/shared/types/EventType';
 import { useMemo } from 'react';
 import { useEvents, useHolidayEvents, useSubscribedEvents } from './useEvent';
-import { useHoliday } from '../context/HolidayContext';
-import { useColorFilter } from '../context/ColorFilterContext';
+import { usePreference } from '@/shared/lib/preferences';
 
 export function useCalendarItems() {
   const { data: eventData } = useEvents();
   const subscribedEvents = useSubscribedEvents();
   const { data: holidayData } = useHolidayEvents();
-  const { showHoliday } = useHoliday();
-  const { filteredColors } = useColorFilter();
+  const [showHoliday] = usePreference('showHoliday');
+  const [colorFilter] = usePreference('colorFilter');
 
   const items = useMemo<CalendarEvent[]>(() => {
     const events = eventData?.items ?? [];
@@ -35,14 +34,14 @@ export function useCalendarItems() {
         end: { date: event.end?.date ?? '' }
       };
     });
-    const filtered = filteredColors.size > 0 ? all.filter((e) => filteredColors.has(e.colorId)) : all;
+    const filtered = colorFilter.length > 0 ? all.filter((e) => colorFilter.includes(e.colorId)) : all;
 
     return filtered.sort((a, b) => {
       const sa = a.category === 'time' ? a.start.dateTime : a.start.date;
       const sb = b.category === 'time' ? b.start.dateTime : b.start.date;
       return sa.localeCompare(sb);
     });
-  }, [eventData, subscribedEvents, holidayData, showHoliday, filteredColors]);
+  }, [eventData, subscribedEvents, holidayData, showHoliday, colorFilter]);
 
   return { items };
 }

@@ -1,5 +1,5 @@
-import { useColorLabels } from '@/entities/event';
-import { COLORPALLETTE } from '@/shared/const/color';
+import { COLORPALLETTE, COLOR_LABEL_MAX_LENGTH } from '@/shared/const/color';
+import { usePreference } from '@/shared/lib/preferences';
 import { HangulInput } from '@/shared/ui/input';
 import { cn } from '@/shared/lib/utils';
 
@@ -16,7 +16,14 @@ interface ColorChipsProps {
  * 칩은 폭이 모자라면 다음 줄로 흐르고 이름은 칩 안에서 줄바꿈되므로 이름 길이에 제한이 없다.
  */
 export function ColorChips({ isSelected, onSelect, naming, className }: ColorChipsProps) {
-  const { labels, setLabel } = useColorLabels();
+  const [labels, setLabels] = usePreference('colorLabels');
+  const setLabel = (colorId: string, label: string) => {
+    const next = { ...labels };
+    // 표시하는 쪽(스와치 아래 두 줄)이 감당 못 하는 길이는 저장 단계에서 막는다
+    if (label.trim()) next[colorId] = label.slice(0, COLOR_LABEL_MAX_LENGTH);
+    else delete next[colorId];
+    setLabels(next);
+  };
   const named = COLORPALLETTE.filter((key) => labels[key]);
   const unnamed = COLORPALLETTE.filter((key) => !labels[key]);
 

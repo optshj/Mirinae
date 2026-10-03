@@ -5,7 +5,7 @@ import { HOLIDAY_CALENDAR_ID } from '../api';
 import { useLogin } from '@/shared/hooks/useLogin';
 import { COLORPALLETTE } from '@/shared/const/color';
 import { Events } from '@/shared/types/EventType';
-import { useCalendarVisibility } from '../context/CalendarVisibilityContext';
+import { usePreference } from '@/shared/lib/preferences';
 
 export const useEvents = () => {
   const { isAuthenticated } = useLogin();
@@ -34,7 +34,7 @@ export const useCalendarList = () => {
 /** primary·대한민국 공휴일(useHolidayEvents가 따로 가져옴)을 뺀 구독/공유 캘린더. 표시 여부는 미리내에서 고른 목록 → 고른 적 없으면 Google의 selected */
 export const useSubscribedCalendars = () => {
   const { data } = useCalendarList();
-  const { visibleIds } = useCalendarVisibility();
+  const [visibleIds] = usePreference('visibleCalendars');
   return useMemo(
     () =>
       (data?.items ?? [])

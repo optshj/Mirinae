@@ -1,10 +1,15 @@
 import { cn } from '@/shared/lib/utils';
-import { useMaxLanes } from '@/entities/event';
+import { posthog } from '@/shared/lib/posthog';
+import { usePreference } from '@/shared/lib/preferences';
 
 const MAX_LANES_OPTIONS = [1, 2, 3, 4, 5] as const;
 
 export function MaxLanesButton() {
-  const { maxLanes, setMaxLanes } = useMaxLanes();
+  const [maxLanes, setMaxLanes] = usePreference('maxLanes');
+  const select = (lanes: number) => {
+    setMaxLanes(lanes);
+    posthog.capture('max_lanes_changed', { max_lanes: lanes });
+  };
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -17,7 +22,7 @@ export function MaxLanesButton() {
             role="tab"
             aria-selected={lanes === maxLanes}
             tabIndex={-1}
-            onClick={() => setMaxLanes(lanes)}
+            onClick={() => select(lanes)}
             className={cn(
               'rounded px-1 py-1 text-[11px] font-semibold whitespace-nowrap transition-colors',
               lanes === maxLanes ? 'bg-main-color text-white shadow-xs' : 'text-primary/55 hover:text-primary'
