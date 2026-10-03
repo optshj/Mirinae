@@ -18,6 +18,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
     try {
       await window.api.loginGoogleOAuth();
     } catch {
+      posthog.capture('user_login_failed');
       toast.error('로그인에 실패했어요. 잠시 후 다시 시도해 주세요', { id: 'login-error' });
       return;
     }

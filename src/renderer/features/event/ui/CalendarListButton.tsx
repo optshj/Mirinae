@@ -3,6 +3,7 @@ import { useCalendarVisibility, useHoliday, useSubscribedCalendars } from '@/ent
 import { cn } from '@/shared/lib/utils';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
 import { Tooltip } from '@/shared/ui/tooltip';
+import { posthog } from '@/shared/lib/posthog';
 
 export function CalendarListButton() {
   const { showHoliday, setShowHoliday } = useHoliday();
@@ -10,7 +11,14 @@ export function CalendarListButton() {
   const calendars = useSubscribedCalendars();
 
   const keepOpen = (event: Event) => event.preventDefault();
-  const toggle = (id: string, checked: boolean) => setVisibleIds(calendars.filter((cal) => (cal.id === id ? checked : cal.visible)).map((cal) => cal.id));
+  const toggle = (id: string, checked: boolean) => {
+    setVisibleIds(calendars.filter((cal) => (cal.id === id ? checked : cal.visible)).map((cal) => cal.id));
+    posthog.capture('calendar_visibility_changed', { calendar: 'subscribed', visible: checked });
+  };
+  const toggleHoliday = (checked: boolean) => {
+    setShowHoliday(checked);
+    posthog.capture('calendar_visibility_changed', { calendar: 'holiday', visible: checked });
+  };
   const itemClass = 'pr-1.5 [&>[data-slot=dropdown-menu-checkbox-item-indicator]]:hidden';
 
   return (
@@ -24,7 +32,7 @@ export function CalendarListButton() {
       </Tooltip>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="text-primary text-xs">표시할 캘린더</DropdownMenuLabel>
-        <DropdownMenuCheckboxItem className={itemClass} checked={showHoliday} onCheckedChange={setShowHoliday} onSelect={keepOpen}>
+        <DropdownMenuCheckboxItem className={itemClass} checked={showHoliday} onCheckedChange={toggleHoliday} onSelect={keepOpen}>
           <ColorCheckbox colorId="10" checked={showHoliday} />
           <span className="truncate">대한민국 공휴일</span>
         </DropdownMenuCheckboxItem>

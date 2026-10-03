@@ -1,10 +1,12 @@
 import { Switch } from '@/shared/ui/switch';
 import { useState } from 'react';
+import { posthog } from '@/shared/lib/posthog';
 
 export function FlipFooterButton() {
   const [isFlip, setIsFlip] = useState(localStorage.getItem('flipFooter') === 'true');
 
   const onClick = () => {
+    posthog.capture('flip_footer_changed', { flip_footer: !isFlip });
     setIsFlip((prev) => {
       const next = !prev;
       document.documentElement.classList.toggle('flip-footer', next);

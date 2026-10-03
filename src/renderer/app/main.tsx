@@ -15,21 +15,25 @@ const isDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
 if (isDark) {
   document.documentElement.classList.add('dark');
 }
-posthog.capture('app_launched_theme', { theme: isDark ? 'dark' : 'light' });
 
 const paletteSet = localStorage.getItem(PALETTE_SET_STORAGE_KEY) ?? DEFAULT_PALETTE_SET;
 document.documentElement.classList.add(`palette-${paletteSet}`);
-posthog.capture('app_launched_palette_set', { palette_set: paletteSet });
 
 if (localStorage.getItem('miniView') === 'true') {
   document.documentElement.classList.add('mini-view');
 }
 
-document.documentElement.style.setProperty('--bg-opacity', localStorage.getItem('bgOpacity') ?? '1');
-posthog.capture('app_launched_bg_opacity', { bg_opacity: localStorage.getItem('bgOpacity') ?? '1' });
+const bgOpacity = localStorage.getItem('bgOpacity') ?? '1';
+document.documentElement.style.setProperty('--bg-opacity', bgOpacity);
 
 window.api.getAppVersion().then((appVersion) => {
-  posthog.capture('app_launched', { app_version: appVersion, platform: window.api.platform });
+  posthog.capture('app_launched', {
+    app_version: appVersion,
+    platform: window.api.platform,
+    theme: isDark ? 'dark' : 'light',
+    palette_set: paletteSet,
+    bg_opacity: bgOpacity
+  });
 });
 window.api.onUpdateAvailable(({ currentVersion, newVersion }) => {
   posthog.capture('update_available', { current_version: currentVersion, new_version: newVersion });
