@@ -6,6 +6,7 @@ interface LoginContextValue {
   isAuthenticated: boolean;
   login: () => void;
   logout: () => void;
+  restoreSession: () => Promise<void>;
 }
 
 const LoginContext = createContext<LoginContextValue | null>(null);
@@ -45,7 +46,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
     };
   }, [restoreSession]);
 
-  return <LoginContext.Provider value={{ isAuthenticated, login, logout }}>{children}</LoginContext.Provider>;
+  return <LoginContext.Provider value={{ isAuthenticated, login, logout, restoreSession }}>{children}</LoginContext.Provider>;
 }
 
 export function useLogin() {
