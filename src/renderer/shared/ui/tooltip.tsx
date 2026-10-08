@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
+import { useHoveredIn } from '@/shared/hooks/useHover';
 import { cn } from '@/shared/lib/utils';
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
@@ -29,58 +30,19 @@ const arrowClass: Record<Side, string> = {
 };
 
 export function Tooltip({ content, children, side = 'top', delay = 0, className, wrapperClassName }: TooltipProps) {
-  const [open, setOpen] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const openRef = useRef(false);
+  const hovered = useHoveredIn(ref) !== null;
+  const [open, setOpen] = useState(false);
 
-  const setOpenState = useCallback((value: boolean) => {
-    openRef.current = value;
-    setOpen(value);
-  }, []);
-
-  const clearTimer = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-  }, []);
-
-  const hide = useCallback(() => {
-    clearTimer();
-    if (openRef.current) setOpenState(false);
-  }, [clearTimer, setOpenState]);
-
+  // 커서가 떠나면 바로 닫고, 들어오면 delay 뒤에 연다. 클릭으로 닫은 뒤엔 나갔다 들어와야 다시 열린다.
   useEffect(() => {
-    const onMove = (e: PointerEvent) => {
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const inside = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
-
-      if (inside) {
-        if (!openRef.current && !timerRef.current) {
-          timerRef.current = setTimeout(() => {
-            timerRef.current = null;
-            setOpenState(true);
-          }, delay);
-        }
-      } else {
-        hide();
-      }
-    };
-
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('blur', hide); // 다른 창으로 이동 시 안전하게 닫기
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('blur', hide);
-      clearTimer();
-    };
-  }, [delay, hide, setOpenState, clearTimer]);
+    if (!hovered) return setOpen(false);
+    const timer = setTimeout(() => setOpen(true), delay);
+    return () => clearTimeout(timer);
+  }, [hovered, delay]);
 
   return (
-    <span ref={ref} className={cn('relative inline-flex h-fit w-fit', wrapperClassName)} onPointerDown={hide}>
+    <span ref={ref} data-hoverable className={cn('relative inline-flex h-fit w-fit', wrapperClassName)} onPointerDown={() => setOpen(false)}>
       {children}
       {open && (
         <span

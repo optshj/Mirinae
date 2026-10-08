@@ -1,9 +1,12 @@
 import dayjs from 'dayjs';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 
-import { useCalendarItems, useMaxLanes, getEventRange } from '@/entities/event';
+import { useCalendarItems, getEventRange } from '@/entities/event';
 import { DateProps } from '@/shared/hooks/useDate';
 import { cn } from '@/shared/lib/utils';
+import { useHoveredIn } from '@/shared/hooks/useHover';
+
+const MAX_DOTS = 3;
 
 interface DayEvent {
   id: string;
@@ -13,9 +16,9 @@ interface DayEvent {
 
 export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>) {
   const { items } = useCalendarItems();
-  const { maxLanes } = useMaxLanes();
-  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
-  const cellRefs = useRef(new Map<string, HTMLDivElement>());
+  const gridRef = useRef<HTMLDivElement>(null);
+  // 미니뷰는 창이 작아 hover만으로 일정을 훑어봐야 해서 호버된 칸에 팝오버를 띄운다
+  const hoveredKey = useHoveredIn(gridRef)?.dataset.date ?? null;
 
   const eventsByDate = useMemo(() => {
     const map: Record<string, DayEvent[]> = {};
@@ -31,30 +34,6 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
     });
     return map;
   }, [items]);
-
-  // 미니뷰는 창이 작아 hover만으로 일정을 훑어봐야 함 - 실제 포워딩된 마우스 이동을
-  // window pointermove로 직접 추적한다 (Tooltip과 동일 패턴; onMouseEnter/Leave는 신뢰 불가).
-  useEffect(() => {
-    const onMove = (e: PointerEvent) => {
-      let found: string | null = null;
-      for (const [key, el] of cellRefs.current) {
-        const rect = el.getBoundingClientRect();
-        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
-          found = key;
-          break;
-        }
-      }
-      setHoveredKey(found);
-    };
-    const hide = () => setHoveredKey(null);
-
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('blur', hide);
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('blur', hide);
-    };
-  }, []);
 
   return (
     <div className="bg-surface flex flex-col overflow-hidden rounded-b-lg">
@@ -72,7 +51,7 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
         </div>
       </div>
 
-      <div className="grid grid-cols-7 grid-rows-6">
+      <div ref={gridRef} className="grid grid-cols-7 grid-rows-6">
         {days.map((date, i) => {
           const isCurrentMonth = date.getMonth() === month;
           const isToday = dayjs(date).isSame(dayjs(), 'day');
@@ -85,19 +64,16 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
             <div
               key={dateKey}
               data-date={dateKey}
-              ref={(el) => {
-                if (el) cellRefs.current.set(dateKey, el);
-                else cellRefs.current.delete(dateKey);
-              }}
-              className={`relative flex h-14 flex-col items-center justify-center gap-1.5 rounded-md transition-colors ${hoveredKey === dateKey ? 'bg-main-color/20' : ''}`}
+              data-hoverable
+              className="data-hovered:bg-main-color/20 relative flex h-14 flex-col items-center justify-center gap-1.5 rounded-md transition-colors"
             >
               <div className={cn('-mt-1.5 flex flex-col items-center gap-1.5', !isCurrentMonth && 'opacity-40')}>
                 <div className={`flex h-7 w-7 items-center justify-center rounded-md text-sm tracking-tighter ${isToday ? 'bg-red-400 text-white' : 'text-primary'}`}>{date.getDate()}</div>
                 <div className="flex h-2 items-center gap-1">
-                  {dayEvents.slice(0, maxLanes).map((event, i) => (
+                  {dayEvents.slice(0, MAX_DOTS).map((event, i) => (
                     <span key={i} className={`h-2 w-2 shrink-0 rounded-full event-color-${event.colorId} bg-(--event-color)`} />
                   ))}
-                  {dayEvents.length > maxLanes && <span className="text-secondary flex h-2 w-2 shrink-0 items-center justify-center text-[10px] leading-none">+</span>}
+                  {dayEvents.length > MAX_DOTS && <span className="text-secondary flex h-2 w-2 shrink-0 items-center justify-center text-[10px] leading-none">+</span>}
                 </div>
               </div>
 
