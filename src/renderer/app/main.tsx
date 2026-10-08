@@ -4,6 +4,7 @@ import './index.css';
 import 'sonner/dist/styles.css';
 import { posthog } from '@/shared/lib/posthog';
 import { DEFAULT_PALETTE_SET, PALETTE_SET_STORAGE_KEY } from '@/shared/const/color';
+import { startHoverTracking } from '@/shared/hooks/useHover';
 
 if (localStorage.getItem('flipFooter') === 'true') {
   document.documentElement.classList.add('flip-footer');
@@ -41,5 +42,7 @@ window.api.onUpdateAvailable(({ currentVersion, newVersion }) => {
 window.api.onUpdateClickable((isExplorer: boolean) => {
   document.documentElement.classList.toggle('disable-click', !isExplorer);
 });
+
+startHoverTracking();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<App />);

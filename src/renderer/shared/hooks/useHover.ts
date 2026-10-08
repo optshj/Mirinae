@@ -1,7 +1,7 @@
-import { RefObject, useEffect, useSyncExternalStore } from 'react';
+import { RefObject, useSyncExternalStore } from 'react';
 
 // 스타일만 필요하면: <div data-hoverable className="data-hovered:bg-..." />
-// React로 그려야 하면 (툴팁, 팝오버): useHoveredIn(ref)
+// React로 그려야 하면 (툴팁, 팝오버): useHover(ref)
 let hovered: HTMLElement[] = [];
 const listeners = new Set<() => void>();
 
@@ -16,17 +16,10 @@ function update(next: HTMLElement[]) {
 const onMove = (e: PointerEvent) => update(document.elementsFromPoint(e.clientX, e.clientY).filter((el): el is HTMLElement => el instanceof HTMLElement && el.hasAttribute('data-hoverable')));
 const clear = () => update([]);
 
-/** 앱 루트에서 한 번만 호출 */
-export function useHoverTracking() {
-  useEffect(() => {
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('blur', clear);
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('blur', clear);
-      clear();
-    };
-  }, []);
+/** 앱 시작 시 main.tsx에서 한 번만 호출. 앱이 꺼질 때까지 유지되므로 정리하지 않는다. */
+export function startHoverTracking() {
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('blur', clear);
 }
 
 function subscribe(listener: () => void) {
@@ -35,7 +28,7 @@ function subscribe(listener: () => void) {
 }
 
 /** ref 요소(자신 포함) 안에서 커서 아래에 있는 가장 안쪽 [data-hoverable] 요소. 바뀔 때만 리렌더된다. */
-export function useHoveredIn(ref: RefObject<HTMLElement | null>) {
+export function useHover(ref: RefObject<HTMLElement | null>) {
   return useSyncExternalStore(subscribe, () => {
     const root = ref.current;
     return root ? (hovered.find((el) => root.contains(el)) ?? null) : null;

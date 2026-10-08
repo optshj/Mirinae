@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useHoveredIn } from '@/shared/hooks/useHover';
+import { useHover } from '@/shared/hooks/useHover';
 import { cn } from '@/shared/lib/utils';
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
@@ -31,7 +31,7 @@ const arrowClass: Record<Side, string> = {
 
 export function Tooltip({ content, children, side = 'top', delay = 0, className, wrapperClassName }: TooltipProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const hovered = useHoveredIn(ref) !== null;
+  const hovered = useHover(ref) !== null;
   const [open, setOpen] = useState(false);
 
   // 커서가 떠나면 바로 닫고, 들어오면 delay 뒤에 연다. 클릭으로 닫은 뒤엔 나갔다 들어와야 다시 열린다.

@@ -3,7 +3,6 @@ import Provider from './provider';
 import { Calendar } from '@/pages';
 import { Toaster } from '@/shared/ui/sonner';
 import { useEventNotifications } from '@/features/event-notification';
-import { useHoverTracking } from '@/shared/hooks/useHover';
 
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -19,7 +18,6 @@ function EventNotifications() {
 
 export default function App() {
   useEffect(() => window.api.rendererReady(), []);
-  useHoverTracking();
 
   return (
     <Provider>

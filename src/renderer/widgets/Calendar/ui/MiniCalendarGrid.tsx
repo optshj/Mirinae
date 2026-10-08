@@ -4,7 +4,7 @@ import { useMemo, useRef } from 'react';
 import { useCalendarItems, getEventRange } from '@/entities/event';
 import { DateProps } from '@/shared/hooks/useDate';
 import { cn } from '@/shared/lib/utils';
-import { useHoveredIn } from '@/shared/hooks/useHover';
+import { useHover } from '@/shared/hooks/useHover';
 
 const MAX_DOTS = 3;
 
@@ -18,7 +18,7 @@ export function MiniCalendarGrid({ days, month }: Pick<DateProps, 'days' | 'mont
   const { items } = useCalendarItems();
   const gridRef = useRef<HTMLDivElement>(null);
   // 미니뷰는 창이 작아 hover만으로 일정을 훑어봐야 해서 호버된 칸에 팝오버를 띄운다
-  const hoveredKey = useHoveredIn(gridRef)?.dataset.date ?? null;
+  const hoveredKey = useHover(gridRef)?.dataset.date ?? null;
 
   const eventsByDate = useMemo(() => {
     const map: Record<string, DayEvent[]> = {};
