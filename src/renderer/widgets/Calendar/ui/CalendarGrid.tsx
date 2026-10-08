@@ -1,48 +1,44 @@
 import dayjs from 'dayjs';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useLayoutEffect, useRef } from 'react';
 
 import { ScheduleModal } from './ScheduleModal';
-import { EventList, useCalendarItems, buildMonthSegments, buildHolidayDates, useMaxLanes, useHolidayEvents, useHoliday, EventSegment } from '@/entities/event';
+import { EventList, useCalendarItems, buildMonthSegments, buildHolidayDates, useHolidayEvents, useHoliday, EventSegment } from '@/entities/event';
 import { useEventDrag, DragGhost } from '@/features/event-drag';
 
 import { Dialog } from '@/shared/ui/dialog';
 import { DateProps } from '@/shared/hooks/useDate';
 import { cn } from '@/shared/lib/utils';
 
+const DATE_HEADER_PX = 32;
+const LANE_PX = 20;
+const LANE_GAP_PX = 4;
+
 export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
+  const [maxLanes, setMaxLanes] = useState(1);
+  const weeksRef = useRef<HTMLDivElement>(null);
+
   const { items } = useCalendarItems();
-  const { maxLanes } = useMaxLanes();
   const { drag, previewRange, ghostRef, posRef, startDrag } = useEventDrag();
   const { data: holidayData } = useHolidayEvents();
   const { showHoliday } = useHoliday();
-  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
-  const cellRefs = useRef(new Map<string, HTMLDivElement>());
 
-  useEffect(() => {
-    const onMove = (e: PointerEvent) => {
-      let found: string | null = null;
-      for (const [key, el] of cellRefs.current) {
-        const rect = el.getBoundingClientRect();
-        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
-          found = key;
-          break;
-        }
-      }
-      setHoveredKey(found);
+  // 창 높이(크기 조절, '달력만' 전환)에 맞춰 들어가는 만큼 줄 수를 정한다. 6개 행은 높이가 같아서 컨테이너만 재면 된다.
+  useLayoutEffect(() => {
+    const el = weeksRef.current;
+    if (!el) return;
+    const measure = () => {
+      const rowHeight = el.clientHeight / 6;
+      setMaxLanes(Math.max(1, Math.floor((rowHeight - DATE_HEADER_PX + LANE_GAP_PX) / (LANE_PX + LANE_GAP_PX))));
     };
-    const hide = () => setHoveredKey(null);
-
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('blur', hide);
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('blur', hide);
-    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
-  // 날짜 숫자를 빨갛게 칠하기 위한 공휴일 날짜 집합. 색상 필터와 무관하게 '공휴일 표시' 토글만 따른다.
+  // 공휴일인 경우 빨갛게 칠하는 집합.
   const holidayDates = useMemo(() => (showHoliday ? buildHolidayDates(holidayData?.items ?? []) : new Set<string>()), [holidayData, showHoliday]);
 
   const weekArray = useMemo(() => {
@@ -71,7 +67,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
         </div>
       </div>
 
-      <div className="grid h-[calc(100vh-20rem)] grid-rows-6 transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-7.5rem)] [html.resizable_&]:transition-none">
+      <div ref={weeksRef} className="grid h-[calc(100vh-20rem)] grid-rows-6 transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-7.5rem)] [html.resizable_&]:transition-none">
         {weekArray.map((week, weekIndex) => (
           <WeekRow
             key={weekIndex}
@@ -88,8 +84,6 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
             onEventPointerDown={startDrag}
             draggingEventId={drag?.seg.event.id ?? null}
             previewRange={previewRange}
-            hoveredKey={drag ? null : hoveredKey}
-            cellRefs={cellRefs.current}
           />
         ))}
 
@@ -114,10 +108,8 @@ interface WeekRowProps {
   onEventPointerDown: (e: React.PointerEvent, seg: EventSegment) => void;
   draggingEventId: string | null;
   previewRange: { start: string; end: string } | null;
-  hoveredKey: string | null;
-  cellRefs: Map<string, HTMLDivElement>;
 }
-function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidayDates, onPickDate, onEventPointerDown, draggingEventId, previewRange, hoveredKey, cellRefs }: WeekRowProps) {
+function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidayDates, onPickDate, onEventPointerDown, draggingEventId, previewRange }: WeekRowProps) {
   const weekStart = dayjs(week[0]).format('YYYY-MM-DD');
 
   return (
@@ -134,11 +126,8 @@ function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidayDates,
           <div
             key={dateKey}
             data-date={dateKey}
-            ref={(el) => {
-              if (el) cellRefs.set(dateKey, el);
-              else cellRefs.delete(dateKey);
-            }}
-            className={cn('flex h-full w-full flex-col overflow-hidden rounded-md transition-colors', isDropPreview && 'bg-main-color/10', hoveredKey === dateKey && 'bg-main-color/20')}
+            data-hoverable={draggingEventId === null ? '' : undefined}
+            className={cn('data-hovered:bg-main-color/20 flex h-full w-full flex-col overflow-hidden rounded-md transition-colors', isDropPreview && 'bg-main-color/10')}
             onDoubleClick={() => onPickDate(date)}
           >
             <div className={`grid grid-cols-[1fr_auto_1fr] items-center p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
@@ -161,9 +150,11 @@ function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidayDates,
       })}
 
       <div
-        className="pointer-events-none absolute inset-x-0 top-8 bottom-0 grid grid-cols-7 gap-y-1"
+        className="pointer-events-none absolute inset-x-0 bottom-0 grid grid-cols-7"
         style={{
-          gridTemplateRows: `repeat(${maxLanes}, minmax(0, 20px))`
+          top: DATE_HEADER_PX,
+          rowGap: LANE_GAP_PX,
+          gridTemplateRows: `repeat(${maxLanes}, ${LANE_PX}px)`
         }}
       >
         {visible.map((seg) => (
