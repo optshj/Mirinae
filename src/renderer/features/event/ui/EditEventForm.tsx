@@ -67,7 +67,8 @@ function Event({ event, completeButton, deleteButton }: { event: CalendarEvent; 
 
   return (
     <div
-      className={`relative flex items-center justify-between rounded-xl p-3 dark:saturate-70 [html.show-event-form_&]:hidden event-color-${event.colorId} bg-(--event-color)/20`}
+      data-hoverable={isReadOnly ? undefined : ''}
+      className={`relative flex items-center justify-between rounded-xl p-3 transition-colors data-hovered:bg-(--event-color)/50 dark:saturate-70 [html.show-event-form_&]:hidden event-color-${event.colorId} bg-(--event-color)/20`}
       onClick={(e) => {
         if (isReadOnly) e.stopPropagation();
       }}

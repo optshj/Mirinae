@@ -59,7 +59,8 @@ export function AddEventForm({ date }: { date: Date }) {
             wrapperClassName="w-full"
           >
             <button
-              className="text-secondary w-full rounded-xl border-2 border-dashed py-3 text-center [html.show-event-form_&]:hidden"
+              data-hoverable
+              className="text-secondary data-hovered:text-primary w-full rounded-xl border-2 border-dashed py-3 text-center transition-colors data-hovered:bg-black/5 dark:data-hovered:bg-white/5 [html.show-event-form_&]:hidden"
               onClick={() => {
                 resetForm();
               }}
