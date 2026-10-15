@@ -1,8 +1,10 @@
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Settings } from 'lucide-react';
 import { DateProps } from '@/shared/hooks/useDate';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
 import { Tooltip } from '@/shared/ui/tooltip';
+import { cn } from '@/shared/lib/utils';
 
 import { FlipCalendarButton } from '@/features/flip';
 import { MiniViewButton } from '@/features/mini-view';
@@ -16,7 +18,14 @@ import { SettingsMegaMenu } from './SettingsMegaMenu';
 const dragStyle = { WebkitAppRegion: 'drag' } as React.CSSProperties;
 const noDragStyle = { WebkitAppRegion: 'no-drag' } as React.CSSProperties;
 
-export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }: Pick<DateProps, 'displayMonth' | 'year' | 'handlePrevMonth' | 'handleNextMonth'>) {
+export function Header({
+  displayMonth,
+  year,
+  handlePrevMonth,
+  handleNextMonth,
+  isCurrentMonth,
+  handleToday
+}: Pick<DateProps, 'displayMonth' | 'year' | 'handlePrevMonth' | 'handleNextMonth' | 'isCurrentMonth' | 'handleToday'>) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -31,6 +40,19 @@ export function Header({ displayMonth, year, handlePrevMonth, handleNextMonth }:
             {year}년 {displayMonth.toString().padStart(2, '0')}월
           </div>
           <ChevronRight strokeWidth={1} onClick={handleNextMonth} className="cursor-pointer [html.mini-view_&]:size-6" />
+          <button
+            tabIndex={-1}
+            onClick={handleToday}
+            aria-hidden={isCurrentMonth}
+            className={cn(
+              'ml-2 rounded-full bg-zinc-800 px-3 py-1 text-xs font-semibold whitespace-nowrap text-white transition-[translate,scale,opacity] active:scale-95 dark:bg-zinc-100 dark:text-zinc-900',
+              isCurrentMonth
+                ? 'pointer-events-none -translate-x-7 scale-90 opacity-0 duration-160 ease-[cubic-bezier(0.4,0,1,1)]'
+                : 'translate-x-0 scale-100 opacity-100 duration-280 ease-[cubic-bezier(0.2,0.8,0.2,1)]'
+            )}
+          >
+            오늘<span className="[html.mini-view_&]:hidden">로 돌아가기</span>
+          </button>
         </div>
 
         <div className="flex items-center gap-5 [&_svg]:size-6 [html.mini-view_&]:gap-3" style={noDragStyle}>

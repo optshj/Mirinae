@@ -8,6 +8,8 @@ export type DateProps = {
   displayMonth: number;
   handlePrevMonth: () => void;
   handleNextMonth: () => void;
+  isCurrentMonth: boolean;
+  handleToday: () => void;
 };
 
 export function useDate() {
@@ -24,6 +26,8 @@ export function useDate() {
 
   const handlePrevMonth = () => setViewDate(viewDate.subtract(1, 'month'));
   const handleNextMonth = () => setViewDate(viewDate.add(1, 'month'));
+  const handleToday = () => setViewDate(dayjs());
+  const isCurrentMonth = viewDate.isSame(dayjs(), 'month');
 
   return {
     days,
@@ -31,6 +35,8 @@ export function useDate() {
     month,
     displayMonth,
     handlePrevMonth,
-    handleNextMonth
+    handleNextMonth,
+    isCurrentMonth,
+    handleToday
   };
 }
