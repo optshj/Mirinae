@@ -70,7 +70,7 @@ export const Toaster = () => {
         error: <X className="h-4 w-4" />,
         warning: <TriangleAlert className="h-4 w-4" />,
         info: <Check className="h-4 w-4" />,
-        loading: <LoaderCircle className="h-4 w-4" />
+        loading: <LoaderCircle className="h-4 w-4 animate-spin" />
       }}
       toastOptions={{
         style: { WebkitAppRegion: 'no-drag' } as React.CSSProperties,
@@ -86,7 +86,7 @@ export const Toaster = () => {
           error: '[&_[data-icon]]:text-red-600',
           warning: '[&_[data-icon]]:text-amber-500',
           info: '[&_[data-icon]]:text-blue-600',
-          loading: '[&_[data-icon]]:text-zinc-600 dark:[&_[data-icon]]:text-zinc-300 animate-spin'
+          loading: '[&_[data-icon]]:text-zinc-600 dark:[&_[data-icon]]:text-zinc-300'
         }
       }}
     />
