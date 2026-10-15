@@ -77,7 +77,10 @@ function Event({ event, completeButton, deleteButton }: { event: CalendarEvent; 
         <div className={`h-10 w-2 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />
         <div className="text-primary flex-1 pl-3">
           <span className={`font-semibold ${completed ? 'line-through decoration-current/40 decoration-1' : ''}`}>{event.summary}</span>
-          <div className="text-xs">{renderTimeRange()}</div>
+          <div className="text-xs">
+            {renderTimeRange()}
+            {event.recurringEventId && ' · 반복 일정'}
+          </div>
         </div>
       </div>
       {!isReadOnly && (
