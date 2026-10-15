@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Settings } from 'lucide-react';
 import { DateProps } from '@/shared/hooks/useDate';
