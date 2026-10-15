@@ -36,6 +36,7 @@ function DialogContent({
   showCloseButton = true,
   overlayClassName,
   container,
+  onInteractOutside,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
@@ -48,6 +49,11 @@ function DialogContent({
       <DialogPrimitive.Content
         onOpenAutoFocus={(e) => {
           e.preventDefault();
+        }}
+        // 토스트는 다이얼로그 바깥에 렌더링되지만, 되돌리기 버튼을 누르는 걸 바깥 클릭으로 보고 다이얼로그를 닫으면 안 된다.
+        onInteractOutside={(e) => {
+          if ((e.target as Element | null)?.closest('[data-sonner-toaster]')) e.preventDefault();
+          onInteractOutside?.(e);
         }}
         data-slot="dialog-content"
         className={cn(

@@ -3,7 +3,7 @@ import { Check, LoaderCircle, TriangleAlert, Undo2, X } from 'lucide-react';
 import { toast, Toaster as Sonner } from 'sonner';
 import { Tooltip } from '@/shared/ui/tooltip';
 
-const UNDO_TOAST_DURATION = 5000;
+const UNDO_TOAST_DURATION = 8000;
 
 export function showUndoToast(type: 'success' | 'error' | 'info', message: string, onUndo: () => void) {
   const toastId = `undo-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -28,6 +28,7 @@ function ToastUndoButton({ toastId, onClick }: ToastUndoButtonProps) {
         onClick={() => {
           onClick();
           toast.dismiss(toastId);
+          toast.success('원래대로 돌렸어요');
         }}
       >
         <svg className="pointer-events-none absolute inset-0 -rotate-90" viewBox="0 0 30 30">
