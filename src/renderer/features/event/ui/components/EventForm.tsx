@@ -89,19 +89,18 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
           <div className="flex items-center">
             <span className="text-secondary w-10 shrink-0 text-sm font-medium">날짜</span>
             <RangePicker start={form.startDate} end={form.endDate} onChange={(end) => updateForm('endDate', end)} />
-          </div>
-
-          <div className="flex items-center">
-            <span className="text-secondary w-10 shrink-0 text-sm font-medium">종일</span>
-            <Tooltip
-              content={
-                <span className="flex items-center gap-1">
-                  단축키 <Kbd className="bg-white/20 text-white/90">Ctrl + D</Kbd>
-                </span>
-              }
-            >
-              <Switch onClick={() => updateForm('allDay', !form.allDay)} isOn={form.allDay} />
-            </Tooltip>
+            <div className="ml-auto flex shrink-0 items-center gap-1.5">
+              <span className="text-secondary text-sm font-medium">종일</span>
+              <Tooltip
+                content={
+                  <span className="flex items-center gap-1">
+                    단축키 <Kbd className="bg-white/20 text-white/90">Ctrl + D</Kbd>
+                  </span>
+                }
+              >
+                <Switch onClick={() => updateForm('allDay', !form.allDay)} isOn={form.allDay} />
+              </Tooltip>
+            </div>
           </div>
 
           <div className={`transition-all ${form.allDay ? 'pointer-events-none opacity-50' : ''}`}>

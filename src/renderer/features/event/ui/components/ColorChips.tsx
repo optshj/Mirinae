@@ -44,7 +44,7 @@ export function ColorChips({ isSelected, onSelect, naming, className }: ColorChi
       )}
 
       {unnamed.length > 0 && (
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-0.5">
           {unnamed.map((key) => (
             <button
               key={key}

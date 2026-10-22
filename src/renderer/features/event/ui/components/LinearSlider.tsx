@@ -93,8 +93,6 @@ export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'], sta
 
   return (
     <div className="w-full">
-      {/* 여러 날이면 위 레인 = 시작일(시작~24시), 아래 레인 = 종료일(0시~종료), 날짜는 위 날짜 줄에 있으니 라벨은 시작/종료만 */}
-      {/* 라벨 칸은 EventForm의 다른 행 라벨(w-10)과 같은 폭이라 슬라이더 시작 x가 다른 입력들과 맞음 */}
       <div className="mb-2 flex">
         <div className="flex w-10 shrink-0 flex-col justify-between">
           {allowCrossDay ? (
@@ -168,7 +166,7 @@ function LaneRuler({ className, covered }: { className: string; covered: (hour: 
   return (
     <>
       {Array.from({ length: 23 }, (_, i) => i + 1).map((h) => {
-        const size = h % 6 === 0 ? 'h-3 w-[1.5px]' : h % 3 === 0 ? 'h-2 w-px' : 'h-1 w-px';
+        const size = h % 6 === 0 ? 'h-2 w-[1.5px]' : h % 3 === 0 ? 'h-2 w-px' : 'h-1 w-px';
         return (
           <div
             key={h}
