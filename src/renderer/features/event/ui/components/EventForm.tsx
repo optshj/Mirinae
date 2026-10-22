@@ -11,11 +11,11 @@ import { LinearSlider } from './LinearSlider';
 import { FormState, RecurrenceType } from '../../types/FormType';
 
 const RECURRENCE_OPTIONS: Array<{ label: string; value: RecurrenceType }> = [
-  { label: '반복 안 함', value: null },
-  { label: '1일마다', value: 'DAILY' },
-  { label: '1주마다', value: 'WEEKLY' },
-  { label: '1개월마다', value: 'MONTHLY' },
-  { label: '1년마다', value: 'YEARLY' }
+  { label: '안 함', value: null },
+  { label: '매일', value: 'DAILY' },
+  { label: '매주', value: 'WEEKLY' },
+  { label: '매월', value: 'MONTHLY' },
+  { label: '매년', value: 'YEARLY' }
 ];
 
 interface EventFormProps {
