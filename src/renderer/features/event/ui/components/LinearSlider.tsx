@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { AlarmClock, AlarmClockOff, ArrowRight, Minus, Plus } from 'lucide-react';
 import { FormState } from '../../types/FormType';
 
@@ -9,11 +9,13 @@ const PREFERRED_GAP = 120; // 선호하는 기본 간격 (2시간)
 interface SliderProps {
   updateForm: (key: keyof FormState, value: FormState[keyof FormState]) => void;
   defaultTime?: [string, string];
-  // 여러 날에 걸친 일정이면 종료시간이 시작시간보다 앞설 수 있어 제약을 풀어줌
-  allowCrossDay?: boolean;
+  startDate: string;
+  endDate: string;
 }
 
-export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'], allowCrossDay = false }: SliderProps) {
+export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'], startDate, endDate }: SliderProps) {
+  // 여러 날에 걸친 일정이면 시작/종료가 서로 다른 날의 시각이라 제약을 풀고 레인을 둘로 나눔
+  const allowCrossDay = endDate > startDate;
   const sliderRef = useRef<HTMLDivElement>(null);
   const [activeThumb, setActiveThumb] = useState<'start' | 'end' | null>(null);
   const [start, setStart] = useState(timeToMinutes(defaultTime[0]));
@@ -42,6 +44,11 @@ export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'], all
     },
     [start, updateForm, allowCrossDay]
   );
+
+  // 여러 날 → 하루로 돌아왔는데 종료가 시작보다 앞서 있으면 기본 간격으로 밀어줌
+  useEffect(() => {
+    if (!allowCrossDay && end < start) handleUpdate(start, start + PREFERRED_GAP);
+  }, [allowCrossDay, start, end, handleUpdate]);
 
   const adjustTime = (type: 'start' | 'end', amount: number) => {
     if (type === 'start') {
@@ -86,48 +93,62 @@ export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'], all
 
   return (
     <div className="w-full">
-      <div className="relative mb-6 h-6">
-        <div ref={sliderRef} className="absolute h-6 w-full rounded-full bg-zinc-200 dark:bg-zinc-700" />
+      {/* 여러 날이면 위 레인 = 시작일(시작~24시), 아래 레인 = 종료일(0시~종료), 날짜는 위 날짜 줄에 있으니 라벨은 시작/종료만 */}
+      {/* 라벨 칸은 EventForm의 다른 행 라벨(w-10)과 같은 폭이라 슬라이더 시작 x가 다른 입력들과 맞음 */}
+      <div className="mb-2 flex">
+        <div className="flex w-10 shrink-0 flex-col justify-between">
+          {allowCrossDay ? (
+            <>
+              <LaneLabel kind="시작" />
+              <LaneLabel kind="종료" />
+            </>
+          ) : (
+            <LaneLabel kind="시간" />
+          )}
+        </div>
+        <div className={`relative flex-1 ${allowCrossDay ? 'h-14' : 'h-9.5'}`}>
+          <div ref={sliderRef} className="absolute h-4 w-full rounded-full bg-zinc-200 dark:bg-zinc-700" />
+          {allowCrossDay && <div className="absolute top-10 h-4 w-full rounded-full bg-zinc-200 dark:bg-zinc-700" />}
 
-        <div
-          className="absolute z-10 h-6 bg-(--event-color) dark:saturate-70"
-          style={{
-            left: `${(Math.min(start, end) / MINUTES_IN_DAY) * 100}%`,
-            width: `${(Math.abs(end - start) / MINUTES_IN_DAY) * 100}%`,
-            backgroundImage: 'radial-gradient(circle, white 1.2px, transparent 1.2px)',
-            backgroundSize: '8px 100%',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'repeat-x'
-          }}
-        />
+          {allowCrossDay ? (
+            <>
+              <SliderFill left={start} width={MINUTES_IN_DAY - start} className="rounded-r-full" />
+              <SliderFill left={0} width={end} className="top-10 rounded-l-full" />
+              <LaneRuler className="bottom-10" covered={(h) => h * 60 >= start} />
+              <LaneRuler className="top-10" covered={(h) => h * 60 <= end} />
+            </>
+          ) : (
+            <>
+              <SliderFill left={start} width={end - start} />
+              <LaneRuler className="bottom-5.5" covered={(h) => h * 60 >= start && h * 60 <= end} />
+            </>
+          )}
 
-        {Array.from({ length: 9 }, (_, i) => i * 3).map((h) => {
-          const isMajor = h % 6 === 0;
-          const hh = h.toString().padStart(2, '0');
-          return (
-            <div key={h} className="absolute mt-2 flex flex-col" style={{ left: `${(h / 24) * 100}%` }}>
-              <div className="mb-2 flex h-2 items-start">
-                <div className={`w-px ${isMajor ? 'h-2 bg-zinc-400' : 'h-1.5 bg-zinc-300 dark:bg-zinc-600'}`} />
+          {Array.from({ length: 9 }, (_, i) => i * 3).map((h) => {
+            const isMajor = h % 6 === 0;
+            const hh = h.toString().padStart(2, '0');
+            return (
+              <div key={h} className="absolute top-5.5 flex flex-col" style={{ left: `${(h / 24) * 100}%` }}>
+                <span className={`-ml-1.5 tabular-nums ${isMajor ? 'text-xs font-medium text-zinc-500' : 'text-[10px] text-zinc-400 dark:text-zinc-500'}`}>{hh}</span>
               </div>
-              <span className={`-ml-1.5 tabular-nums ${isMajor ? 'text-xs font-medium text-zinc-500' : 'text-[10px] text-zinc-400 dark:text-zinc-500'}`}>{hh}</span>
-            </div>
-          );
-        })}
+            );
+          })}
 
-        <SliderThumb
-          type="start"
-          pos={(start / MINUTES_IN_DAY) * 100}
-          active={activeThumb === 'start'}
-          onPointerDown={(e) => handleDrag('start', e)}
-          className={`${activeThumb === 'start' ? 'z-40' : start > MAX_TIME - 30 ? 'z-35' : 'z-20'}`}
-        />
-        <SliderThumb
-          type="end"
-          pos={(end / MINUTES_IN_DAY) * 100}
-          active={activeThumb === 'end'}
-          onPointerDown={(e) => handleDrag('end', e)}
-          className={`${activeThumb === 'end' ? 'z-40' : end < 30 ? 'z-35' : 'z-25'}`}
-        />
+          <SliderThumb
+            type="start"
+            pos={(start / MINUTES_IN_DAY) * 100}
+            active={activeThumb === 'start'}
+            onPointerDown={(e) => handleDrag('start', e)}
+            className={`${activeThumb === 'start' ? 'z-40' : start > MAX_TIME - 30 ? 'z-35' : 'z-20'}`}
+          />
+          <SliderThumb
+            type="end"
+            pos={(end / MINUTES_IN_DAY) * 100}
+            active={activeThumb === 'end'}
+            onPointerDown={(e) => handleDrag('end', e)}
+            className={`${allowCrossDay ? 'top-12' : ''} ${activeThumb === 'end' ? 'z-40' : end < 30 ? 'z-35' : 'z-25'}`}
+          />
+        </div>
       </div>
 
       <div className="flex w-full items-center justify-between gap-2">
@@ -137,6 +158,31 @@ export function LinearSlider({ updateForm, defaultTime = ['08:00', '12:00'], all
       </div>
     </div>
   );
+}
+
+function LaneLabel({ kind }: { kind: string }) {
+  return <span className="text-secondary flex h-4 items-center text-sm font-medium select-none">{kind}</span>;
+}
+
+function LaneRuler({ className, covered }: { className: string; covered: (hour: number) => boolean }) {
+  return (
+    <>
+      {Array.from({ length: 23 }, (_, i) => i + 1).map((h) => {
+        const size = h % 6 === 0 ? 'h-3 w-[1.5px]' : h % 3 === 0 ? 'h-2 w-px' : 'h-1 w-px';
+        return (
+          <div
+            key={h}
+            className={`pointer-events-none absolute z-15 -translate-x-1/2 ${size} ${covered(h) ? 'bg-white/85' : 'bg-zinc-400 dark:bg-zinc-500'} ${className}`}
+            style={{ left: `${(h / 24) * 100}%` }}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+function SliderFill({ left, width, className = '' }: { left: number; width: number; className?: string }) {
+  return <div className={`absolute z-10 h-4 bg-(--event-color) dark:saturate-70 ${className}`} style={{ left: `${(left / MINUTES_IN_DAY) * 100}%`, width: `${(width / MINUTES_IN_DAY) * 100}%` }} />;
 }
 
 function SliderThumb({
@@ -156,7 +202,7 @@ function SliderThumb({
   return (
     <div
       onPointerDown={onPointerDown}
-      className={`absolute top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 cursor-grab items-center justify-center rounded-full bg-(--event-color) p-1.5 transition-transform duration-150 active:cursor-grabbing ${active ? 'scale-125' : ''} ${className}`}
+      className={`absolute top-2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 cursor-grab items-center justify-center rounded-full bg-(--event-color) p-1.5 transition-transform duration-150 active:cursor-grabbing ${active ? 'scale-125' : ''} ${className}`}
       style={{ left: `${pos}%` }}
     >
       <Icon className="text-white" size={16} />

@@ -31,9 +31,6 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
   const formId = `${type}-event-form`;
   const submitButtonText = type === 'add' ? '추가' : '수정';
 
-  // 종료일이 시작일보다 늦으면 여러 날에 걸친 일정 → 슬라이더의 시간 제약을 풀어줌
-  const isMultiDay = form.endDate > form.startDate;
-
   useEffect(() => {
     if (showForm) document.documentElement.classList.add('show-event-form');
     else document.documentElement.classList.remove('show-event-form');
@@ -108,7 +105,7 @@ export function EventForm({ form, updateForm, onSubmit, trigger, type }: EventFo
           </div>
 
           <div className={`transition-all ${form.allDay ? 'pointer-events-none opacity-50' : ''}`}>
-            <LinearSlider updateForm={updateForm} defaultTime={[form.start, form.end]} allowCrossDay={isMultiDay} />
+            <LinearSlider updateForm={updateForm} defaultTime={[form.start, form.end]} startDate={form.startDate} endDate={form.endDate} />
           </div>
 
           {/** 반복 */}
