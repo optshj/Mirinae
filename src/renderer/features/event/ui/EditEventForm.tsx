@@ -6,7 +6,6 @@ import { showUndoToast } from '@/shared/ui/sonner';
 
 import { EventForm } from './components/EventForm';
 import { FormState } from '../types/FormType';
-
 import { CalendarEvent } from '@/shared/types/EventType';
 import { useEditEvent, getEventRange } from '@/entities/event';
 
@@ -36,6 +35,11 @@ export function EditEventForm({ event, completeButton, deleteButton }: EditEvent
     e?.preventDefault();
     if (!form.summary.trim()) {
       toast.warning('제목을 입력해주세요');
+      return false;
+    }
+    // 'YYYY-MM-DD HH:mm'은 문자열 비교가 곧 시간순 비교다
+    if (!form.allDay && `${form.endDate} ${form.end}` < `${form.startDate} ${form.start}`) {
+      toast.warning('종료 시간이 시작 시간보다 빨라요');
       return false;
     }
     editEvent({
