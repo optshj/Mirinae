@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CalendarDays, LayoutPanelTop, type LucideIcon } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
-import { posthog } from '@/shared/lib/posthog';
+import { setFlipFooter } from '../lib/flipFooter';
 
 export function FlipFooterButton() {
   const [isFlip, setIsFlip] = useState(localStorage.getItem('flipFooter') === 'true');
@@ -9,9 +9,7 @@ export function FlipFooterButton() {
   const selectLayout = (flip: boolean) => {
     if (flip === isFlip) return;
     setIsFlip(flip);
-    document.documentElement.classList.toggle('flip-footer', flip);
-    localStorage.setItem('flipFooter', flip.toString());
-    posthog.capture('flip_footer_changed', { flip_footer: flip });
+    setFlipFooter(flip, 'settings');
   };
 
   return (

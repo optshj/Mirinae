@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
-import { PalletteDropdown } from '@/features/event';
+import { PalletteDropdown } from './PalletteDropdown';
 import { FooterEvent, useCalendarItems } from '@/entities/event';
 import { COLOR_STORAGE_KEY } from '@/shared/const/color';
 
@@ -41,10 +41,10 @@ export function Footer() {
   const importantEvent = useMemo(() => upcomingEvent.filter((event) => event.colorId === colorId), [upcomingEvent, colorId]);
 
   return (
-    <footer className="mt-2 grid h-48 grid-cols-3 gap-2 transition-all duration-300 ease-in-out [html.flip-footer_&]:pointer-events-none [html.flip-footer_&]:invisible [html.flip-footer_&]:mt-0 [html.flip-footer_&]:h-0 [html.flip-footer_&]:opacity-0">
-      <FooterEvent items={todayEvent} title="오늘 일정" description="오늘의 일정이 없습니다" />
+    <footer className="bg-surface border-surface grid h-48 grid-cols-3 overflow-hidden rounded-b-xl border-t transition-all duration-300 ease-in-out [html.flip-footer_&]:pointer-events-none [html.flip-footer_&]:invisible [html.flip-footer_&]:h-0 [html.flip-footer_&]:border-t-0 [html.flip-footer_&]:opacity-0">
+      <FooterEvent items={todayEvent} hideDate title="오늘 일정" description="오늘의 일정이 없습니다" />
       <FooterEvent items={upcomingEvent} title="다가오는 일정" description="다가오는 일정이 없습니다" />
-      <FooterEvent items={importantEvent} title="카테고리별 일정" description="선택한 색상의 일정만 표시됩니다" headerButton={<PalletteDropdown colorId={colorId} setColorId={setColorId} />} />
+      <FooterEvent items={importantEvent} title={<PalletteDropdown colorId={colorId} setColorId={setColorId} />} description="선택한 색상의 일정이 표시됩니다" />
     </footer>
   );
 }

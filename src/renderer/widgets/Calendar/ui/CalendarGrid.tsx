@@ -58,7 +58,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
   const monthSegments = useMemo(() => buildMonthSegments(laneItems, weekRanges, maxLanes), [laneItems, weekRanges, maxLanes]);
 
   return (
-    <div className="bg-surface flex flex-1 flex-col overflow-hidden rounded-b-xl">
+    <div className="bg-surface flex flex-1 flex-col overflow-hidden rounded-b-xl [html:not(.flip-footer)_&]:rounded-b-none">
       <div className="bg-background-primary grid grid-cols-7 py-2 text-center">
         <div className="text-red-400" aria-label="일요일">
           일
@@ -73,7 +73,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
         </div>
       </div>
 
-      <div ref={weeksRef} className="grid h-[calc(100vh-20rem)] grid-rows-6 transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-7.5rem)] [html.resizable_&]:transition-none">
+      <div ref={weeksRef} className="grid h-[calc(100vh-19.5rem)] grid-rows-6 transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-7.5rem)] [html.resizable_&]:transition-none">
         {weekArray.map((week, weekIndex) => (
           <WeekRow
             key={weekIndex}
