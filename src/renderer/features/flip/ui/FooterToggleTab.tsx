@@ -9,7 +9,7 @@ export function FooterToggleTab() {
         tabIndex={-1}
         data-hoverable
         onClick={() => setFlipFooter(!document.documentElement.classList.contains('flip-footer'), 'footer_tab')}
-        className="bg-primary border-primary text-secondary data-hovered:text-primary pointer-events-auto flex h-5 items-center gap-0.5 rounded-full border px-2.5 text-[11px] font-medium transition-all duration-300 ease-in-out [html.flip-footer_&]:rounded-t-md [html.flip-footer_&]:rounded-b-none [html.flip-footer_&]:border-b-0"
+        className="bg-surface border-surface text-secondary data-hovered:text-primary pointer-events-auto flex h-5 items-center gap-0.5 rounded-full border px-2.5 text-[11px] font-medium transition-[border-radius,border-width] duration-300 ease-in-out [html.flip-footer_&]:rounded-t-md [html.flip-footer_&]:rounded-b-none [html.flip-footer_&]:border-b-0"
       >
         <span className="contents [html.flip-footer_&]:hidden">
           <ChevronDown size={12} className="pointer-events-none" />

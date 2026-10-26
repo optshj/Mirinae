@@ -141,7 +141,10 @@ function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidays, onP
             <div className={`grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
               <div className="flex min-w-0 justify-end">
                 {more > 0 && (
-                  <span aria-label={`일정 ${more}개 더 있음`} className="text-secondary min-w-0 truncate rounded-[5px] bg-black/5 px-1.25 text-[10px] font-medium tabular-nums dark:bg-white/10">
+                  <span
+                    aria-label={`일정 ${more}개 더 있음`}
+                    className="text-secondary bg-surface-fill min-w-0 truncate rounded-[5px] bg-black/5 px-1.25 text-[10px] font-medium tabular-nums dark:bg-white/10"
+                  >
                     +{more}개 일정
                   </span>
                 )}

@@ -84,6 +84,13 @@ body {
 @utility bg-surface {
   background-color: color-mix(in srgb, var(--color-background-primary) calc(var(--bg-opacity, 1) * 100%), transparent);
 }
+/* bg-surface 위의 작은 라벨용: 투명도가 낮아 빠진 만큼 배경색을 채워, 바탕화면 위에서도 불투명하게 보이게 한다 */
+@utility bg-surface-fill {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--color-background-primary) calc((1 - var(--bg-opacity, 1)) * 100%), transparent),
+    color-mix(in srgb, var(--color-background-primary) calc((1 - var(--bg-opacity, 1)) * 100%), transparent)
+  );
+}
 @utility text-primary {
   color: var(--color-text-primary);
 }
