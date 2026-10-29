@@ -3,73 +3,70 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { CalendarEvent } from '@/shared/types/EventType';
+import { cn } from '@/shared/lib/utils';
+import { getEventRange } from '../lib/eventLayout';
+
+const PAGE_SIZE = 4;
 
 interface FooterEventProps {
   items: CalendarEvent[];
-  title: string;
+  title: React.ReactNode;
   description: string;
   headerButton?: React.ReactNode;
+  hideDate?: boolean;
 }
-export function FooterEvent({ items, title, description, headerButton }: FooterEventProps) {
-  const [visibleStartIndex, setVisibleStartIndex] = useState(0);
-  const showCount = 2;
-
-  const canScrollUp = visibleStartIndex > 0;
-  const canScrollDown = visibleStartIndex < items.length - showCount;
-  const visibleItems = items.slice(visibleStartIndex, visibleStartIndex + showCount);
-
-  const handleScrollUp = () => canScrollUp && setVisibleStartIndex((prev) => prev - 1);
-  const handleScrollDown = () => canScrollDown && setVisibleStartIndex((prev) => prev + 1);
+export function FooterEvent({ items, title, description, headerButton, hideDate }: FooterEventProps) {
+  const [page, setPage] = useState(0);
+  const pages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const current = Math.min(page, pages - 1);
+  const visibleItems = items.slice(current * PAGE_SIZE, current * PAGE_SIZE + PAGE_SIZE);
 
   return (
-    <section className="bg-surface rounded-xl p-4">
-      <div className="mb-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h3 className="text-primary font-semibold whitespace-nowrap">{title}</h3>
-          {headerButton}
-        </div>
+    <section className="border-surface flex min-w-0 flex-col border-l p-4 first:border-l-0">
+      <div className="flex h-9 shrink-0 items-center gap-2">
+        <h3 className="text-primary min-w-0 text-sm font-semibold whitespace-nowrap">{title}</h3>
+        {headerButton}
 
-        <div className="flex">
-          <Button onClick={handleScrollUp} disabled={!canScrollUp} variant="ghost" size="icon" tabIndex={-1}>
-            <ChevronUp size={20} />
-          </Button>
-          <Button onClick={handleScrollDown} disabled={!canScrollDown} variant="ghost" size="icon" tabIndex={-1}>
-            <ChevronDown size={20} />
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex max-h-30 flex-col gap-4">
-        {items.length === 0 ? (
-          <span className="text-font-gray py-8 text-center font-medium whitespace-nowrap">{description}</span>
-        ) : (
-          visibleItems.map((event) => (
-            <div key={event.id} className="flex items-center gap-3 px-3">
-              <span className={`h-2 w-2 rounded-full event-color-${event.colorId} bg-(--event-color)`} />
-              <div className="flex flex-col">
-                <span className="text-primary line-clamp-1 font-semibold">{event.summary}</span>
-                <span className="text-font-gray line-clamp-1 text-sm">{formatKorean(event)}</span>
-              </div>
-            </div>
-          ))
+        {pages > 1 && (
+          <div className="ml-auto flex items-center">
+            <Button onClick={() => setPage(current - 1)} disabled={current === 0} variant="ghost" size="icon" className="size-7" tabIndex={-1}>
+              <ChevronUp size={18} />
+            </Button>
+            <Button onClick={() => setPage(current + 1)} disabled={current === pages - 1} variant="ghost" size="icon" className="size-7" tabIndex={-1}>
+              <ChevronDown size={18} />
+            </Button>
+          </div>
         )}
       </div>
+
+      {items.length === 0 ? (
+        <span className="text-font-gray m-auto text-[13px] font-medium whitespace-nowrap">{description}</span>
+      ) : (
+        <div className="flex flex-col">
+          {visibleItems.map((event) => (
+            <FooterEventRow key={event.id} event={event} hideDate={hideDate} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
 
-function formatKorean(event: CalendarEvent): string {
-  const isTime = event.category === 'time';
-  const dateVal = isTime ? event.start.dateTime : event.start.date;
+function FooterEventRow({ event, hideDate }: { event: CalendarEvent; hideDate?: boolean }) {
+  const [start, end] = getEventRange(event);
+  const isBar = event.category !== 'time' || start !== end;
+  const completed = event.extendedProperties?.private?.completed === 'true';
+  const day = dayjs(start);
+  const time = event.category === 'time' ? dayjs(event.start.dateTime).format('HH:mm') : start !== end ? `~${dayjs(end).date()}일` : '종일';
+  const date = day.isSame(dayjs(), 'day') ? '오늘' : day.isSame(dayjs().add(1, 'day'), 'day') ? '내일' : day.format('M/D');
+  const meta = cn('text-xs whitespace-nowrap tabular-nums', completed ? 'text-secondary line-through' : 'text-zinc-500 dark:text-zinc-400');
 
-  if (!dateVal) {
-    return '';
-  }
-
-  const d = dayjs(dateVal);
-  const now = dayjs();
-  const yearFormat = d.year() !== now.year() ? 'YYYY년 ' : '';
-  const dateFormat = `${yearFormat}M월 D일 (ddd)`;
-
-  return isTime ? d.format(`${dateFormat} A h:mm`) : d.format(dateFormat);
+  return (
+    <div className={cn('grid h-7 items-center gap-2.5 text-[13px]', hideDate ? 'grid-cols-[0.5rem_minmax(0,1fr)_2.25rem]' : 'grid-cols-[0.5rem_minmax(0,1fr)_2.5rem_2.25rem]')}>
+      <i className={cn(`event-color-${event.colorId} justify-self-center rounded-full bg-(--event-color) dark:saturate-70`, isBar ? 'h-3 w-1' : 'h-2 w-2')} />
+      <span className={cn('truncate font-medium', completed ? 'text-secondary line-through' : 'text-primary')}>{event.summary}</span>
+      {!hideDate && <span className={meta}>{date}</span>}
+      <span className={cn(meta, 'text-right')}>{time}</span>
+    </div>
+  );
 }

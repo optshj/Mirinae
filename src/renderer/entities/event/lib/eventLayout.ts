@@ -105,20 +105,25 @@ export function buildMonthSegments(events: CalendarEvent[], weeks: Array<{ start
 //           그때는 공공데이터포털 특일정보 API로 갈아타는 게 정공법.
 const PUBLIC_HOLIDAY = /공휴일|public holiday/i;
 
-// 날짜 숫자를 빨갛게 칠하기 위한 공휴일 날짜(YYYY-MM-DD) 집합. 여러 날에 걸친 연휴도 펼쳐서 담는다.
-export function buildHolidayDates(events: Array<{ description?: string; start?: { date?: string }; end?: { date?: string } }>) {
+// 날짜 칸 머리에 쓰는 휴일 정보. 여러 날에 걸친 연휴도 펼쳐서 담는다.
+// - dates: 날짜 숫자를 빨갛게 칠할 날짜(YYYY-MM-DD) — 실제 공휴일만
+// - names: 날짜 옆에 붙일 이름 — 기념일·절기까지 휴일 캘린더의 모든 항목
+export function buildHolidays(events: Array<{ summary?: string; description?: string; start?: { date?: string }; end?: { date?: string } }>) {
   const dates = new Set<string>();
+  const names: Record<string, string[]> = {};
   for (const event of events) {
     const start = event.start?.date;
     if (!start) continue;
-    if (!PUBLIC_HOLIDAY.test(event.description ?? '')) continue;
+    const isPublic = PUBLIC_HOLIDAY.test(event.description ?? '');
     // Google API의 end.date는 exclusive(종료일+1). 없으면 하루짜리로 본다.
     const endExclusive = dayjs(event.end?.date ?? start);
     let cur = dayjs(start);
     do {
-      dates.add(cur.format('YYYY-MM-DD'));
+      const key = cur.format('YYYY-MM-DD');
+      if (event.summary) (names[key] ??= []).push(event.summary);
+      if (isPublic) dates.add(key);
       cur = cur.add(1, 'day');
     } while (cur.isBefore(endExclusive, 'day'));
   }
-  return dates;
+  return { dates, names };
 }

@@ -45,9 +45,7 @@ export function Header({
             aria-hidden={isCurrentMonth}
             className={cn(
               'ml-2 rounded-full bg-zinc-800 px-3 py-1 text-xs font-semibold whitespace-nowrap text-white transition-[translate,scale,opacity] active:scale-95 dark:bg-zinc-100 dark:text-zinc-900',
-              isCurrentMonth
-                ? 'pointer-events-none -translate-x-7 scale-90 opacity-0 duration-160 ease-[cubic-bezier(0.4,0,1,1)]'
-                : 'translate-x-0 scale-100 opacity-100 duration-280 ease-[cubic-bezier(0.2,0.8,0.2,1)]'
+              isCurrentMonth ? 'pointer-events-none -translate-x-7 scale-90 opacity-0 duration-160 ease-in' : 'translate-x-0 scale-100 opacity-100 duration-280 ease-[cubic-bezier(0.2,0.8,0.2,1)]'
             )}
           >
             오늘<span className="[html.mini-view_&]:hidden">로 돌아가기</span>

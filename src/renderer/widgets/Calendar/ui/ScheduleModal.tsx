@@ -19,13 +19,13 @@ export function ScheduleModal({ date }: { date: Date }) {
   });
 
   return (
-    <DialogContent>
-      <DialogHeader className="mb-2 text-left">
-        <DialogTitle className="flex flex-row items-baseline gap-3">
-          <span className="text-foreground text-3xl font-bold tracking-tight">
+    <DialogContent className="grid-cols-[minmax(0,1fr)]">
+      <DialogHeader className="mb-1 text-left">
+        <DialogTitle className="flex flex-row items-baseline gap-2 pr-8">
+          <span className="text-foreground text-lg font-semibold">
             {date.getMonth() + 1}월 {date.getDate()}일
           </span>
-          <span className="text-secondary text-sm font-medium tracking-wide"> {isToday ? 'Today' : dDay} </span>
+          <span className="text-secondary text-xs">{isToday ? '오늘' : dDay}</span>
         </DialogTitle>
       </DialogHeader>
       {events.map((event) => {
