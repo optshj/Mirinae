@@ -77,10 +77,10 @@ function Event({ event, completeButton, deleteButton }: { event: CalendarEvent; 
         if (isReadOnly) e.stopPropagation();
       }}
     >
-      <div className={`flex flex-1 items-center ${completed ? 'opacity-50' : ''}`}>
-        <div className={`h-10 w-2 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />
-        <div className="text-primary flex-1 pl-3">
-          <span className={`font-semibold ${completed ? 'line-through decoration-current/40 decoration-1' : ''}`}>{event.summary}</span>
+      <div className={`flex min-w-0 flex-1 items-center ${completed ? 'opacity-50' : ''}`}>
+        <div className={`h-10 w-2 shrink-0 rounded-xl event-color-${event.colorId} bg-(--event-color)`} />
+        <div className="text-primary min-w-0 flex-1 pl-3">
+          <span className={`block truncate font-semibold ${completed ? 'line-through decoration-current/40 decoration-1' : ''}`}>{event.summary}</span>
           <div className="text-xs">
             {renderTimeRange()}
             {event.recurringEventId && ' · 반복 일정'}
@@ -88,7 +88,7 @@ function Event({ event, completeButton, deleteButton }: { event: CalendarEvent; 
         </div>
       </div>
       {!isReadOnly && (
-        <div className="flex items-center">
+        <div className="flex shrink-0 items-center">
           {completeButton}
           {deleteButton}
         </div>
