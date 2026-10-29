@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { posthog } from '@/shared/lib/posthog';
 
@@ -13,6 +14,7 @@ const LoginContext = createContext<LoginContextValue | null>(null);
 
 export function LoginProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const queryClient = useQueryClient();
 
   const login = async () => {
     try {
@@ -28,6 +30,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setIsAuthenticated(false);
+    queryClient.removeQueries();
     window.api.logoutGoogleOAuth();
     posthog.capture('user_logged_out');
   };
@@ -39,13 +42,16 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     restoreSession();
     window.addEventListener('online', restoreSession);
-    const removeAuthExpiredListener = window.api.onAuthExpired(() => setIsAuthenticated(false));
+    const removeAuthExpiredListener = window.api.onAuthExpired(() => {
+      setIsAuthenticated(false);
+      queryClient.removeQueries();
+    });
 
     return () => {
       removeAuthExpiredListener();
       window.removeEventListener('online', restoreSession);
     };
-  }, [restoreSession]);
+  }, [restoreSession, queryClient]);
 
   return <LoginContext.Provider value={{ isAuthenticated, login, logout, restoreSession }}>{children}</LoginContext.Provider>;
 }
