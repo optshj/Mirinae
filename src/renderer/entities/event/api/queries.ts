@@ -7,7 +7,6 @@ export const eventKeys = {
   events: ['googleCalendarEvents'] as const,
   holidays: ['googleCalendarHolidays'] as const,
   calendarList: ['googleCalendarList'] as const,
-  // events와 prefix를 분리해 primary mutation의 invalidate가 다른 캘린더까지 번지지 않게 한다
   calendarEvents: (calendarId: string) => ['googleCalendarSubscribedEvents', calendarId] as const
 };
 
@@ -40,6 +39,7 @@ export const eventOptions = {
   holidays: () =>
     queryOptions({
       queryKey: eventKeys.holidays,
-      queryFn: () => eventApi.getHolidays()
+      queryFn: () => eventApi.getHolidays(),
+      staleTime: Infinity
     })
 };

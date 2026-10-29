@@ -9,7 +9,6 @@ export function Footer() {
   const [colorId, setColorId] = useState<string>(localStorage.getItem(COLOR_STORAGE_KEY) ?? '11');
   const [tomorrow, setTomorrow] = useState(() => dayjs().add(1, 'day').startOf('day').toDate());
 
-  // 매일 자정마다 tomorrow 상태를 업데이트하여 오늘과 내일 일정을 정확히 구분할 수 있도록 함
   useEffect(() => {
     const msUntilMidnight = dayjs().endOf('day').diff(dayjs()) + 1;
 
@@ -20,14 +19,10 @@ export function Footer() {
     return () => clearTimeout(timeout);
   }, [tomorrow]);
 
-  const todayEvent = useMemo(
-    () =>
-      items.filter((event) => {
-        if (event.category === 'time') return dayjs(event.start.dateTime).isSame(dayjs(), 'day');
-        else return dayjs(event.start.date).isSame(dayjs(), 'day');
-      }),
-    [items]
-  );
+  const todayEvent = useMemo(() => {
+    const today = dayjs(tomorrow).subtract(1, 'day');
+    return items.filter((event) => dayjs(event.category === 'time' ? event.start.dateTime : event.start.date).isSame(today, 'day'));
+  }, [items, tomorrow]);
 
   const upcomingEvent = useMemo(
     () =>
