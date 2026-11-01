@@ -73,7 +73,7 @@ export function CalendarGrid({ days, month }: Pick<DateProps, 'days' | 'month'>)
         </div>
       </div>
 
-      <div ref={weeksRef} className="grid h-[calc(100vh-19.5rem)] grid-rows-6 transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-7.5rem)] [html.resizable_&]:transition-none">
+      <div ref={weeksRef} className="grid h-[calc(100vh-18.75rem)] grid-rows-6 transition-all duration-300 ease-in-out [html.flip-footer_&]:h-[calc(100vh-6.75rem)] [html.resizable_&]:transition-none">
         {weekArray.map((week, weekIndex) => (
           <WeekRow
             key={weekIndex}
