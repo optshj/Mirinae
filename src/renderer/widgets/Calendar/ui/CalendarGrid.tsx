@@ -135,7 +135,7 @@ function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidays, onP
             key={dateKey}
             data-date={dateKey}
             data-hoverable={draggingEventId === null ? '' : undefined}
-            className={cn('data-hovered:bg-main-color/20 flex h-full w-full flex-col overflow-hidden rounded-md transition-colors', isDropPreview && 'bg-main-color/10')}
+            className={cn('data-hovered:bg-main-color/20 @container flex h-full w-full flex-col overflow-hidden rounded-md transition-colors', isDropPreview && 'bg-main-color/10')}
             onDoubleClick={() => onPickDate(date)}
           >
             <div className={`grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 p-1 font-semibold ${isCurrentMonth ? 'text-primary' : 'text-secondary'}`}>
@@ -145,7 +145,9 @@ function WeekRow({ week, month, visible, overflowByDate, maxLanes, holidays, onP
                     aria-label={`일정 ${more}개 더 있음`}
                     className="text-secondary bg-surface-fill min-w-0 truncate rounded-[5px] bg-black/5 px-1.25 text-[10px] font-medium tabular-nums dark:bg-white/10"
                   >
-                    +{more}개 일정
+                    {/* 칸 폭에 따라 +3개 일정 → +3개 → +3 */}+{more}
+                    <span className="hidden @min-[104px]:inline">개</span>
+                    <span className="hidden @min-[140px]:inline"> 일정</span>
                   </span>
                 )}
               </div>
