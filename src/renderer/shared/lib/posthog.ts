@@ -8,7 +8,8 @@ posthog.init(import.meta.env.VITE_POSTHOG_API_KEY, {
   autocapture: false,
   capture_pageview: false,
   capture_exceptions: true,
-  disable_external_dependency_loading: true
+  disable_external_dependency_loading: true,
+  opt_out_capturing_by_default: import.meta.env.DEV
 });
 
 posthog.register({ bundle_build: import.meta.env.VITE_BUNDLE_BUILD ?? 'embedded' });
