@@ -6,7 +6,7 @@ import { initTray } from './tray';
 import { initAutoUpdater } from './autoUpdate';
 import { registerIPCHandlers } from './ipcHandler';
 import { store } from './store';
-import { toWallpaperBounds } from './wallpaperBounds';
+import { clampToDisplay, toWallpaperBounds } from './wallpaperBounds';
 import { startActiveWindowWatcher, stopActiveWindowWatcher } from './activeWindow';
 import { attachWallpaper } from './wallpaper';
 import { dropDuplicateKeyInput } from './keyInput';
@@ -34,12 +34,12 @@ Sentry.init({
 function createWindow(): void {
   const { height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
   const saved = store.get('window-bounds');
-  const savedBounds = {
+  const savedBounds = clampToDisplay({
     x: saved.x || 0,
     y: saved.y || 0,
     width: saved.width,
     height: saved.height || screenHeight
-  };
+  });
 
   mainWindow = new BrowserWindow({
     ...savedBounds,
