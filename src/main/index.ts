@@ -12,6 +12,7 @@ import { attachWallpaper } from './wallpaper';
 import { dropDuplicateKeyInput } from './keyInput';
 import { handleRendererProtocol, loadRenderer, registerRendererScheme } from './bundleUpdate';
 import * as Sentry from '@sentry/electron/main';
+import { REPORT_INTERVAL_MS, startPerformanceMetrics } from './performanceMetrics';
 
 const SERVICE_NAME = 'Mirinae';
 
@@ -28,7 +29,9 @@ new AutoLaunch({
 
 Sentry.init({
   dsn: 'https://e14a01e7695b60bc88127406d382c174@o4511528205615104.ingest.us.sentry.io/4511528463630336',
-  enableLogs: true
+  enableLogs: true,
+  // 메인 프로세스 CPU·메모리·이벤트 루프 지연 자동 측정 (dev 데이터는 안 보냄)
+  integrations: app.isPackaged ? [Sentry.nodeRuntimeMetricsIntegration({ collectionIntervalMs: REPORT_INTERVAL_MS })] : []
 });
 
 function createWindow(): void {
@@ -85,6 +88,7 @@ app.whenReady().then(() => {
   loadRenderer(mainWindow);
   initAutoUpdater();
   startActiveWindowWatcher(mainWindow);
+  startPerformanceMetrics();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
