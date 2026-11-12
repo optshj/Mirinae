@@ -19,9 +19,12 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
   const login = async () => {
     try {
       await window.api.loginGoogleOAuth();
-    } catch {
-      posthog.capture('user_login_failed');
-      toast.error('로그인에 실패했어요. 잠시 후 다시 시도해 주세요', { id: 'login-error' });
+    } catch (error) {
+      // IPC를 거치면 메시지 앞에 "Error invoking remote method ..."가 붙는다
+      const reason = String(error).replace(/^.*Error invoking remote method '[^']+': (Error: )?/, '');
+      posthog.capture('user_login_failed', { reason });
+      // 권한 누락은 브라우저 결과 페이지(auth-result.html)에서도 안내한다
+      toast.error(reason.includes('MISSING_SCOPE') ? '캘린더 권한을 모두 체크해야 일정을 불러오고 추가할 수 있어요' : '로그인에 실패했어요. 잠시 후 다시 시도해 주세요', { id: 'login-error' });
       return;
     }
     setIsAuthenticated(true);

@@ -12,15 +12,28 @@ const CLIENT_SECRET = process.env.VITE_CLIENT_SECRET;
 const LOOPBACK_HOST = '127.0.0.1';
 const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.owned';
 
+const hasAllScopes = (granted = '') => SCOPES.split(' ').every((scope) => granted.split(' ').includes(scope));
+
 const generatePKCE = () => {
   const codeVerifier = crypto.randomBytes(32).toString('hex');
   const codeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64url');
   return { codeVerifier, codeChallenge };
 };
 
+const RESULT_PAGES = {
+  success: { title: '로그인 성공!', message: '창을 닫아주시면 앱에서 계속 진행됩니다.' },
+  scope: { title: '권한을 모두 체크해 주세요', message: '캘린더 권한을 모두 체크해야 일정을 불러오고 추가할 수 있어요.' },
+  failure: { title: '로그인에 실패했어요', message: '창을 닫고 다시 시도해 주세요.' }
+};
+
+const renderResultPage = (kind: keyof typeof RESULT_PAGES) => {
+  const templatePath = app.isPackaged ? join(process.resourcesPath, 'resources', 'auth-result.html') : join(__dirname, '../../resources/auth-result.html');
+  const { title, message } = RESULT_PAGES[kind];
+  return readFileSync(templatePath, 'utf8').replace('{{state}}', kind).replaceAll('{{title}}', title).replaceAll('{{message}}', message);
+};
+
 const startAuthServer = (onListening: (redirectUri: string) => void): Promise<string> => {
   return new Promise<string>((resolve, reject) => {
-    const successPath = app.isPackaged ? join(process.resourcesPath, 'resources', 'success.html') : join(__dirname, '../../resources/success.html');
     let server: http.Server | null = null;
     let timeout: NodeJS.Timeout | null = null;
 
@@ -33,15 +46,21 @@ const startAuthServer = (onListening: (redirectUri: string) => void): Promise<st
     server = http.createServer((req, res) => {
       const url = new URL(req.url!, `http://${req.headers.host}`);
       const code = url.searchParams.get('code');
+      const error = url.searchParams.get('error');
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
 
-      if (code) {
-        res.end(readFileSync(successPath));
+      if (code && hasAllScopes(url.searchParams.get('scope') ?? '')) {
+        res.end(renderResultPage('success'));
         cleanup();
         resolve(code);
-      } else {
-        res.end('<h1>Authentication failed. Please try again.</h1>');
+      } else if (code || error === 'access_denied') {
+        res.end(renderResultPage('scope'));
         cleanup();
-        reject(new Error('No authorization code received'));
+        reject(new Error(`MISSING_SCOPE (${code ? 'partial' : error})`));
+      } else {
+        res.end(renderResultPage('failure'));
+        cleanup();
+        reject(new Error(`No authorization code received (${error ?? url.pathname})`));
       }
     });
 
@@ -122,6 +141,11 @@ const refreshSession = async () => {
     if (!refreshToken) return false;
 
     const tokenData = await refreshAccessToken(refreshToken);
+    if (!hasAllScopes(tokenData.scope)) {
+      // 권한 일부만 허용된 채 저장된 토큰은 버린다 (다시 로그인해서 모두 허용해야 함)
+      await keytar.deletePassword(SERVICE_NAME, ACCOUNT_NAME);
+      return false;
+    }
     if (tokenData.refresh_token) {
       await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokenData.refresh_token);
     }
@@ -167,7 +191,22 @@ export const logoutGoogleOAuth = async () => {
   return true;
 };
 
-export const loginGoogleOAuth = async () => {
+let pendingLogin: Promise<void> | null = null;
+let pendingAuthUrl: string | null = null;
+
+export const loginGoogleOAuth = () => {
+  if (pendingLogin) {
+    if (pendingAuthUrl) shell.openExternal(pendingAuthUrl);
+    return pendingLogin;
+  }
+  pendingLogin = startLogin().finally(() => {
+    pendingLogin = null;
+    pendingAuthUrl = null;
+  });
+  return pendingLogin;
+};
+
+const startLogin = async () => {
   const { codeVerifier, codeChallenge } = generatePKCE();
   let redirectUri = '';
 
@@ -182,10 +221,12 @@ export const loginGoogleOAuth = async () => {
     authUrl.searchParams.append('code_challenge', codeChallenge);
     authUrl.searchParams.append('code_challenge_method', 'S256');
     authUrl.searchParams.append('access_type', 'offline');
-    shell.openExternal(authUrl.toString());
+    pendingAuthUrl = authUrl.toString();
+    shell.openExternal(pendingAuthUrl);
   });
 
   const tokens = await fetchAccessTokens(authCode, codeVerifier, redirectUri);
+  if (!hasAllScopes(tokens.scope)) throw new Error('MISSING_SCOPE (token)'); // 콜백 scope 검사를 통과했는데 토큰이 다른 경우 대비
   if (tokens.refresh_token) {
     await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, tokens.refresh_token);
   }
