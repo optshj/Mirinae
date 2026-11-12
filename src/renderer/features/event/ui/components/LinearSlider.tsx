@@ -203,7 +203,7 @@ function SliderThumb({
       className={`absolute top-2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 cursor-grab items-center justify-center rounded-full bg-(--event-color) p-1.5 transition-transform duration-150 active:cursor-grabbing ${active ? 'scale-125' : ''} ${className}`}
       style={{ left: `${pos}%` }}
     >
-      <Icon className="text-white" size={16} />
+      <Icon className="text-white" strokeWidth={3} size={16} />
     </div>
   );
 }
