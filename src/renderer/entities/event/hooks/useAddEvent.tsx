@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { toast } from 'sonner';
 import { CalendarEvent } from '@/shared/types/EventType';
 import { eventApi } from '@/entities/event';
 import { eventKeys } from '../api/queries';
@@ -65,7 +66,10 @@ export function useAddEvent() {
 
       return { previousData };
     },
-    onError: (_error, _variables, context) => queryClient.setQueryData(eventKeys.events, context?.previousData),
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(eventKeys.events, context?.previousData);
+      toast.error('일정을 추가하지 못했어요. 잠시 후 다시 시도해 주세요');
+    },
     onSettled: () => queryClient.invalidateQueries({ queryKey: eventKeys.events })
   });
 
