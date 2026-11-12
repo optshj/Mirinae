@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>미리내 | {{title}}</title>
+    <link rel="icon" href="https://www.mirinaecalendar.store/favicon.ico" type="image/x-icon" />
+    <link href="https://cdn.jsdelivr.net/gh/sun-typeface/SUITE@2/fonts/static/woff2/SUITE.css" rel="stylesheet" />
+    <style>
+      .sky {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: linear-gradient(to bottom, #1a1f3d, #5a5475, #8e7c8a);
+      }
+      .star {
+        position: absolute;
+        background: #fff;
+        border-radius: 50%;
+        animation: tw ease-in-out infinite;
+      }
+      @keyframes tw {
+        0%,
+        100% {
+          opacity: 0.2;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      .meteor {
+        position: absolute;
+        animation: shoot linear infinite;
+        opacity: 0;
+      }
+      .meteor::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 150px;
+        height: 2px;
+        rotate: 135deg;
+        border-radius: 2px;
+        background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3) 88%, #fff);
+        filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.6));
+      }
+      @keyframes shoot {
+        0% {
+          transform: translate(0, 0);
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-500px, 500px);
+          opacity: 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .star,
+        .meteor {
+          animation: none;
+        }
+        .meteor {
+          display: none;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      body {
+        font-family: 'SUITE', sans-serif;
+        letter-spacing: -0.02em;
+        overflow: hidden;
+        word-break: keep-all;
+      }
+      body[data-state='success'] [data-only]:not([data-only~='success']),
+      body[data-state='scope'] [data-only]:not([data-only~='scope']),
+      body[data-state='failure'] [data-only]:not([data-only~='failure']) {
+        display: none !important;
+      }
+      body:not([data-state='success']) .star {
+        animation-play-state: paused;
+      }
+      .cb {
+        flex: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 2px;
+        background: #1a73e8;
+        display: grid;
+        place-items: center;
+      }
+      .cb svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .dim {
+        position: absolute;
+        inset: 0;
+        background: #0d1024;
+        opacity: 0;
+      }
+      body[data-state='scope'] .dim {
+        opacity: 0.5;
+      }
+      body[data-state='failure'] .dim {
+        opacity: 0.62;
+      }
+      main {
+        position: relative;
+        height: 100%;
+        color: #fff;
+      }
+      .center {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .center h1 {
+        font-size: 3rem;
+        margin: 80px 0 10px;
+      }
+      .center p {
+        font-size: 1.125rem;
+        color: #a7aeb8;
+        margin: 0;
+      }
+      .col {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: max(64px, 12vw);
+        max-width: calc(600px + max(64px, 12vw));
+      }
+      .col h1 {
+        font-size: 2.75rem;
+        line-height: 1.2;
+        margin: 0 0 14px;
+      }
+      .col .msg {
+        font-size: 1.125rem;
+        line-height: 1.6;
+        color: #c6cad3;
+        margin: 0 0 48px;
+      }
+      .col h2 {
+        font-size: 0.9375rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0 0 4px;
+      }
+      .rows {
+        list-style: none;
+        margin: 0 0 36px;
+        padding: 0;
+      }
+      .rows li {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+        font:
+          15px/1.5 Roboto,
+          'Malgun Gothic',
+          sans-serif;
+        color: #e8eaed;
+        letter-spacing: 0;
+      }
+      .rows .cb {
+        margin-top: 2px;
+        background: #8ab4f8;
+      }
+      .rows .cb path {
+        stroke: #202124;
+      }
+      .next {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: #c6cad3;
+        margin: 0;
+      }
+      .next b {
+        color: #fff;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body data-state="{{state}}">
+    <div class="sky" id="sky"></div>
+    <div class="dim"></div>
+    <main>
+      <section class="center" data-only="success failure">
+        <h1 data-slot="title">{{title}}</h1>
+        <p data-slot="message">{{message}}</p>
+      </section>
+      <section class="col" data-only="scope">
+        <h1 data-slot="title">{{title}}</h1>
+        <p class="msg" data-slot="message">{{message}}</p>
+        <h2>구글 화면에서 이 두 칸을 모두 체크해 주세요</h2>
+        <ul class="rows">
+          <li>
+            <span class="cb"
+              ><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span
+            >Google Calendar를 사용하여 액세스할 수 있는 모든 캘린더 보기 및 다운로드
+          </li>
+          <li>
+            <span class="cb"
+              ><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span
+            >내가 소유한 Google 캘린더의 일정 보기, 생성, 변경, 삭제
+          </li>
+        </ul>
+        <p class="next">이 창을 닫고 <b>다시 로그인</b>해주세요.</p>
+      </section>
+    </main>
+    <script>
+      /* 별 생성: 성공일 때만 별똥별 */
+      (function () {
+        var c = document.getElementById('sky');
+        if (!c) return;
+        var live = document.body.dataset.state === 'success';
+        var n = +(c.dataset.stars || 150);
+        for (var i = 0; i < n; i++) {
+          var s = document.createElement('i');
+          s.className = 'star';
+          s.style.top = Math.random() * 100 + '%';
+          s.style.left = Math.random() * 100 + '%';
+          s.style.width = s.style.height = 1 + Math.random() * 1.5 + 'px';
+          s.style.animationDuration = 3 + Math.random() * 7 + 's';
+          s.style.animationDelay = -Math.random() * 8 + 's';
+          c.appendChild(s);
+        }
+        if (!live) return;
+        for (var j = 0; j < 10; j++) {
+          var m = document.createElement('i');
+          m.className = 'meteor';
+          if (Math.random() > 0.5) {
+            m.style.top = '-10%';
+            m.style.left = Math.random() * 100 + '%';
+          } else {
+            m.style.top = Math.random() * 100 + '%';
+            m.style.left = 100 + Math.random() * 5 + '%';
+          }
+          m.style.animationDuration = 3 + Math.random() * 3 + 's';
+          m.style.animationDelay = (j < 5 ? Math.random() * 3 : 3 + Math.random() * 17) + 's';
+          c.appendChild(m);
+        }
+      })();
+    </script>
+  </body>
+</html>
