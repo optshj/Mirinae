@@ -57,7 +57,7 @@ export const Toaster = () => {
       expand={false}
       offset={{ top: 84 }}
       mobileOffset={{ top: 84 }}
-      className="antialiased"
+      className="antialiased [html.mini-view_&]:left-[calc(100%-14rem)]!"
       style={
         {
           fontFamily: 'Pretendard Variable, Pretendard, "Segoe UI Symbol", sans-serif',
